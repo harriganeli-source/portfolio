@@ -318,6 +318,10 @@ img.thumb-zoomed {
   color: var(--color-gray-medium);
 }
 
+.project-title .studio {
+  font-style: italic;
+}
+
 .project-role {
   display: block;
   font-size: var(--font-size-small);
