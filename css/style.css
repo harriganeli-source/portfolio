@@ -314,14 +314,15 @@ img.thumb-zoomed {
 .project-title {
   display: block;
   font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-dark);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-medium);
 }
 
 .project-role {
   display: block;
-  font-size: 13px;
-  color: var(--color-gray-medium);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-dark);
 }
 
 /* Fade-in animation on scroll */
