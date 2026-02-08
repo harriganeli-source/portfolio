@@ -503,8 +503,12 @@ img.thumb-zoomed {
   align-items: start;
 }
 
-.doc-layout .video-container {
+.doc-main .video-container {
   margin-bottom: 0;
+}
+
+.doc-main .laurels-marquee {
+  margin-top: var(--spacing-sm);
 }
 
 .doc-sidebar {
