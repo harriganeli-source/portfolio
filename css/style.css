@@ -735,6 +735,86 @@ img.thumb-zoomed {
   transform: scale(1.05);
 }
 
+/* Instagram Feed */
+.ig-feed-section {
+  margin-top: 80px;
+  padding-top: 48px;
+  border-top: 1px solid var(--color-gray-light);
+}
+
+.ig-feed-heading {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--color-text-secondary);
+}
+
+.ig-feed-heading a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ig-feed-heading a:hover {
+  color: var(--color-text-primary);
+}
+
+.ig-feed-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.ig-feed-item {
+  aspect-ratio: 1;
+  overflow: hidden;
+  display: block;
+  background: var(--color-gray-light);
+}
+
+.ig-feed-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.ig-feed-item:hover img {
+  transform: scale(1.08);
+  opacity: 0.85;
+}
+
+.ig-feed-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+.ig-feed-more {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.ig-feed-more a {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-text-secondary);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.ig-feed-more a:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
 /* Lightbox styles */
 .lightbox {
   display: none;
@@ -846,12 +926,22 @@ img.thumb-zoomed {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
   }
+  .ig-feed-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 767px) {
   .grid-photos {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
+  }
+  .ig-feed-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ig-feed-section {
+    margin-top: 48px;
+    padding-top: 32px;
   }
 
   .lightbox-image {
