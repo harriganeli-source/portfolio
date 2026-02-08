@@ -233,6 +233,47 @@ function initLightbox() {
 }
 
 // ============================================================================
+// VIDEO POSTER → IFRAME
+// ============================================================================
+
+/**
+ * Initialize video poster click-to-play
+ * Replaces poster image + play button with autoplay iframe on click
+ */
+function initVideoPoster() {
+  const posters = document.querySelectorAll('.video-container[data-src]');
+
+  posters.forEach(container => {
+    container.addEventListener('click', () => {
+      const src = container.getAttribute('data-src');
+      if (!src) return;
+
+      // Add autoplay param
+      const sep = src.includes('?') ? '&' : '?';
+      const autoplaySrc = src + sep + 'autoplay=1';
+
+      // Determine allow attribute based on platform
+      const isVimeo = src.includes('vimeo');
+      const allow = isVimeo
+        ? 'autoplay; fullscreen; picture-in-picture'
+        : 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+
+      // Create iframe
+      const iframe = document.createElement('iframe');
+      iframe.src = autoplaySrc;
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('allow', allow);
+      iframe.style.border = 'none';
+
+      // Clear poster and insert iframe
+      container.innerHTML = '';
+      container.appendChild(iframe);
+      container.removeAttribute('data-src');
+    });
+  });
+}
+
+// ============================================================================
 // BACK BUTTON
 // ============================================================================
 
@@ -263,6 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFadeInAnimations();
   initGridOverlays();
   initLightbox();
+  initVideoPoster();
   initBackButton();
 });
 
