@@ -132,18 +132,20 @@ function generateProjectPage(project, pageData) {
     const desc = pageData.description || '';
     const docPoster = pageData.docPoster || '';
     mainContent = `      <div class="doc-layout">
+        <div class="doc-main">
 ${videoHtml}
+          <div class="laurels-marquee">
+            <div class="laurels-track">
+              <img src="../images/laurels-strip.webp" alt="Festival Laurels">
+              <img src="../images/laurels-strip.webp" alt="Festival Laurels">
+            </div>
+          </div>
+        </div>
         <div class="doc-sidebar">
           <div class="doc-poster">
             <img src="${docPoster}" alt="${titleEsc} - Poster">
           </div>
           <p class="doc-description">${desc}</p>
-        </div>
-      </div>
-      <div class="laurels-marquee">
-        <div class="laurels-track">
-          <img src="../images/laurels-strip.webp" alt="Festival Laurels">
-          <img src="../images/laurels-strip.webp" alt="Festival Laurels">
         </div>
       </div>`;
   } else {
