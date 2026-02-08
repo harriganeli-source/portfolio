@@ -471,7 +471,8 @@ img.thumb-zoomed {
 
 /* Widen container for side-by-side layouts */
 .container-narrow:has(.project-layout),
-.container-narrow:has(.doc-layout) {
+.container-narrow:has(.doc-layout),
+.container-narrow:has(.videos-grid) {
   max-width: 1200px;
 }
 
@@ -510,6 +511,41 @@ img.thumb-zoomed {
 
 @media (max-width: 767px) {
   .project-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Video grid layout (2-up with per-video captions) */
+.project-role-label {
+  font-size: var(--font-size-small);
+  color: var(--color-gray-medium);
+  margin-bottom: var(--spacing-lg);
+}
+
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.video-card .video-container {
+  margin-bottom: var(--spacing-xs);
+}
+
+.video-caption {
+  font-size: var(--font-size-small);
+  color: var(--color-gray-medium);
+  line-height: 1.6;
+  padding: 4px 0;
+}
+
+.video-caption strong {
+  color: var(--color-gray-dark);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 767px) {
+  .videos-grid {
     grid-template-columns: 1fr;
   }
 }

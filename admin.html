@@ -831,6 +831,7 @@
             <select id="editorPageType">
               <option value="single">Single Video</option>
               <option value="stacked">Stacked Videos</option>
+              <option value="grid">Video Grid (2-up with captions)</option>
               <option value="documentary">Documentary</option>
             </select>
           </div>
@@ -1404,6 +1405,7 @@ function openProjectEditor(index) {
     const rawPoster = p.posters && p.posters[i] ? p.posters[i] : '';
     return {
       url,
+      caption: p.videoCaptions && p.videoCaptions[i] ? p.videoCaptions[i] : '',
       posterPath: rawPoster,
       posterFile: null,
       posterPreview: rawPoster ? rawPoster.replace(/^\.\.\//, '/') : '',
@@ -1458,6 +1460,7 @@ function renderEditorVideos() {
       <img class="video-poster-preview" src="${v.posterPreview || ''}" alt="" onerror="this.src=''">
       <div class="video-fields">
         <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
+        <input type="text" value="${esc(v.caption || '')}" placeholder="Caption (for grid layout)" class="ev-caption" style="margin-top:4px;">
         <input type="file" accept="image/*" class="ev-poster" style="margin-top:4px;" title="Upload poster image (shown before play)">
       </div>
       <div class="video-actions">
@@ -1473,6 +1476,9 @@ function renderEditorVideos() {
 
     item.querySelector('.ev-url').addEventListener('input', (e) => {
       editorVideoData[i].url = e.target.value;
+    });
+    item.querySelector('.ev-caption').addEventListener('input', (e) => {
+      editorVideoData[i].caption = e.target.value;
     });
     item.querySelector('.ev-poster').addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -1515,7 +1521,7 @@ function onEditorVideoDrop(e) {
 }
 
 document.getElementById('editorAddVideoBtn').addEventListener('click', () => {
-  editorVideoData.push({ url: '', posterPath: '', posterFile: null, posterPreview: '' });
+  editorVideoData.push({ url: '', caption: '', posterPath: '', posterFile: null, posterPreview: '' });
   renderEditorVideos();
 });
 
@@ -1583,6 +1589,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
     p.credit = document.getElementById('editorCredits').innerHTML.trim();
     p.description = document.getElementById('editorDocDesc').value.trim();
     p.videoUrls = editorVideoData.map(v => v.url).filter(Boolean);
+    p.videoCaptions = editorVideoData.filter(v => v.url).map(v => v.caption || '');
 
     // Upload poster images
     const newPosters = [];

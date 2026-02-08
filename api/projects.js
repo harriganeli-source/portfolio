@@ -65,8 +65,15 @@ function parseProjectPage(html) {
 
   // Detect page type
   if (html.includes('doc-layout')) data.pageType = 'documentary';
+  else if (html.includes('videos-grid')) data.pageType = 'grid';
   else if (html.includes('videos-stacked')) data.pageType = 'stacked';
   else data.pageType = 'single';
+
+  // Extract per-video captions (grid layout)
+  if (data.pageType === 'grid') {
+    const captionMatches = [...html.matchAll(/<p class="video-caption">([\s\S]*?)<\/p>/g)];
+    data.videoCaptions = captionMatches.map(m => m[1].trim());
+  }
 
   // Doc-specific: description and poster image
   if (data.pageType === 'documentary') {
@@ -134,7 +141,25 @@ function generateProjectPage(project, pageData) {
   const credit = pageData.credit || project.role.replace(/&/g, '&amp;') + '.';
 
   let mainContent;
-  if (pageData.pageType === 'documentary') {
+  if (pageData.pageType === 'grid') {
+    // 2-column grid with per-video captions
+    const roleEsc = (project.role || '').replace(/&/g, '&amp;');
+    const cards = pageData.videoUrls.map((url, i) => {
+      const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
+      const caption = pageData.videoCaptions && pageData.videoCaptions[i] ? pageData.videoCaptions[i] : '';
+      return `        <div class="video-card">
+          <div class="video-container" data-src="${url}">
+            <img src="${poster}" alt="${titleEsc}" class="video-poster">
+            <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+          </div>
+          <p class="video-caption">${caption}</p>
+        </div>`;
+    }).join('\n');
+    mainContent = `      <p class="project-role-label">${roleEsc}.</p>
+      <div class="videos-grid">
+${cards}
+      </div>`;
+  } else if (pageData.pageType === 'documentary') {
     const desc = pageData.description || '';
     const docPoster = pageData.docPoster || '';
     mainContent = `      <div class="doc-layout">
@@ -328,6 +353,7 @@ module.exports = async function handler(req, res) {
         pageType: project.pageType || 'single',
         description: project.description || '',
         docPoster: project.docPoster || '',
+        videoCaptions: project.videoCaptions || [],
       };
       const pageHtml = generateProjectPage(project, pageData);
       return res.status(200).json({
