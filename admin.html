@@ -969,7 +969,7 @@ function renderGrid() {
     card.draggable = true;
     card.dataset.index = i;
 
-    const thumbSrc = p.thumbnail.startsWith('http') ? p.thumbnail : `/${p.thumbnail}`;
+    const thumbSrc = p._thumbPreview || (p.thumbnail.startsWith('http') ? p.thumbnail : `/${p.thumbnail}`);
 
     card.innerHTML = `
       <div class="card-actions">
@@ -1191,6 +1191,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
 
   // Handle thumbnail upload
   let thumbnail;
+  let thumbPreview;
   if (newThumbFile) {
     try {
       const base64 = await compressImage(newThumbFile);
@@ -1203,6 +1204,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
       });
       stagedFiles.push(uploadResult.stagedFile);
       thumbnail = uploadResult.stagedFile.path;
+      thumbPreview = 'data:image/webp;base64,' + base64;
     } catch (err) {
       showToast('Failed to process image: ' + err.message);
       return;
@@ -1219,7 +1221,10 @@ document.getElementById('editSave').addEventListener('click', async () => {
     p.credit = credit;
     p.description = description;
     p.videoUrls = videoUrls;
-    if (thumbnail) p.thumbnail = thumbnail;
+    if (thumbnail) {
+      p.thumbnail = thumbnail;
+      p._thumbPreview = thumbPreview;
+    }
   } else {
     // Add new
     projects.push({
@@ -1234,6 +1239,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
       posters: [],
       thumbnail: thumbnail || `images/${slug}.webp`,
       hasLaurels: false,
+      _thumbPreview: thumbPreview,
     });
   }
 
@@ -1668,6 +1674,8 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
       });
       stagedFiles.push(uploadResult.stagedFile);
       p.thumbnail = uploadResult.stagedFile.path;
+      // Store local preview so card shows the new image before publish
+      p._thumbPreview = 'data:image/webp;base64,' + base64;
     }
 
     // Upload doc poster if changed
