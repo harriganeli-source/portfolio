@@ -366,6 +366,184 @@
       opacity: 0.8;
       transform: rotate(3deg);
     }
+
+    /* ---- Project Editor ---- */
+    .project-editor { display: none; }
+    .project-editor.active { display: block; }
+    .editor-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .editor-top-bar h1 {
+      font-size: 16px;
+      font-weight: 500;
+      flex: 1;
+      margin: 0 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .editor-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      padding-bottom: 120px;
+    }
+    .editor-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .editor-section h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .editor-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .editor-field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .editor-field input,
+    .editor-field select,
+    .editor-section > textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      font-family: var(--font);
+    }
+    .editor-field input:focus,
+    .editor-field select:focus,
+    .editor-section > textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .editor-section > textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .video-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      transition: border-color 0.15s;
+    }
+    .video-item.dragging { opacity: 0.5; }
+    .video-item.drag-over { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .video-item .drag-handle {
+      color: var(--text-dim);
+      cursor: grab;
+      font-size: 16px;
+      user-select: none;
+      flex-shrink: 0;
+      letter-spacing: -2px;
+    }
+    .video-item .video-poster-preview {
+      width: 100px;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #333;
+      flex-shrink: 0;
+      display: block;
+    }
+    .video-item .video-fields {
+      flex: 1;
+      min-width: 0;
+    }
+    .video-item .video-fields input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font);
+      margin-bottom: 6px;
+    }
+    .video-item .video-fields input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .video-item .video-fields input[type="file"] {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .video-item .video-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .video-item .video-actions button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .video-item .video-actions button:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .editor-add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font);
+      margin-top: 8px;
+    }
+    .editor-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .doc-fields { display: none; margin-top: 16px; }
+    .doc-fields.active { display: block; }
+    @media (max-width: 600px) {
+      .editor-row { grid-template-columns: 1fr; }
+      .video-item { flex-wrap: wrap; }
+      .video-item .video-poster-preview { width: 80px; }
+    }
   </style>
 </head>
 <body>
@@ -456,6 +634,76 @@
       <div class="modal-actions">
         <button class="btn" id="editCancel">Cancel</button>
         <button class="btn btn-primary" id="editSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Editor -->
+  <div class="project-editor" id="projectEditor">
+    <div class="editor-top-bar">
+      <button class="btn" id="editorBackBtn">&larr; Back</button>
+      <h1 id="editorProjectTitle">Edit Project</h1>
+      <button class="btn btn-primary" id="editorSaveBtn">Save</button>
+    </div>
+    <div class="editor-body">
+      <!-- Project Info -->
+      <div class="editor-section">
+        <h3>Project Info</h3>
+        <div class="editor-row">
+          <div class="editor-field">
+            <label>Title</label>
+            <input type="text" id="editorProjTitle" placeholder="Project title">
+          </div>
+          <div class="editor-field">
+            <label>Studio</label>
+            <input type="text" id="editorProjStudio" placeholder="Studio name (optional)">
+          </div>
+        </div>
+        <div class="editor-row">
+          <div class="editor-field">
+            <label>Role</label>
+            <input type="text" id="editorProjRole" placeholder="Editor">
+          </div>
+          <div class="editor-field">
+            <label>Thumbnail</label>
+            <input type="file" id="editorThumbUpload" accept="image/*">
+          </div>
+        </div>
+      </div>
+      <!-- Videos -->
+      <div class="editor-section">
+        <h3>Videos</h3>
+        <div id="editorVideoList"></div>
+        <button class="editor-add-btn" id="editorAddVideoBtn">+ Add Video</button>
+      </div>
+      <!-- Credits -->
+      <div class="editor-section">
+        <h3>Credits</h3>
+        <textarea id="editorCredits" placeholder="Editor."></textarea>
+      </div>
+      <!-- Page Settings -->
+      <div class="editor-section">
+        <h3>Page Settings</h3>
+        <div class="editor-row">
+          <div class="editor-field">
+            <label>Page Type</label>
+            <select id="editorPageType">
+              <option value="single">Single Video</option>
+              <option value="stacked">Stacked Videos</option>
+              <option value="documentary">Documentary</option>
+            </select>
+          </div>
+        </div>
+        <div class="doc-fields" id="editorDocFields">
+          <div class="editor-field" style="margin-bottom: 12px;">
+            <label>Documentary Description</label>
+            <textarea id="editorDocDesc" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;min-height:60px;" placeholder="Short description..."></textarea>
+          </div>
+          <div class="editor-field">
+            <label>Documentary Poster Image</label>
+            <input type="file" id="editorDocPosterUpload" accept="image/*">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -594,7 +842,7 @@ function renderGrid() {
     // Edit/Delete clicks
     card.querySelector('.edit-btn').addEventListener('click', (e) => {
       e.stopPropagation();
-      openEditModal(i);
+      openProjectEditor(i);
     });
     card.querySelector('.delete-btn').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -881,20 +1129,18 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
     // Combine all staged files
     const allFiles = [...(result.stagedFiles || []), ...stagedFiles];
 
-    // 2. Also regenerate individual project pages that were edited
+    // 2. Regenerate project pages for edited projects
     for (const p of projects) {
-      if (p._edited || editingIndex >= 0) {
+      if (p._edited) {
         const pageResult = await apiCall('/api/projects', {
-          method: 'POST',
+          method: 'PATCH',
           body: JSON.stringify(p),
         });
-        // Get the project page file from staged files
-        const projectPageFile = (pageResult.stagedFiles || []).find(f => f.path.startsWith('projects/'));
-        if (projectPageFile) {
-          // Replace if already exists, otherwise add
-          const existingIdx = allFiles.findIndex(f => f.path === projectPageFile.path);
-          if (existingIdx >= 0) allFiles[existingIdx] = projectPageFile;
-          else allFiles.push(projectPageFile);
+        const pageFiles = pageResult.stagedFiles || [];
+        for (const pf of pageFiles) {
+          const existingIdx = allFiles.findIndex(f => f.path === pf.path);
+          if (existingIdx >= 0) allFiles[existingIdx] = pf;
+          else allFiles.push(pf);
         }
       }
     }
@@ -913,6 +1159,7 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
     status.className = 'publish-status success';
 
     // Reset state
+    projects.forEach(p => delete p._edited);
     originalProjects = JSON.parse(JSON.stringify(projects));
     stagedFiles = [];
     deletedFiles = [];
@@ -939,10 +1186,212 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+// ---- Project Editor ----
+let editorIndex = -1;
+let editorVideoData = [];
+let editorNewThumbFile = null;
+let editorDocPosterFile = null;
+
+function openProjectEditor(index) {
+  editorIndex = index;
+  editorNewThumbFile = null;
+  editorDocPosterFile = null;
+  const p = projects[index];
+
+  dashboard.classList.remove('active');
+  document.getElementById('projectEditor').classList.add('active');
+
+  document.getElementById('editorProjectTitle').textContent = 'Edit: ' + p.title;
+  document.getElementById('editorProjTitle').value = p.title || '';
+  document.getElementById('editorProjStudio').value = p.studio || '';
+  document.getElementById('editorProjRole').value = p.role || '';
+  document.getElementById('editorCredits').value = p.credit || '';
+  document.getElementById('editorPageType').value = p.pageType || 'single';
+  document.getElementById('editorDocDesc').value = p.description || '';
+  document.getElementById('editorThumbUpload').value = '';
+  toggleEditorDocFields();
+
+  editorVideoData = (p.videoUrls && p.videoUrls.length ? p.videoUrls : ['']).map((url, i) => {
+    const rawPoster = p.posters && p.posters[i] ? p.posters[i] : '';
+    return {
+      url,
+      posterPath: rawPoster,
+      posterFile: null,
+      posterPreview: rawPoster ? rawPoster.replace(/^\.\.\//, '/') : '',
+    };
+  });
+  renderEditorVideos();
+}
+
+function closeProjectEditor() {
+  document.getElementById('projectEditor').classList.remove('active');
+  dashboard.classList.add('active');
+}
+
+document.getElementById('editorBackBtn').addEventListener('click', closeProjectEditor);
+
+document.getElementById('editorPageType').addEventListener('change', toggleEditorDocFields);
+function toggleEditorDocFields() {
+  const show = document.getElementById('editorPageType').value === 'documentary';
+  document.getElementById('editorDocFields').classList.toggle('active', show);
+}
+
+function renderEditorVideos() {
+  const list = document.getElementById('editorVideoList');
+  list.innerHTML = '';
+  editorVideoData.forEach((v, i) => {
+    const item = document.createElement('div');
+    item.className = 'video-item';
+    item.draggable = true;
+    item.dataset.vi = i;
+    item.innerHTML = `
+      <span class="drag-handle">&#8942;&#8942;</span>
+      <img class="video-poster-preview" src="${v.posterPreview || ''}" alt="" onerror="this.src=''">
+      <div class="video-fields">
+        <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
+        <input type="file" accept="image/*" class="ev-poster" style="margin-top:4px;">
+      </div>
+      <div class="video-actions">
+        <button title="Remove">&times;</button>
+      </div>
+    `;
+    item.addEventListener('dragstart', onEditorVideoDragStart);
+    item.addEventListener('dragend', onEditorVideoDragEnd);
+    item.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+    item.addEventListener('drop', onEditorVideoDrop);
+    item.addEventListener('dragenter', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+
+    item.querySelector('.ev-url').addEventListener('input', (e) => {
+      editorVideoData[i].url = e.target.value;
+    });
+    item.querySelector('.ev-poster').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      editorVideoData[i].posterFile = file;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        editorVideoData[i].posterPreview = ev.target.result;
+        item.querySelector('.video-poster-preview').src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+    item.querySelector('.video-actions button').addEventListener('click', () => {
+      if (editorVideoData.length <= 1) return;
+      editorVideoData.splice(i, 1);
+      renderEditorVideos();
+    });
+    list.appendChild(item);
+  });
+}
+
+let editorDragIdx = -1;
+function onEditorVideoDragStart(e) {
+  editorDragIdx = parseInt(e.currentTarget.dataset.vi);
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onEditorVideoDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.video-item').forEach(v => v.classList.remove('drag-over'));
+}
+function onEditorVideoDrop(e) {
+  e.preventDefault();
+  const dropIdx = parseInt(e.currentTarget.dataset.vi);
+  e.currentTarget.classList.remove('drag-over');
+  if (editorDragIdx === dropIdx) return;
+  const moved = editorVideoData.splice(editorDragIdx, 1)[0];
+  editorVideoData.splice(dropIdx, 0, moved);
+  renderEditorVideos();
+}
+
+document.getElementById('editorAddVideoBtn').addEventListener('click', () => {
+  editorVideoData.push({ url: '', posterPath: '', posterFile: null, posterPreview: '' });
+  renderEditorVideos();
+});
+
+document.getElementById('editorThumbUpload').addEventListener('change', (e) => {
+  editorNewThumbFile = e.target.files[0] || null;
+});
+
+document.getElementById('editorSaveBtn').addEventListener('click', async () => {
+  const p = projects[editorIndex];
+  const btn = document.getElementById('editorSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  try {
+    p.title = document.getElementById('editorProjTitle').value.trim();
+    p.studio = document.getElementById('editorProjStudio').value.trim();
+    p.role = document.getElementById('editorProjRole').value.trim();
+    p.pageType = document.getElementById('editorPageType').value;
+    p.credit = document.getElementById('editorCredits').value.trim();
+    p.description = document.getElementById('editorDocDesc').value.trim();
+    p.videoUrls = editorVideoData.map(v => v.url).filter(Boolean);
+
+    // Upload poster images
+    const newPosters = [];
+    for (let i = 0; i < editorVideoData.length; i++) {
+      const v = editorVideoData[i];
+      if (!v.url) continue;
+      if (v.posterFile) {
+        const base64 = await fileToBase64(v.posterFile);
+        const posterName = p.videoUrls.length > 1
+          ? `${p.slug}-poster-${i + 1}.webp`
+          : `${p.slug}-poster.webp`;
+        const uploadResult = await apiCall('/api/upload', {
+          method: 'POST',
+          body: JSON.stringify({ filename: posterName, data: base64 }),
+        });
+        stagedFiles.push(uploadResult.stagedFile);
+        newPosters.push('../images/' + uploadResult.filename);
+      } else {
+        newPosters.push(v.posterPath || '');
+      }
+    }
+    p.posters = newPosters;
+
+    // Upload thumbnail if changed
+    if (editorNewThumbFile) {
+      const base64 = await fileToBase64(editorNewThumbFile);
+      const uploadResult = await apiCall('/api/upload', {
+        method: 'POST',
+        body: JSON.stringify({ filename: p.slug + '.webp', data: base64 }),
+      });
+      stagedFiles.push(uploadResult.stagedFile);
+      p.thumbnail = uploadResult.stagedFile.path;
+    }
+
+    // Upload doc poster if changed
+    if (editorDocPosterFile) {
+      const base64 = await fileToBase64(editorDocPosterFile);
+      const uploadResult = await apiCall('/api/upload', {
+        method: 'POST',
+        body: JSON.stringify({ filename: p.slug + '-doc-poster.webp', data: base64 }),
+      });
+      stagedFiles.push(uploadResult.stagedFile);
+      p.docPoster = '../images/' + uploadResult.filename;
+    }
+
+    p._edited = true;
+    markChanged();
+    renderGrid();
+    closeProjectEditor();
+    showToast('Project updated');
+  } catch (err) {
+    showToast('Error: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  }
+});
+
 // ---- Keyboard shortcuts ----
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     document.getElementById('editModal').classList.remove('active');
+    if (document.getElementById('projectEditor').classList.contains('active')) {
+      closeProjectEditor();
+    }
   }
 });
 </script>

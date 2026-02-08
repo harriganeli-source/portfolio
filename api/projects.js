@@ -225,7 +225,7 @@ function rebuildIndexHtml(originalHtml, projects) {
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -306,6 +306,28 @@ module.exports = async function handler(req, res) {
           { path: `projects/${project.slug}.html`, content: pageHtml },
         ],
         projects: existingProjects,
+      });
+    }
+
+    if (req.method === 'PATCH') {
+      // Regenerate a single project page (no index.html changes)
+      const project = req.body;
+      if (!project.slug || !project.title) {
+        return res.status(400).json({ error: 'slug and title required' });
+      }
+      const pageData = {
+        videoUrls: project.videoUrls || [''],
+        posters: project.posters || [],
+        credit: project.credit || (project.role || '') + '.',
+        pageType: project.pageType || 'single',
+        description: project.description || '',
+        docPoster: project.docPoster || '',
+      };
+      const pageHtml = generateProjectPage(project, pageData);
+      return res.status(200).json({
+        stagedFiles: [
+          { path: `projects/${project.slug}.html`, content: pageHtml },
+        ],
       });
     }
 
