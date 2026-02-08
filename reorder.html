@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reorder Projects — Eli Harrigan</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+    button {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 20px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    button:hover { background: #f0f0f0; }
+    button.primary {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #1a1a1a;
+    }
+    button.primary:hover { background: #333; }
+    .status {
+      font-size: 13px;
+      color: #666;
+      margin-left: auto;
+    }
+    .status.saved { color: #16a34a; font-weight: 500; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: grab;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: box-shadow 150ms ease, transform 150ms ease;
+      position: relative;
+    }
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .card.dragging {
+      opacity: 0.4;
+      transform: scale(0.97);
+    }
+    .card.drag-over {
+      box-shadow: 0 0 0 2px #1a1a1a;
+    }
+    .card-thumb {
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: #eee;
+    }
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .card-info {
+      padding: 10px 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .card-role {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
+    .card-number {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal for generated HTML */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal h2 { font-size: 18px; margin-bottom: 12px; }
+    .modal textarea {
+      flex: 1;
+      min-height: 300px;
+      font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .instructions {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Reorder Projects</h1>
+  <p class="subtitle">Drag and drop to rearrange. Click "Save Order" when done.</p>
+
+  <div class="instructions">
+    <strong>How to use:</strong> Drag cards to reorder them. The 3-column grid matches your homepage layout.
+    When you're happy with the order, click <strong>Save Order</strong> to update your index.html directly,
+    or <strong>Export HTML</strong> to copy the generated code.
+  </div>
+
+  <div class="toolbar">
+    <button class="primary" onclick="saveToFile()">Save Order</button>
+    <button onclick="exportHTML()">Export HTML</button>
+    <button onclick="resetOrder()">Reset</button>
+    <span class="status" id="status"></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>Generated HTML</h2>
+      <textarea id="output" readonly></textarea>
+      <div class="modal-actions">
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        <button onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Project data extracted from index.html
+    const projects = [
+  {
+    "href": "projects/fc-26.html",
+    "img": "images/fc26.webp",
+    "title": "FC 26",
+    "role": "Editor \u00b7 Electronic Arts",
+    "html": "        <a href=\"projects/fc-26.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/fc26.webp\" alt=\"EA FC 26\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">FC 26</span>\n            <span class=\"project-role\">Editor \u00b7 Electronic Arts</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/clash.html",
+    "img": "images/clash.webp",
+    "title": "Clash of Clans",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/clash.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/clash.webp\" alt=\"Clash of Clans\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Clash of Clans</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/breathwork.html",
+    "img": "images/breathwork.webp",
+    "title": "Breathwork",
+    "role": "Producer, Shooter &amp; Editor \u00b7 Independent",
+    "html": "        <a href=\"projects/breathwork.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/breathwork.webp\" alt=\"Breathwork\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Breathwork</span>\n            <span class=\"project-role\">Producer, Shooter &amp; Editor \u00b7 Independent</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/the-lights.html",
+    "img": "images/the%20lights.webp",
+    "title": "The Lights",
+    "role": "Director \u00b7 Coolburns &amp; Co.",
+    "html": "        <a href=\"projects/the-lights.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/the%20lights.webp\" alt=\"The Lights\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">The Lights</span>\n            <span class=\"project-role\">Director \u00b7 Coolburns &amp; Co.</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/kohler.html",
+    "img": "images/kohler.webp",
+    "title": "Kohler",
+    "role": "Editor \u00b7 Scholar",
+    "html": "        <a href=\"projects/kohler.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/kohler.webp\" alt=\"Kohler\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Kohler</span>\n            <span class=\"project-role\">Editor \u00b7 Scholar</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/mom-documentary.html",
+    "img": "images/mom.webp",
+    "title": "Mom, I Have Something to Tell You",
+    "role": "Producer &amp; Editor \u00b7 Independent",
+    "html": "        <a href=\"projects/mom-documentary.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/mom.webp\" alt=\"Mom, I Have Something to Tell You\" loading=\"lazy\">\n            <div class=\"laurels-overlay\">\n              <img src=\"images/laurels-overlay.webp\" alt=\"Festival Laurels\">\n            </div>\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Mom, I Have Something to Tell You</span>\n            <span class=\"project-role\">Producer &amp; Editor \u00b7 Independent</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/aldi.html",
+    "img": "images/aldi.webp",
+    "title": "Aldi Christmas",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/aldi.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/aldi.webp\" alt=\"Aldi Christmas\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Aldi Christmas</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/alt-mba.html",
+    "img": "images/altbma.webp",
+    "title": "Alt MBA",
+    "role": "Shooter &amp; Editor",
+    "html": "        <a href=\"projects/alt-mba.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/altbma.webp\" alt=\"Alt MBA\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Alt MBA</span>\n            <span class=\"project-role\">Shooter &amp; Editor</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/when-nobodys-watching.html",
+    "img": "images/nobody%20watching.webp",
+    "title": "When Nobody&#39;s Watching",
+    "role": "Editor",
+    "html": "        <a href=\"projects/when-nobodys-watching.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/nobody%20watching.webp\" alt=\"When Nobody&#39;s Watching\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">When Nobody&#39;s Watching</span>\n            <span class=\"project-role\">Editor</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/royal-kingdom.html",
+    "img": "images/royal%20kingdom.webp",
+    "title": "Royal Kingdom",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/royal-kingdom.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/royal%20kingdom.webp\" alt=\"Royal Kingdom\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Royal Kingdom</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/apex-legends.html",
+    "img": "images/apex.webp",
+    "title": "Apex Legends",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/apex-legends.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/apex.webp\" alt=\"Apex Legends\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Apex Legends</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/nuveen.html",
+    "img": "images/nuveen.webp",
+    "title": "Nuveen",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/nuveen.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/nuveen.webp\" alt=\"Nuveen\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Nuveen</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/motion.html",
+    "img": "images/motion.webp",
+    "title": "Motion",
+    "role": "Animator &amp; Editor \u00b7 Independent",
+    "html": "        <a href=\"projects/motion.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/motion.webp\" alt=\"Motion\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Motion</span>\n            <span class=\"project-role\">Animator &amp; Editor \u00b7 Independent</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/patron.html",
+    "img": "images/patron.webp",
+    "title": "Patron",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/patron.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/patron.webp\" alt=\"Patron\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Patron</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/bobbi-brown.html",
+    "img": "images/bobbi%20brown.webp",
+    "title": "Bobbi Brown Lunar New Year",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/bobbi-brown.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/bobbi%20brown.webp\" alt=\"Bobbi Brown Lunar New Year\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Bobbi Brown Lunar New Year</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/greenpoint.html",
+    "img": "images/greenpoint.webp",
+    "title": "The Greenpoint Occasional",
+    "role": "Shooter &amp; Editor \u00b7 Independent",
+    "html": "        <a href=\"projects/greenpoint.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/greenpoint.webp\" alt=\"The Greenpoint Occasional\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">The Greenpoint Occasional</span>\n            <span class=\"project-role\">Shooter &amp; Editor \u00b7 Independent</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/boom-beach.html",
+    "img": "images/boom.webp",
+    "title": "Boom Beach",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/boom-beach.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/boom.webp\" alt=\"Boom Beach\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Boom Beach</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/xfinity.html",
+    "img": "images/xfinity.webp",
+    "title": "Xfinity Xfi",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/xfinity.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/xfinity.webp\" alt=\"Xfinity Xfi\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Xfinity Xfi</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/acuvue.html",
+    "img": "images/avuvue.webp",
+    "title": "Acuvue",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/acuvue.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/avuvue.webp\" alt=\"Acuvue\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Acuvue</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/allswell.html",
+    "img": "images/allswell.webp",
+    "title": "A Minute @ Allswell",
+    "role": "Shooter, Editor, Motion Graphics \u00b7 The Brothers Buoy",
+    "html": "        <a href=\"projects/allswell.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/allswell.webp\" alt=\"A Minute @ Allswell\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">A Minute @ Allswell</span>\n            <span class=\"project-role\">Shooter, Editor, Motion Graphics \u00b7 The Brothers Buoy</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/pathnorth.html",
+    "img": "images/pathnorth.webp",
+    "title": "PathNorth",
+    "role": "Shooter &amp; Editor \u00b7 Coolburns &amp; Co.",
+    "html": "        <a href=\"projects/pathnorth.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/pathnorth.webp\" alt=\"PathNorth\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">PathNorth</span>\n            <span class=\"project-role\">Shooter &amp; Editor \u00b7 Coolburns &amp; Co.</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/joi-scientific.html",
+    "img": "images/joi.webp",
+    "title": "Joi Scientific",
+    "role": "Animator &amp; Editor \u00b7 Yup Video",
+    "html": "        <a href=\"projects/joi-scientific.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/joi.webp\" alt=\"Joi Scientific\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Joi Scientific</span>\n            <span class=\"project-role\">Animator &amp; Editor \u00b7 Yup Video</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/sonya.html",
+    "img": "images/sonya.webp",
+    "title": "Sonya",
+    "role": "Editor &amp; Associate Producer \u00b7 Chop Wood Carry Water",
+    "html": "        <a href=\"projects/sonya.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/sonya.webp\" alt=\"Sonya\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Sonya</span>\n            <span class=\"project-role\">Editor &amp; Associate Producer \u00b7 Chop Wood Carry Water</span>\n          </div>\n        </a>"
+  },
+  {
+    "href": "projects/wonderful.html",
+    "img": "images/wondeful.webp",
+    "title": "Wonderful Pistachios: Get Crackin&#39;",
+    "role": "Editor \u00b7 Psyop",
+    "html": "        <a href=\"projects/wonderful.html\" class=\"project-card grid-item fade-in\">\n          <div class=\"project-thumb\">\n            <img src=\"images/wondeful.webp\" alt=\"Get Crackin&#39; with Humpty Dumpty\" loading=\"lazy\">\n          </div>\n          <div class=\"project-info\">\n            <span class=\"project-title\">Wonderful Pistachios: Get Crackin&#39;</span>\n            <span class=\"project-role\">Editor \u00b7 Psyop</span>\n          </div>\n        </a>"
+  }
+];
+
+    let currentOrder = [...projects];
+    const originalOrder = [...projects];
+
+    function render() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      currentOrder.forEach((p, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.draggable = true;
+        card.dataset.index = i;
+
+        // Decode HTML entities for display
+        const tmp = document.createElement('div');
+        tmp.innerHTML = p.title;
+        const displayTitle = tmp.textContent;
+        tmp.innerHTML = p.role;
+        const displayRole = tmp.textContent;
+
+        card.innerHTML = `
+          <div class="card-number">${i + 1}</div>
+          <div class="card-thumb">
+            <img src="${p.img}" alt="${displayTitle}" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="card-title">${displayTitle}</div>
+            <div class="card-role">${displayRole}</div>
+          </div>
+        `;
+
+        card.addEventListener('dragstart', onDragStart);
+        card.addEventListener('dragend', onDragEnd);
+        card.addEventListener('dragover', onDragOver);
+        card.addEventListener('dragenter', onDragEnter);
+        card.addEventListener('dragleave', onDragLeave);
+        card.addEventListener('drop', onDrop);
+
+        grid.appendChild(card);
+      });
+    }
+
+    let dragIndex = null;
+
+    function onDragStart(e) {
+      dragIndex = parseInt(e.currentTarget.dataset.index);
+      e.currentTarget.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function onDragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
+      dragIndex = null;
+    }
+
+    function onDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function onDragEnter(e) {
+      e.preventDefault();
+      const card = e.currentTarget;
+      card.classList.add('drag-over');
+    }
+
+    function onDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function onDrop(e) {
+      e.preventDefault();
+      const dropIndex = parseInt(e.currentTarget.dataset.index);
+      e.currentTarget.classList.remove('drag-over');
+
+      if (dragIndex === null || dragIndex === dropIndex) return;
+
+      const item = currentOrder.splice(dragIndex, 1)[0];
+      currentOrder.splice(dropIndex, 0, item);
+      render();
+      setStatus('Order changed (unsaved)', false);
+    }
+
+    function generateGridHTML() {
+      let html = '';
+      currentOrder.forEach(p => {
+        html += `\n${p.html}\n`;
+      });
+      return html;
+    }
+
+    function generateFullPage() {
+      const header = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eli Harrigan — Work</title>
+  <meta name="description" content="Eli Harrigan — Multimedia producer, director, editor, and photographer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Eli Harrigan</a>
+    <ul class="nav-links nav-menu">
+      <li><a href="index.html" class="active">work</a></li>
+      <li><a href="photography.html">photography</a></li>
+      <li><a href="about.html">about</a></li>
+    </ul>
+    <div class="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="grid-projects">
+${generateGridHTML()}
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Eli Harrigan</p>
+  </footer>
+
+  <script src="js/main.js"><\/script>
+</body>
+</html>
+`;
+      return header;
+    }
+
+    function exportHTML() {
+      document.getElementById('output').value = generateFullPage();
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    function copyToClipboard() {
+      const textarea = document.getElementById('output');
+      textarea.select();
+      document.execCommand('copy');
+      setStatus('Copied to clipboard!', true);
+      closeModal();
+    }
+
+    async function saveToFile() {
+      // Generate index.html and save via download
+      const content = generateFullPage();
+      const blob = new Blob([content], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'index.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setStatus('Downloaded index.html — replace the file in your project folder', true);
+    }
+
+    function resetOrder() {
+      currentOrder = [...originalOrder];
+      render();
+      setStatus('Reset to original order', false);
+    }
+
+    function setStatus(msg, saved) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = saved ? 'status saved' : 'status';
+      if (saved) setTimeout(() => { el.textContent = ''; }, 4000);
+    }
+
+    render();
+  </script>
+</body>
+</html>
