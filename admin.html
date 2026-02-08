@@ -149,24 +149,61 @@
       display: block;
       background: #000;
     }
+    .admin-card .card-thumb-wrap {
+      position: relative;
+      cursor: pointer;
+    }
+    .admin-card .card-thumb-wrap::after {
+      content: 'Double-click to edit page';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 6px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 11px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.15s;
+      pointer-events: none;
+    }
+    .admin-card .card-thumb-wrap:hover::after { opacity: 1; }
     .admin-card .card-body { padding: 12px 14px; }
     .admin-card .card-title {
       font-size: 14px;
       font-weight: 500;
       margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      outline: none;
+      border-radius: 3px;
+      transition: background 0.15s;
     }
+    .admin-card .card-title:hover { background: var(--surface-hover); }
+    .admin-card .card-title:focus { background: var(--bg); box-shadow: 0 0 0 1px var(--accent); }
     .admin-card .card-studio {
       font-size: 12px;
       color: var(--text-dim);
       font-style: italic;
+      outline: none;
+      border-radius: 3px;
+      transition: background 0.15s;
     }
+    .admin-card .card-studio:hover { background: var(--surface-hover); }
+    .admin-card .card-studio:focus { background: var(--bg); box-shadow: 0 0 0 1px var(--accent); }
     .admin-card .card-role {
       font-size: 12px;
       color: var(--text-dim);
       margin-top: 2px;
+      outline: none;
+      border-radius: 3px;
+      transition: background 0.15s;
+    }
+    .admin-card .card-role:hover { background: var(--surface-hover); }
+    .admin-card .card-role:focus { background: var(--bg); box-shadow: 0 0 0 1px var(--accent); }
+    .admin-card [contenteditable]:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-dim);
+      opacity: 0.5;
     }
     .admin-card .card-actions {
       position: absolute;
@@ -539,6 +576,49 @@
     .editor-add-btn:hover { border-color: var(--accent); color: var(--accent); }
     .doc-fields { display: none; margin-top: 16px; }
     .doc-fields.active { display: block; }
+    /* Rich text editor */
+    .rte-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 6px 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .rte-toolbar button {
+      padding: 4px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .rte-toolbar button:hover { background: var(--surface-hover); color: var(--text); }
+    .rte-toolbar button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .rte-editor {
+      min-height: 100px;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0 0 var(--radius) var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      font-family: var(--font);
+      outline: none;
+      line-height: 1.6;
+    }
+    .rte-editor:focus { border-color: var(--accent); }
+    .rte-editor strong, .rte-editor b { font-weight: 600; }
+    .rte-editor em, .rte-editor i { font-style: italic; }
+    .rte-editor:empty::before {
+      content: 'Editor.';
+      color: var(--text-dim);
+      opacity: 0.5;
+    }
     @media (max-width: 600px) {
       .editor-row { grid-template-columns: 1fr; }
       .video-item { flex-wrap: wrap; }
@@ -664,22 +744,32 @@
             <label>Role</label>
             <input type="text" id="editorProjRole" placeholder="Editor">
           </div>
-          <div class="editor-field">
-            <label>Thumbnail</label>
-            <input type="file" id="editorThumbUpload" accept="image/*">
-          </div>
         </div>
+      </div>
+      <!-- Homepage Thumbnail -->
+      <div class="editor-section">
+        <h3>Homepage Thumbnail</h3>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">The image shown on the main grid. Separate from the video poster screenshots below.</p>
+        <img id="editorThumbPreview" style="width:200px;aspect-ratio:16/9;object-fit:cover;border-radius:4px;background:#333;display:block;margin-bottom:10px;" src="" alt="">
+        <input type="file" id="editorThumbUpload" accept="image/*">
       </div>
       <!-- Videos -->
       <div class="editor-section">
         <h3>Videos</h3>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Each video has its own poster image (the still shown before pressing play). Drag to reorder.</p>
         <div id="editorVideoList"></div>
         <button class="editor-add-btn" id="editorAddVideoBtn">+ Add Video</button>
       </div>
       <!-- Credits -->
       <div class="editor-section">
         <h3>Credits</h3>
-        <textarea id="editorCredits" placeholder="Editor."></textarea>
+        <div class="rte-toolbar" id="rteToolbar">
+          <button type="button" data-cmd="bold" title="Bold"><b>B</b></button>
+          <button type="button" data-cmd="italic" title="Italic"><i>I</i></button>
+          <button type="button" data-cmd="insertUnorderedList" title="Bullet list">&#8226; List</button>
+          <button type="button" data-cmd="removeFormat" title="Clear formatting">Clear</button>
+        </div>
+        <div class="rte-editor" id="editorCredits" contenteditable="true"></div>
       </div>
       <!-- Page Settings -->
       <div class="editor-section">
@@ -820,14 +910,16 @@ function renderGrid() {
 
     card.innerHTML = `
       <div class="card-actions">
-        <button class="edit-btn" title="Edit" data-index="${i}">&#9998;</button>
+        <button class="edit-btn" title="Edit page" data-index="${i}">&#9998;</button>
         <button class="delete-btn" title="Delete" data-index="${i}">&times;</button>
       </div>
-      <img class="card-thumb" src="${thumbSrc}" alt="${esc(p.title)}" onerror="this.style.background='#333'">
+      <div class="card-thumb-wrap">
+        <img class="card-thumb" src="${thumbSrc}" alt="${esc(p.title)}" onerror="this.style.background='#333'">
+      </div>
       <div class="card-body">
-        <div class="card-title">${esc(p.title)}</div>
-        ${p.studio ? `<div class="card-studio">for ${esc(p.studio)}</div>` : ''}
-        <div class="card-role">${esc(p.role)}</div>
+        <div class="card-title" contenteditable="true" data-field="title" data-index="${i}" data-placeholder="Title">${esc(p.title)}</div>
+        <div class="card-studio" contenteditable="true" data-field="studio" data-index="${i}" data-placeholder="Studio">${p.studio ? 'for ' + esc(p.studio) : ''}</div>
+        <div class="card-role" contenteditable="true" data-field="role" data-index="${i}" data-placeholder="Role">${esc(p.role)}</div>
       </div>
     `;
 
@@ -839,6 +931,12 @@ function renderGrid() {
     card.addEventListener('dragenter', (e) => { e.preventDefault(); card.classList.add('drag-over'); });
     card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
 
+    // Double-click thumbnail to open editor
+    card.querySelector('.card-thumb-wrap').addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      openProjectEditor(i);
+    });
+
     // Edit/Delete clicks
     card.querySelector('.edit-btn').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -847,6 +945,31 @@ function renderGrid() {
     card.querySelector('.delete-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       deleteProject(i);
+    });
+
+    // Inline caption editing
+    card.querySelectorAll('[contenteditable]').forEach(el => {
+      // Prevent drag when editing text
+      el.addEventListener('mousedown', (e) => { card.draggable = false; });
+      el.addEventListener('blur', (e) => {
+        card.draggable = true;
+        const field = el.dataset.field;
+        const idx = parseInt(el.dataset.index);
+        const p = projects[idx];
+        let val = el.textContent.trim();
+        if (field === 'studio') {
+          val = val.replace(/^for\s*/i, '');
+        }
+        if (p[field] !== val) {
+          p[field] = val;
+          p._edited = true;
+          markChanged();
+        }
+      });
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+        if (e.key === 'Escape') { el.blur(); }
+      });
     });
 
     grid.appendChild(card);
@@ -1205,10 +1328,12 @@ function openProjectEditor(index) {
   document.getElementById('editorProjTitle').value = p.title || '';
   document.getElementById('editorProjStudio').value = p.studio || '';
   document.getElementById('editorProjRole').value = p.role || '';
-  document.getElementById('editorCredits').value = p.credit || '';
+  document.getElementById('editorCredits').innerHTML = p.credit || '';
   document.getElementById('editorPageType').value = p.pageType || 'single';
   document.getElementById('editorDocDesc').value = p.description || '';
   document.getElementById('editorThumbUpload').value = '';
+  const thumbPrev = document.getElementById('editorThumbPreview');
+  thumbPrev.src = p.thumbnail ? (p.thumbnail.startsWith('http') ? p.thumbnail : '/' + p.thumbnail) : '';
   toggleEditorDocFields();
 
   editorVideoData = (p.videoUrls && p.videoUrls.length ? p.videoUrls : ['']).map((url, i) => {
@@ -1230,6 +1355,26 @@ function closeProjectEditor() {
 
 document.getElementById('editorBackBtn').addEventListener('click', closeProjectEditor);
 
+// Rich text toolbar
+document.getElementById('rteToolbar').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  e.preventDefault();
+  const cmd = btn.dataset.cmd;
+  document.execCommand(cmd, false, null);
+  document.getElementById('editorCredits').focus();
+  updateRteToolbar();
+});
+document.getElementById('editorCredits').addEventListener('keyup', updateRteToolbar);
+document.getElementById('editorCredits').addEventListener('mouseup', updateRteToolbar);
+function updateRteToolbar() {
+  document.querySelectorAll('#rteToolbar button[data-cmd]').forEach(btn => {
+    const cmd = btn.dataset.cmd;
+    if (cmd === 'removeFormat' || cmd === 'insertUnorderedList') return;
+    btn.classList.toggle('active', document.queryCommandState(cmd));
+  });
+}
+
 document.getElementById('editorPageType').addEventListener('change', toggleEditorDocFields);
 function toggleEditorDocFields() {
   const show = document.getElementById('editorPageType').value === 'documentary';
@@ -1249,7 +1394,7 @@ function renderEditorVideos() {
       <img class="video-poster-preview" src="${v.posterPreview || ''}" alt="" onerror="this.src=''">
       <div class="video-fields">
         <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
-        <input type="file" accept="image/*" class="ev-poster" style="margin-top:4px;">
+        <input type="file" accept="image/*" class="ev-poster" style="margin-top:4px;" title="Upload poster image (shown before play)">
       </div>
       <div class="video-actions">
         <button title="Remove">&times;</button>
@@ -1312,6 +1457,13 @@ document.getElementById('editorAddVideoBtn').addEventListener('click', () => {
 
 document.getElementById('editorThumbUpload').addEventListener('change', (e) => {
   editorNewThumbFile = e.target.files[0] || null;
+  if (editorNewThumbFile) {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      document.getElementById('editorThumbPreview').src = ev.target.result;
+    };
+    reader.readAsDataURL(editorNewThumbFile);
+  }
 });
 
 document.getElementById('editorSaveBtn').addEventListener('click', async () => {
@@ -1324,7 +1476,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
     p.studio = document.getElementById('editorProjStudio').value.trim();
     p.role = document.getElementById('editorProjRole').value.trim();
     p.pageType = document.getElementById('editorPageType').value;
-    p.credit = document.getElementById('editorCredits').value.trim();
+    p.credit = document.getElementById('editorCredits').innerHTML.trim();
     p.description = document.getElementById('editorDocDesc').value.trim();
     p.videoUrls = editorVideoData.map(v => v.url).filter(Boolean);
 
