@@ -1,0 +1,274 @@
+/**
+ * Portfolio Website - Main JavaScript
+ * Clean, minimal vanilla JS with no dependencies
+ */
+
+// ============================================================================
+// NAVIGATION
+// ============================================================================
+
+/**
+ * Initialize mobile hamburger menu
+ */
+function initMobileMenu() {
+  const hamburger = document.querySelector('.hamburger');
+  const navMenu = document.querySelector('.nav-menu');
+
+  if (!hamburger || !navMenu) return;
+
+  // Toggle menu on hamburger click
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  });
+
+  // Close menu when a nav link is clicked
+  const navLinks = navMenu.querySelectorAll('a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    const isHamburger = hamburger.contains(e.target);
+    const isNavMenu = navMenu.contains(e.target);
+
+    if (!isHamburger && !isNavMenu && navMenu.classList.contains('active')) {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
+    }
+  });
+}
+
+/**
+ * Set active navigation link based on current page
+ */
+function setActiveNavLink() {
+  const navLinks = document.querySelectorAll('.nav-menu a');
+  const currentPage = window.location.pathname;
+
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+
+    // Check if link matches current page
+    if (
+      (currentPage.includes(href) && href !== '/') ||
+      (currentPage === '/' && href === 'index.html') ||
+      (currentPage.endsWith('/') && href === 'index.html')
+    ) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+}
+
+// ============================================================================
+// FADE-IN ANIMATIONS
+// ============================================================================
+
+/**
+ * Initialize fade-in animations using IntersectionObserver
+ */
+function initFadeInAnimations() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  // Observe all elements with fade-in class
+  const fadeElements = document.querySelectorAll('.fade-in');
+  fadeElements.forEach(element => {
+    observer.observe(element);
+  });
+}
+
+// ============================================================================
+// HOMEPAGE GRID
+// ============================================================================
+
+/**
+ * Initialize homepage grid with hover overlays
+ */
+function initGridOverlays() {
+  const gridItems = document.querySelectorAll('.grid-item');
+
+  gridItems.forEach(item => {
+    // Create overlay if it doesn't exist
+    if (!item.querySelector('.grid-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'grid-overlay';
+
+      // Get project title from data attribute or element
+      const title = item.getAttribute('data-title') || item.querySelector('h3')?.textContent || '';
+
+      overlay.innerHTML = `<span class="overlay-title">${title}</span>`;
+      item.appendChild(overlay);
+    }
+  });
+}
+
+// ============================================================================
+// LIGHTBOX
+// ============================================================================
+
+/**
+ * Initialize lightbox for photography pages
+ */
+function initLightbox() {
+  const lightboxTriggers = document.querySelectorAll('.lightbox-trigger, [data-lightbox]');
+
+  if (lightboxTriggers.length === 0) return;
+
+  // Create lightbox container if it doesn't exist
+  let lightbox = document.querySelector('.lightbox');
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.innerHTML = `
+      <div class="lightbox-content">
+        <img class="lightbox-image" src="" alt="">
+        <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
+        <button class="lightbox-prev" aria-label="Previous image">&#10094;</button>
+        <button class="lightbox-next" aria-label="Next image">&#10095;</button>
+      </div>
+    `;
+    document.body.appendChild(lightbox);
+  }
+
+  let currentIndex = 0;
+  const images = Array.from(lightboxTriggers);
+
+  /**
+   * Open lightbox with image at given index
+   */
+  function openLightbox(index) {
+    if (index < 0 || index >= images.length) return;
+
+    currentIndex = index;
+    const imgElement = images[currentIndex];
+    const imgSrc = imgElement.getAttribute('src') || imgElement.getAttribute('data-src');
+    const imgAlt = imgElement.getAttribute('alt') || '';
+
+    lightbox.querySelector('.lightbox-image').src = imgSrc;
+    lightbox.querySelector('.lightbox-image').alt = imgAlt;
+    lightbox.classList.add('active');
+
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Close lightbox
+   */
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  /**
+   * Navigate to next image
+   */
+  function nextImage() {
+    openLightbox(currentIndex + 1);
+  }
+
+  /**
+   * Navigate to previous image
+   */
+  function prevImage() {
+    openLightbox(currentIndex - 1);
+  }
+
+  // Click on image to open lightbox
+  lightboxTriggers.forEach((trigger, index) => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      openLightbox(index);
+    });
+  });
+
+  // Close button
+  lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+
+  // Next/Previous buttons
+  lightbox.querySelector('.lightbox-next').addEventListener('click', nextImage);
+  lightbox.querySelector('.lightbox-prev').addEventListener('click', prevImage);
+
+  // Click outside to close
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('active')) return;
+
+    switch (e.key) {
+      case 'Escape':
+        closeLightbox();
+        break;
+      case 'ArrowRight':
+        nextImage();
+        break;
+      case 'ArrowLeft':
+        prevImage();
+        break;
+    }
+  });
+}
+
+// ============================================================================
+// BACK BUTTON
+// ============================================================================
+
+/**
+ * Initialize back button navigation
+ */
+function initBackButton() {
+  const backButton = document.querySelector('.back-button');
+
+  if (!backButton) return;
+
+  backButton.addEventListener('click', () => {
+    // Navigate to homepage
+    window.location.href = '/';
+  });
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+/**
+ * Initialize all functionality when DOM is ready
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  initMobileMenu();
+  setActiveNavLink();
+  initFadeInAnimations();
+  initGridOverlays();
+  initLightbox();
+  initBackButton();
+});
+
+/**
+ * Re-initialize animations on page load (for cached pages)
+ */
+window.addEventListener('load', () => {
+  initFadeInAnimations();
+});
