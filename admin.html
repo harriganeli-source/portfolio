@@ -1598,7 +1598,9 @@ function renderEditorFrames() {
     const wrap = document.createElement('div');
     wrap.className = 'frame-preview';
     wrap.innerHTML = `
-      <img src="${f.preview}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">
+      ${f.preview
+        ? `<img src="${f.preview}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">`
+        : `<div style="width:100%;height:100%;background:#333;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#888;font-size:11px;">Loading...</div>`}
       <span class="frame-num">${i + 1}</span>
       <button class="frame-remove" title="Remove">&times;</button>
     `;
@@ -1612,10 +1614,20 @@ function renderEditorFrames() {
 
 document.getElementById('editorFrameUpload').addEventListener('change', (e) => {
   const files = Array.from(e.target.files);
-  files.forEach(file => {
+  // Sort by filename so numbered files (frame-1, frame-2, etc.) stay in order
+  files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  // Reserve slots to maintain order regardless of async load timing
+  const startIdx = editorFrames.length;
+  const slots = files.map((file, i) => {
+    const slot = { file, preview: null, existing: false };
+    editorFrames.push(slot);
+    return { slot, file };
+  });
+  renderEditorFrames();
+  slots.forEach(({ slot, file }) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
-      editorFrames.push({ file, preview: ev.target.result, existing: false });
+      slot.preview = ev.target.result;
       renderEditorFrames();
     };
     reader.readAsDataURL(file);
