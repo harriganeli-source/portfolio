@@ -1,4 +1,4 @@
-h<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1193,7 +1193,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
   let thumbnail;
   if (newThumbFile) {
     try {
-      const base64 = await fileToBase64(newThumbFile);
+      const base64 = await compressImage(newThumbFile);
       const uploadResult = await apiCall('/api/upload', {
         method: 'POST',
         body: JSON.stringify({
@@ -1249,6 +1249,41 @@ function fileToBase64(file) {
     reader.onload = () => resolve(reader.result.split(',')[1]);
     reader.onerror = reject;
     reader.readAsDataURL(file);
+  });
+}
+
+// Compress image client-side before uploading (avoids Vercel 4.5MB payload limit)
+function compressImage(file, maxWidth = 1920, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if (w > maxWidth) {
+        h = Math.round(h * (maxWidth / w));
+        w = maxWidth;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      // Try WebP first, fall back to JPEG
+      let dataUrl = canvas.toDataURL('image/webp', quality);
+      if (dataUrl.startsWith('data:image/webp')) {
+        resolve(dataUrl.split(',')[1]);
+      } else {
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl.split(',')[1]);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Failed to load image for compression'));
+    };
+    img.src = url;
   });
 }
 
@@ -1608,7 +1643,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
       const v = editorVideoData[i];
       if (!v.url) continue;
       if (v.posterFile) {
-        const base64 = await fileToBase64(v.posterFile);
+        const base64 = await compressImage(v.posterFile);
         const posterName = p.videoUrls.length > 1
           ? `${p.slug}-poster-${i + 1}.webp`
           : `${p.slug}-poster.webp`;
@@ -1626,7 +1661,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
 
     // Upload thumbnail if changed
     if (editorNewThumbFile) {
-      const base64 = await fileToBase64(editorNewThumbFile);
+      const base64 = await compressImage(editorNewThumbFile);
       const uploadResult = await apiCall('/api/upload', {
         method: 'POST',
         body: JSON.stringify({ filename: p.slug + '.webp', data: base64 }),
@@ -1637,7 +1672,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
 
     // Upload doc poster if changed
     if (editorDocPosterFile) {
-      const base64 = await fileToBase64(editorDocPosterFile);
+      const base64 = await compressImage(editorDocPosterFile);
       const uploadResult = await apiCall('/api/upload', {
         method: 'POST',
         body: JSON.stringify({ filename: p.slug + '-doc-poster.webp', data: base64 }),
@@ -1652,7 +1687,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
       for (const f of editorFrames) {
         frameIdx++;
         if (f.file) {
-          const base64 = await fileToBase64(f.file);
+          const base64 = await compressImage(f.file, 1200, 0.80);
           const uploadResult = await apiCall('/api/upload', {
             method: 'POST',
             body: JSON.stringify({ filename: p.slug + '-frame-' + frameIdx + '.webp', data: base64 }),
