@@ -19,7 +19,7 @@ async function githubGet(path) {
 function parseProjects(html) {
   const projects = [];
   // Match each project card block
-  const cardRegex = /<a href="projects\/([^"]+)" class="project-card[^"]*">\s*<div class="project-thumb">\s*<img src="([^"]+)"[^>]*>\s*(?:<div class="laurels-overlay">[\s\S]*?<\/div>\s*)?<\/div>\s*<div class="project-info">\s*<span class="project-title">([\s\S]*?)<\/span>\s*<span class="project-role">([\s\S]*?)<\/span>\s*<\/div>\s*<\/a>/g;
+  const cardRegex = /<a href="projects\/([^"]+)" class="project-card[^"]*">\s*<div class="project-thumb"[^>]*>\s*<img src="([^"]+)"[^>]*>\s*(?:<div class="laurels-overlay">[\s\S]*?<\/div>\s*)?<\/div>\s*<div class="project-info">\s*<span class="project-title">([\s\S]*?)<\/span>\s*<span class="project-role">([\s\S]*?)<\/span>\s*<\/div>\s*<\/a>/g;
   let m;
   while ((m = cardRegex.exec(html)) !== null) {
     const slug = m[1].replace('.html', '');
@@ -40,7 +40,11 @@ function parseProjects(html) {
     // Check for laurels overlay in the full match
     hasLaurels = m[0].includes('laurels-overlay');
 
-    projects.push({ slug, title, studio, role, thumbnail, hasLaurels });
+    // Check for scrub frame count
+    const framesMatch = m[0].match(/data-frames="(\d+)"/);
+    const frameCount = framesMatch ? parseInt(framesMatch[1], 10) : 0;
+
+    projects.push({ slug, title, studio, role, thumbnail, hasLaurels, frameCount });
   }
   return projects;
 }
@@ -92,8 +96,10 @@ function generateCardHtml(project) {
     laurelsHtml = `\n            <div class="laurels-overlay">\n              <img src="images/laurels-overlay.webp" alt="Festival Laurels">\n            </div>`;
   }
 
+  const framesAttr = project.frameCount > 0 ? ` data-frames="${project.frameCount}"` : '';
+
   return `        <a href="projects/${project.slug}.html" class="project-card grid-item fade-in">
-          <div class="project-thumb">
+          <div class="project-thumb"${framesAttr}>
             <img src="${project.thumbnail}" alt="${titleEsc}" loading="lazy">${laurelsHtml}
           </div>
           <div class="project-info">

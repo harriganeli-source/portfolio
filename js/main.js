@@ -292,6 +292,73 @@ function initBackButton() {
 }
 
 // ============================================================================
+// THUMBNAIL SCRUB ON HOVER
+// ============================================================================
+
+/**
+ * Scrub through video frames by moving cursor across project thumbnails.
+ * Reads data-frames="N" attribute on .project-thumb to know how many frames
+ * are available. Frames follow naming convention: images/{slug}-frame-{1..N}.webp
+ */
+function initThumbnailScrub() {
+  const cards = document.querySelectorAll('.project-card');
+  if (!cards.length) return;
+
+  cards.forEach(card => {
+    const thumb = card.querySelector('.project-thumb');
+    const img = thumb ? thumb.querySelector('img') : null;
+    if (!thumb || !img) return;
+
+    const frameCount = parseInt(thumb.dataset.frames || '0', 10);
+    if (frameCount < 2) return;
+
+    // Derive slug from card href: "projects/fc-26.html" → "fc-26"
+    const href = card.getAttribute('href') || '';
+    const slugMatch = href.match(/projects\/([^.]+)\.html/);
+    if (!slugMatch) return;
+    const slug = slugMatch[1];
+
+    const originalSrc = img.getAttribute('src');
+    const frames = [];
+    for (let i = 1; i <= frameCount; i++) {
+      frames.push('images/' + slug + '-frame-' + i + '.webp');
+    }
+
+    // Preload flag
+    let preloaded = false;
+
+    // Create scrub progress bar
+    const bar = document.createElement('div');
+    bar.className = 'scrub-bar';
+    thumb.appendChild(bar);
+
+    thumb.addEventListener('mouseenter', () => {
+      if (!preloaded) {
+        frames.forEach(src => { const im = new Image(); im.src = src; });
+        preloaded = true;
+      }
+    });
+
+    thumb.addEventListener('mousemove', (e) => {
+      const rect = thumb.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, x / rect.width));
+      const idx = Math.min(Math.floor(pct * frames.length), frames.length - 1);
+
+      img.src = frames[idx];
+      bar.style.width = (pct * 100) + '%';
+      thumb.classList.add('scrubbing');
+    });
+
+    thumb.addEventListener('mouseleave', () => {
+      img.src = originalSrc;
+      thumb.classList.remove('scrubbing');
+      bar.style.width = '0%';
+    });
+  });
+}
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
@@ -306,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox();
   initVideoPoster();
   initBackButton();
+  initThumbnailScrub();
 });
 
 /**

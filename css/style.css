@@ -297,6 +297,28 @@ main {
   transform: scale(1.05);
 }
 
+/* Thumbnail scrub — disable zoom when scrubbing */
+.project-thumb.scrubbing img {
+  transform: none !important;
+  transition: none;
+}
+
+.scrub-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  width: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: width 30ms linear;
+}
+
+.project-thumb.scrubbing {
+  cursor: ew-resize;
+}
+
 /* Tighter crop for specific thumbnails */
 img.thumb-zoomed {
   transform: scale(1.4);

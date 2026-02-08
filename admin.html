@@ -576,6 +576,46 @@
     .editor-add-btn:hover { border-color: var(--accent); color: var(--accent); }
     .doc-fields { display: none; margin-top: 16px; }
     .doc-fields.active { display: block; }
+    /* Scrub frame previews */
+    .frame-preview {
+      width: 100px;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #333;
+      display: block;
+      position: relative;
+    }
+    .frame-preview .frame-num {
+      position: absolute;
+      top: 3px;
+      left: 5px;
+      font-size: 10px;
+      color: #fff;
+      background: rgba(0,0,0,0.6);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .frame-preview .frame-remove {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .frame-preview:hover .frame-remove { opacity: 1; }
+    .frame-preview .frame-remove:hover { background: var(--danger); }
     /* Rich text editor */
     .rte-toolbar {
       display: flex;
@@ -753,6 +793,17 @@
         <img id="editorThumbPreview" style="width:200px;aspect-ratio:16/9;object-fit:cover;border-radius:4px;background:#333;display:block;margin-bottom:10px;" src="" alt="">
         <input type="file" id="editorThumbUpload" accept="image/*">
       </div>
+      <!-- Scrub Frames -->
+      <div class="editor-section">
+        <h3>Hover Scrub Frames</h3>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Upload 4–10 still frames from your video. Visitors scrub through them by moving their cursor across the thumbnail on the homepage.</p>
+        <div id="editorFrameList" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="file" id="editorFrameUpload" accept="image/*" multiple>
+          <button class="btn btn-danger" id="editorClearFrames" style="font-size:12px;padding:6px 12px;">Clear All</button>
+        </div>
+      </div>
+
       <!-- Videos -->
       <div class="editor-section">
         <h3>Videos</h3>
@@ -1336,6 +1387,19 @@ function openProjectEditor(index) {
   thumbPrev.src = p.thumbnail ? (p.thumbnail.startsWith('http') ? p.thumbnail : '/' + p.thumbnail) : '';
   toggleEditorDocFields();
 
+  // Load existing scrub frames
+  editorFrames = [];
+  if (p.frameCount > 0) {
+    for (let i = 1; i <= p.frameCount; i++) {
+      editorFrames.push({
+        file: null,
+        preview: '/images/' + p.slug + '-frame-' + i + '.webp',
+        existing: true,
+      });
+    }
+  }
+  renderEditorFrames();
+
   editorVideoData = (p.videoUrls && p.videoUrls.length ? p.videoUrls : ['']).map((url, i) => {
     const rawPoster = p.posters && p.posters[i] ? p.posters[i] : '';
     return {
@@ -1466,6 +1530,46 @@ document.getElementById('editorThumbUpload').addEventListener('change', (e) => {
   }
 });
 
+// ---- Scrub Frames ----
+let editorFrames = []; // [{file, preview, existing}]
+
+function renderEditorFrames() {
+  const list = document.getElementById('editorFrameList');
+  list.innerHTML = '';
+  editorFrames.forEach((f, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'frame-preview';
+    wrap.innerHTML = `
+      <img src="${f.preview}" style="width:100%;height:100%;object-fit:cover;border-radius:4px;">
+      <span class="frame-num">${i + 1}</span>
+      <button class="frame-remove" title="Remove">&times;</button>
+    `;
+    wrap.querySelector('.frame-remove').addEventListener('click', () => {
+      editorFrames.splice(i, 1);
+      renderEditorFrames();
+    });
+    list.appendChild(wrap);
+  });
+}
+
+document.getElementById('editorFrameUpload').addEventListener('change', (e) => {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      editorFrames.push({ file, preview: ev.target.result, existing: false });
+      renderEditorFrames();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+});
+
+document.getElementById('editorClearFrames').addEventListener('click', () => {
+  editorFrames = [];
+  renderEditorFrames();
+});
+
 document.getElementById('editorSaveBtn').addEventListener('click', async () => {
   const p = projects[editorIndex];
   const btn = document.getElementById('editorSaveBtn');
@@ -1522,6 +1626,25 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
       });
       stagedFiles.push(uploadResult.stagedFile);
       p.docPoster = '../images/' + uploadResult.filename;
+    }
+
+    // Upload scrub frames
+    if (editorFrames.length > 0) {
+      let frameIdx = 0;
+      for (const f of editorFrames) {
+        frameIdx++;
+        if (f.file) {
+          const base64 = await fileToBase64(f.file);
+          const uploadResult = await apiCall('/api/upload', {
+            method: 'POST',
+            body: JSON.stringify({ filename: p.slug + '-frame-' + frameIdx + '.webp', data: base64 }),
+          });
+          stagedFiles.push(uploadResult.stagedFile);
+        }
+      }
+      p.frameCount = editorFrames.length;
+    } else {
+      p.frameCount = 0;
     }
 
     p._edited = true;
