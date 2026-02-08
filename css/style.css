@@ -498,7 +498,7 @@ img.thumb-zoomed {
 
 .doc-layout {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: var(--spacing-xl);
   align-items: start;
 }
@@ -564,11 +564,11 @@ img.thumb-zoomed {
 .laurels-track {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 40s linear infinite;
+  animation: marquee-scroll 80s linear infinite;
 }
 
 .laurels-track img {
-  height: 120px;
+  height: 70px;
   width: auto;
   margin-right: 0;
 }
@@ -610,7 +610,7 @@ img.thumb-zoomed {
   }
 
   .laurels-track img {
-    height: 80px;
+    height: 50px;
     margin-right: 0;
   }
 }
