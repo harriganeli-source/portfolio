@@ -50,8 +50,9 @@ module.exports = async function handler(req, res) {
       size: outputBuffer.length,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: err.message });
+    console.error('Upload error:', err);
+    const msg = err && err.message ? err.message : String(err);
+    return res.status(500).json({ error: msg || 'Unknown upload error' });
   }
 };
 
