@@ -140,12 +140,12 @@ ${videoHtml}
               <img src="../images/laurels-strip.webp" alt="Festival Laurels">
             </div>
           </div>
+          <p class="doc-description">${desc}</p>
         </div>
         <div class="doc-sidebar">
           <div class="doc-poster">
             <img src="${docPoster}" alt="${titleEsc} - Poster">
           </div>
-          <p class="doc-description">${desc}</p>
         </div>
       </div>`;
   } else {
