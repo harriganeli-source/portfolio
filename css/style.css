@@ -503,6 +503,10 @@ img.thumb-zoomed {
   align-items: start;
 }
 
+.doc-main {
+  min-width: 0;
+}
+
 .doc-main .video-container {
   margin-bottom: 0;
 }
