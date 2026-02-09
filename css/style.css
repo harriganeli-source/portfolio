@@ -587,9 +587,11 @@ img.thumb-zoomed {
   gap: var(--spacing-lg);
 }
 
-/* When odd number of videos, first one spans full width */
+/* When odd number of videos, first one spans full width but stays same size as the others */
 .videos-stacked .video-container:first-child:nth-last-child(odd) {
   grid-column: 1 / -1;
+  max-width: calc(50% - var(--spacing-lg) / 2);
+  justify-self: center;
 }
 
 .videos-stacked .video-container {
