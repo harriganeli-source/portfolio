@@ -314,11 +314,12 @@ function initThumbnailScrub() {
   let dotX = -100, dotY = -100;
   let onThumb = false;
   let rafId = null;
-  const ease = 0.08;
+  const ease = 0.055;
   let cursorReady = false;
 
   if (hasPointer) {
     const iDot = document.querySelector('.i-dot');
+    let launched = false;
 
     // Track mouse position from the start
     document.addEventListener('mousemove', (e) => {
@@ -331,10 +332,15 @@ function initThumbnailScrub() {
     });
 
     // Animate the i-dot off the letter and into the cursor
+    let iDotHomeX = 0, iDotHomeY = 0;
+    let rippleCooldown = false;
+
     if (iDot) {
       const dotRect = iDot.getBoundingClientRect();
       const startX = dotRect.left + dotRect.width / 2;
       const startY = dotRect.top + dotRect.height / 2;
+      iDotHomeX = startX;
+      iDotHomeY = startY;
 
       // Create the cursor dot, initially placed at the i-dot position
       dot = document.createElement('div');
@@ -347,23 +353,28 @@ function initThumbnailScrub() {
       dotX = startX;
       dotY = startY;
 
-      // After a brief delay, hide the real i-dot and animate the cursor dot away
-      setTimeout(() => {
+      // Launch the dot toward the cursor on first mouse move
+      function launchOnFirstMove() {
+        if (launched) return;
+        launched = true;
+        document.removeEventListener('mousemove', launchOnFirstMove);
+
         iDot.style.opacity = '0';
         dot.style.opacity = '1';
 
-        // Animate from the i position toward center-ish of viewport
-        const targetX = window.innerWidth / 2;
-        const targetY = window.innerHeight / 3;
+        // Animate from the i position toward the current mouse position
+        const fromX = startX;
+        const fromY = startY;
         const duration = 800;
         const startTime = performance.now();
 
         function launchAnim(now) {
           const t = Math.min((now - startTime) / duration, 1);
           // Ease out cubic
-          const e = 1 - Math.pow(1 - t, 3);
-          dotX = startX + (targetX - startX) * e;
-          dotY = startY + (targetY - startY) * e;
+          const ec = 1 - Math.pow(1 - t, 3);
+          // Animate toward the live mouse position (so it feels alive)
+          dotX = fromX + (mouseX - fromX) * ec;
+          dotY = fromY + (mouseY - fromY) * ec;
           dot.style.left = dotX + 'px';
           dot.style.top = dotY + 'px';
 
@@ -376,7 +387,8 @@ function initThumbnailScrub() {
           }
         }
         requestAnimationFrame(launchAnim);
-      }, 600);
+      }
+      document.addEventListener('mousemove', launchOnFirstMove);
     } else {
       // Fallback: no i-dot found, just create cursor dot normally
       dot = document.createElement('div');
@@ -386,6 +398,39 @@ function initThumbnailScrub() {
       rafId = requestAnimationFrame(tick);
     }
 
+    // ---- Easter egg: color ripple when dot returns to the "i" ----
+    function spawnRipple() {
+      if (rippleCooldown || !iDot) return;
+      rippleCooldown = true;
+
+      // Flash the i-dot back on briefly
+      iDot.style.opacity = '1';
+      setTimeout(() => { iDot.style.opacity = '0'; }, 600);
+
+      // Recalculate i-dot position (may have changed due to scroll/resize)
+      const rect = iDot.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      // Create ripple element
+      const ripple = document.createElement('div');
+      ripple.className = 'i-dot-ripple';
+      ripple.style.left = cx + 'px';
+      ripple.style.top = cy + 'px';
+      document.body.appendChild(ripple);
+
+      // Trigger expansion on next frame
+      requestAnimationFrame(() => {
+        ripple.classList.add('expanding');
+      });
+
+      // Clean up after animation
+      setTimeout(() => {
+        ripple.remove();
+        rippleCooldown = false;
+      }, 1200);
+    }
+
     function tick() {
       if (!onNav) {
         dotX += (mouseX - dotX) * ease;
@@ -393,6 +438,18 @@ function initThumbnailScrub() {
         dot.style.left = dotX + 'px';
         dot.style.top = dotY + 'px';
       }
+
+      // Check if dot has returned home to the "i"
+      if (cursorReady && iDot && !rippleCooldown) {
+        const rect = iDot.getBoundingClientRect();
+        const homeX = rect.left + rect.width / 2;
+        const homeY = rect.top + rect.height / 2;
+        const dist = Math.hypot(dotX - homeX, dotY - homeY);
+        if (dist < 18) {
+          spawnRipple();
+        }
+      }
+
       rafId = requestAnimationFrame(tick);
     }
   }
