@@ -1099,6 +1099,16 @@ img.thumb-zoomed {
 
 /* About page responsive */
 @media (max-width: 767px) {
+  /* Reorder: about content first, then all photo grids */
+  main:has(.about-content) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .about-content {
+    order: -1;
+  }
+
   .about-hero {
     grid-template-columns: 1fr;
   }
