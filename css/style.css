@@ -301,7 +301,7 @@ main {
 .project-thumb {
   position: relative;
   overflow: hidden;
-  background-color: var(--color-gray-light);
+  background-color: #000;
   aspect-ratio: 16 / 9;
   border-radius: 4px;
 }
