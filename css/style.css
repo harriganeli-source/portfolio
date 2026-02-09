@@ -1033,7 +1033,7 @@ img.thumb-zoomed {
 
 .about-photo {
   overflow: hidden;
-  aspect-ratio: 5 / 2;
+  aspect-ratio: 16 / 9;
 }
 
 .about-photo img {
