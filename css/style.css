@@ -573,15 +573,26 @@ img.thumb-zoomed {
   line-height: 1.8;
 }
 
-/* Stack videos for multi-video projects */
+/* Multi-video projects — 2-up grid */
 .videos-stacked {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-lg);
+}
+
+/* When odd number of videos, first one spans full width */
+.videos-stacked .video-container:first-child:nth-last-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .videos-stacked .video-container {
   margin-bottom: 0;
+}
+
+@media (max-width: 767px) {
+  .videos-stacked {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Project page heading */
