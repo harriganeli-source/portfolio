@@ -349,6 +349,7 @@ function initThumbnailScrub() {
     dot.style.height = '60px';
     dot.style.background = 'rgba(0, 0, 0, 0.25)';
     dot.style.border = '1.5px solid rgba(0, 0, 0, 0.6)';
+    dot.style.borderRadius = '50%';
   }
 
   function shrinkDot() {
@@ -358,6 +359,27 @@ function initThumbnailScrub() {
     dot.style.height = '14px';
     dot.style.background = 'rgba(0, 0, 0, 0.8)';
     dot.style.border = '0px solid rgba(0, 0, 0, 0)';
+    dot.style.borderRadius = '50%';
+  }
+
+  // ---- Nav link underline morph ----
+  if (hasPointer) {
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        if (!dot) return;
+        const rect = link.getBoundingClientRect();
+        // Morph dot into an underline beneath the link text
+        dot.style.width = rect.width + 'px';
+        dot.style.height = '2px';
+        dot.style.background = 'rgba(0, 0, 0, 0.8)';
+        dot.style.border = 'none';
+        dot.style.borderRadius = '1px';
+      });
+      link.addEventListener('mouseleave', () => {
+        shrinkDot();
+      });
+    });
   }
 
   if (!cards.length) return;

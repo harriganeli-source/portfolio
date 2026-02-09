@@ -130,7 +130,7 @@ nav {
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 85px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -138,13 +138,13 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--spacing-lg);
+  padding: 0 var(--spacing-xl);
   z-index: var(--z-navigation);
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-base);
 }
 
 .nav-logo {
-  font-size: var(--font-size-large);
+  font-size: 24px;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.5px;
   white-space: nowrap;
@@ -215,7 +215,7 @@ nav {
 .nav-mobile {
   display: none;
   position: fixed;
-  top: 70px;
+  top: 85px;
   left: 0;
   right: 0;
   background: var(--color-white);
@@ -244,8 +244,8 @@ nav {
    ============================================ */
 
 main {
-  margin-top: 70px;
-  min-height: calc(100vh - 70px);
+  margin-top: 85px;
+  min-height: calc(100vh - 85px);
 }
 
 .container {
@@ -334,7 +334,8 @@ main {
   transition: width 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
               height 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
               background 0.35s ease,
-              border 0.35s ease;
+              border 0.35s ease,
+              border-radius 0.35s ease;
   will-change: left, top, width, height;
 }
 
@@ -1060,7 +1061,7 @@ footer {
   .nav-links {
     display: none;
     position: fixed;
-    top: 70px;
+    top: 85px;
     left: 0;
     right: 0;
     background: var(--color-white);
