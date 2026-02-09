@@ -392,15 +392,18 @@ img.thumb-zoomed {
 
 .project-info {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.35) 60%, transparent 100%);
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.55);
   opacity: 0;
   transition: opacity var(--transition-normal);
   z-index: 2;
   pointer-events: none;
+  text-align: center;
 }
 
 .project-card:hover .project-info {
@@ -409,9 +412,10 @@ img.thumb-zoomed {
 
 .project-title {
   display: block;
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-regular);
-  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: #fff;
+  line-height: 1.4;
 }
 
 .project-title .studio {
@@ -421,8 +425,9 @@ img.thumb-zoomed {
 .project-role {
   display: block;
   font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium);
-  color: #fff;
+  font-weight: var(--font-weight-regular);
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 4px;
 }
 
 /* Fade-in animation on scroll */
