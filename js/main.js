@@ -315,22 +315,76 @@ function initThumbnailScrub() {
   let onThumb = false;
   let rafId = null;
   const ease = 0.08;
+  let cursorReady = false;
 
   if (hasPointer) {
-    dot = document.createElement('div');
-    dot.className = 'cursor-dot';
-    document.body.appendChild(dot);
+    const iDot = document.querySelector('.i-dot');
 
+    // Track mouse position from the start
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     });
-
-    // Hide when mouse leaves the viewport
     document.addEventListener('mouseleave', () => {
       mouseX = -100;
       mouseY = -100;
     });
+
+    // Animate the i-dot off the letter and into the cursor
+    if (iDot) {
+      const dotRect = iDot.getBoundingClientRect();
+      const startX = dotRect.left + dotRect.width / 2;
+      const startY = dotRect.top + dotRect.height / 2;
+
+      // Create the cursor dot, initially placed at the i-dot position
+      dot = document.createElement('div');
+      dot.className = 'cursor-dot';
+      dot.style.left = startX + 'px';
+      dot.style.top = startY + 'px';
+      dot.style.opacity = '0';        // hidden until animation
+      document.body.appendChild(dot);
+
+      dotX = startX;
+      dotY = startY;
+
+      // After a brief delay, hide the real i-dot and animate the cursor dot away
+      setTimeout(() => {
+        iDot.style.opacity = '0';
+        dot.style.opacity = '1';
+
+        // Animate from the i position toward center-ish of viewport
+        const targetX = window.innerWidth / 2;
+        const targetY = window.innerHeight / 3;
+        const duration = 800;
+        const startTime = performance.now();
+
+        function launchAnim(now) {
+          const t = Math.min((now - startTime) / duration, 1);
+          // Ease out cubic
+          const e = 1 - Math.pow(1 - t, 3);
+          dotX = startX + (targetX - startX) * e;
+          dotY = startY + (targetY - startY) * e;
+          dot.style.left = dotX + 'px';
+          dot.style.top = dotY + 'px';
+
+          if (t < 1) {
+            requestAnimationFrame(launchAnim);
+          } else {
+            // Animation done — switch to mouse-following mode
+            cursorReady = true;
+            rafId = requestAnimationFrame(tick);
+          }
+        }
+        requestAnimationFrame(launchAnim);
+      }, 600);
+    } else {
+      // Fallback: no i-dot found, just create cursor dot normally
+      dot = document.createElement('div');
+      dot.className = 'cursor-dot';
+      document.body.appendChild(dot);
+      cursorReady = true;
+      rafId = requestAnimationFrame(tick);
+    }
 
     function tick() {
       if (!onNav) {
@@ -341,7 +395,6 @@ function initThumbnailScrub() {
       }
       rafId = requestAnimationFrame(tick);
     }
-    rafId = requestAnimationFrame(tick);
   }
 
   function expandDot() {
