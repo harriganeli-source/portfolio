@@ -221,6 +221,7 @@ ${videoHtml}
   <main>
     <div class="container-narrow">
       <a href="../index.html" class="back-link">Back to Work</a>
+      <h1 class="project-heading">${titleEsc}</h1>
 ${mainContent}
     </div>
   </main>
