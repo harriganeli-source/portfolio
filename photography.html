@@ -130,7 +130,7 @@
           loading.remove();
           const posts = (data.posts || [])
             .filter(p => p.mediaType === 'IMAGE' || p.mediaType === 'CAROUSEL_ALBUM')
-            .slice(0, 12);
+            .slice(0, 24);
           if (!posts.length) {
             grid.innerHTML = '';
             return;

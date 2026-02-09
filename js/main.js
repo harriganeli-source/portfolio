@@ -304,18 +304,16 @@ function initThumbnailScrub() {
   const cards = document.querySelectorAll('.project-card');
   if (!cards.length) return;
 
-  // Create shared custom cursor element
+  // Create shared custom cursor element — always a small white ball
   const cursor = document.createElement('div');
   cursor.className = 'custom-cursor';
   cursor.innerHTML = `
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="24" cy="24" r="22" fill="rgba(0,0,0,0.5)" stroke="white" stroke-width="1.5"/>
-      <polygon points="20,15 20,33 35,24" fill="white"/>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="6" cy="6" r="4" fill="rgba(255,255,255,0.9)"/>
     </svg>`;
   document.body.appendChild(cursor);
 
   let cursorActive = false;
-  let scrubbing = false;
   let rafId = null;
   let mouseX = 0, mouseY = 0;
 
@@ -333,42 +331,18 @@ function initThumbnailScrub() {
     cursor.style.top = mouseY + 'px';
     cursor.classList.add('visible');
     cursorActive = true;
-    scrubbing = false;
-    // Show play icon
-    cursor.querySelector('circle').setAttribute('fill', 'rgba(0,0,0,0.5)');
-    cursor.querySelector('polygon').style.display = '';
     rafId = requestAnimationFrame(updateCursorPos);
   }
 
-  function moveCursor(e) {
+  function trackCursor(e) {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    if (!scrubbing) {
-      scrubbing = true;
-      // Shrink to a small dot while scrubbing
-      cursor.querySelector('circle').setAttribute('fill', 'rgba(255,255,255,0.9)');
-      cursor.querySelector('polygon').style.display = 'none';
-      cursor.querySelector('circle').setAttribute('r', '4');
-      cursor.querySelector('circle').setAttribute('stroke', 'none');
-      cursor.querySelector('svg').setAttribute('width', '12');
-      cursor.querySelector('svg').setAttribute('height', '12');
-      cursor.querySelector('svg').setAttribute('viewBox', '20 20 8 8');
-    }
   }
 
   function hideCursor() {
     cursor.classList.remove('visible');
     cursorActive = false;
-    scrubbing = false;
     if (rafId) cancelAnimationFrame(rafId);
-    // Reset to play icon for next hover
-    cursor.querySelector('circle').setAttribute('fill', 'rgba(0,0,0,0.5)');
-    cursor.querySelector('circle').setAttribute('r', '22');
-    cursor.querySelector('circle').setAttribute('stroke', 'white');
-    cursor.querySelector('polygon').style.display = '';
-    cursor.querySelector('svg').setAttribute('width', '48');
-    cursor.querySelector('svg').setAttribute('height', '48');
-    cursor.querySelector('svg').setAttribute('viewBox', '0 0 48 48');
   }
 
   cards.forEach(card => {
@@ -376,6 +350,12 @@ function initThumbnailScrub() {
     const img = thumb ? thumb.querySelector('img') : null;
     if (!thumb || !img) return;
 
+    // Ball cursor on ALL thumbnails
+    thumb.addEventListener('mouseenter', showCursor);
+    thumb.addEventListener('mousemove', trackCursor);
+    thumb.addEventListener('mouseleave', hideCursor);
+
+    // Scrub logic only for thumbnails with frames
     const frameCount = parseInt(thumb.dataset.frames || '0', 10);
     if (frameCount < 2) return;
 
@@ -399,12 +379,11 @@ function initThumbnailScrub() {
     bar.className = 'scrub-bar';
     thumb.appendChild(bar);
 
-    thumb.addEventListener('mouseenter', (e) => {
+    thumb.addEventListener('mouseenter', () => {
       if (!preloaded) {
         frames.forEach(src => { const im = new Image(); im.src = src; });
         preloaded = true;
       }
-      showCursor(e);
     });
 
     thumb.addEventListener('mousemove', (e) => {
@@ -416,14 +395,12 @@ function initThumbnailScrub() {
       img.src = frames[idx];
       bar.style.width = (pct * 100) + '%';
       thumb.classList.add('scrubbing');
-      moveCursor(e);
     });
 
     thumb.addEventListener('mouseleave', () => {
       img.src = originalSrc;
       thumb.classList.remove('scrubbing');
       bar.style.width = '0%';
-      hideCursor();
     });
   });
 }

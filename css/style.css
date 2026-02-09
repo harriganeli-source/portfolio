@@ -315,8 +315,8 @@ main {
   transition: width 30ms linear;
 }
 
-/* Custom play cursor for scrubbable thumbnails — hide native cursor */
-.project-thumb[data-frames] {
+/* Custom ball cursor for all clickable thumbnails — hide native cursor */
+.project-thumb {
   cursor: none;
 }
 .project-thumb.scrubbing {
