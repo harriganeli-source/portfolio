@@ -397,7 +397,7 @@ function initThumbnailScrub() {
 
             function flyAnim(now) {
               const t2 = Math.min((now - flyStart) / flyDuration, 1);
-              const ec = 1 - Math.pow(1 - t2, 3);
+              const ec = t2 * t2 * t2;
               dotX = flyFromX + (mouseX - flyFromX) * ec;
               dotY = flyFromY + (mouseY - flyFromY) * ec;
               dot.style.left = dotX + 'px';
