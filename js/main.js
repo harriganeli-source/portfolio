@@ -314,7 +314,7 @@ function initThumbnailScrub() {
   let dotX = -100, dotY = -100;
   let onThumb = false;
   let rafId = null;
-  const ease = 0.055;
+  const ease = 0.15;
   let cursorReady = false;
 
   if (hasPointer) {
@@ -499,8 +499,8 @@ function initThumbnailScrub() {
             // Reset dot to normal size
             dot.style.width = '14px';
             dot.style.height = '14px';
-            dot.style.background = 'rgba(0, 0, 0, 0.8)';
-            dot.style.border = '0px solid rgba(0, 0, 0, 0)';
+            dot.style.background = 'rgba(255, 255, 255, 0.8)';
+            dot.style.border = '0px solid rgba(255, 255, 255, 0)';
             dot.style.borderRadius = '50%';
 
             iDot.style.opacity = '0';
@@ -543,8 +543,8 @@ function initThumbnailScrub() {
     onThumb = true;
     dot.style.width = '60px';
     dot.style.height = '60px';
-    dot.style.background = 'rgba(0, 0, 0, 0.25)';
-    dot.style.border = '1.5px solid rgba(0, 0, 0, 0.6)';
+    dot.style.background = 'rgba(255, 255, 255, 0.15)';
+    dot.style.border = '1.5px solid rgba(255, 255, 255, 0.5)';
     dot.style.borderRadius = '50%';
   }
 
@@ -553,8 +553,8 @@ function initThumbnailScrub() {
     onThumb = false;
     dot.style.width = '14px';
     dot.style.height = '14px';
-    dot.style.background = 'rgba(0, 0, 0, 0.8)';
-    dot.style.border = '0px solid rgba(0, 0, 0, 0)';
+    dot.style.background = 'rgba(255, 255, 255, 0.8)';
+    dot.style.border = '0px solid rgba(255, 255, 255, 0)';
     dot.style.borderRadius = '50%';
   }
 
@@ -581,7 +581,7 @@ function initThumbnailScrub() {
         dot.style.width = (rect.width + pad * 2) + 'px';
         dot.style.height = (rect.height + pad * 2) + 'px';
         dot.style.background = 'transparent';
-        dot.style.border = '1.5px solid rgba(0, 0, 0, 0.8)';
+        dot.style.border = '1.5px solid rgba(255, 255, 255, 0.8)';
         dot.style.borderRadius = '6px';
       });
       link.addEventListener('mouseleave', () => {

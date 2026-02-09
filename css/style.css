@@ -8,13 +8,13 @@
    ============================================ */
 
 :root {
-  /* Colors */
-  --color-white: #fff;
-  --color-black: #000;
-  --color-gray-dark: #1a1a1a;
-  --color-gray-medium: #666;
-  --color-gray-light: #f5f5f5;
-  --color-border: #e0e0e0;
+  /* Colors — Dark Mode */
+  --color-white: #000;
+  --color-black: #fff;
+  --color-gray-dark: #e0e0e0;
+  --color-gray-medium: #999;
+  --color-gray-light: #1a1a1a;
+  --color-border: #333;
 
   /* Typography */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -131,10 +131,10 @@ nav {
   left: 0;
   right: 0;
   height: 100px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(224, 224, 224, 0.3);
+  border-bottom: 1px solid rgba(51, 51, 51, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -366,8 +366,8 @@ main {
   left: 0;
   width: 14px;
   height: 14px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 0px solid rgba(0, 0, 0, 0);
+  background: rgba(255, 255, 255, 0.8);
+  border: 0px solid rgba(255, 255, 255, 0);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
@@ -817,17 +817,17 @@ img.thumb-zoomed {
   letter-spacing: 0.03em;
   text-align: center;
   margin-bottom: 28px;
-  color: var(--color-text-secondary);
+  color: var(--color-gray-medium);
 }
 
 .ig-feed-heading a {
-  color: var(--color-text-secondary);
+  color: var(--color-gray-medium);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .ig-feed-heading a:hover {
-  color: var(--color-text-primary);
+  color: var(--color-gray-dark);
 }
 
 .ig-feed-grid {
@@ -858,7 +858,7 @@ img.thumb-zoomed {
 .ig-feed-loading {
   grid-column: 1 / -1;
   text-align: center;
-  color: var(--color-text-secondary);
+  color: var(--color-gray-medium);
   font-size: 14px;
   padding: 40px 0;
 }
@@ -870,18 +870,18 @@ img.thumb-zoomed {
 }
 
 .ig-feed-more a {
-  color: var(--color-text-secondary);
+  color: var(--color-gray-medium);
   font-size: 14px;
   letter-spacing: 0.02em;
   text-decoration: none;
-  border-bottom: 1px solid var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-gray-medium);
   padding-bottom: 2px;
   transition: color 0.2s, border-color 0.2s;
 }
 
 .ig-feed-more a:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-text-primary);
+  color: var(--color-gray-dark);
+  border-color: var(--color-gray-dark);
 }
 
 /* Lightbox styles */
@@ -1097,6 +1097,40 @@ img.thumb-zoomed {
   object-fit: cover;
 }
 
+/* Client logos grid */
+.client-logos {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.client-logos-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-xl) var(--spacing-2xl);
+}
+
+.client-logos-inner img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.7;
+  transition: opacity var(--transition-normal);
+}
+
+.client-logos-inner img:hover {
+  opacity: 1;
+}
+
+/* SVG logos need CSS filter to turn white */
+.client-logos-inner img.svg-logo {
+  filter: brightness(0) invert(1);
+}
+
 /* About page responsive */
 @media (max-width: 767px) {
   .about-hero {
@@ -1109,6 +1143,14 @@ img.thumb-zoomed {
 
   .about-photo-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .client-logos-inner {
+    gap: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .client-logos-inner img {
+    height: 22px;
   }
 }
 
