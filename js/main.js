@@ -499,7 +499,7 @@ function initThumbnailScrub() {
             // Reset dot to normal size
             dot.style.width = '14px';
             dot.style.height = '14px';
-            dot.style.background = 'rgba(255, 255, 255, 0.8)';
+            dot.style.background = '#fff';
             dot.style.border = '0px solid rgba(255, 255, 255, 0)';
             dot.style.borderRadius = '50%';
 
@@ -553,7 +553,7 @@ function initThumbnailScrub() {
     onThumb = false;
     dot.style.width = '14px';
     dot.style.height = '14px';
-    dot.style.background = 'rgba(255, 255, 255, 0.8)';
+    dot.style.background = '#fff';
     dot.style.border = '0px solid rgba(255, 255, 255, 0)';
     dot.style.borderRadius = '50%';
   }
@@ -581,7 +581,7 @@ function initThumbnailScrub() {
         dot.style.width = (rect.width + pad * 2) + 'px';
         dot.style.height = (rect.height + pad * 2) + 'px';
         dot.style.background = 'transparent';
-        dot.style.border = '1.5px solid rgba(255, 255, 255, 0.8)';
+        dot.style.border = '1.5px solid #fff';
         dot.style.borderRadius = '6px';
       });
       link.addEventListener('mouseleave', () => {

@@ -148,6 +148,7 @@ nav {
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.5px;
   white-space: nowrap;
+  color: #fff;
 }
 
 .logo-i {
@@ -366,7 +367,7 @@ main {
   left: 0;
   width: 14px;
   height: 14px;
-  background: rgba(255, 255, 255, 0.8);
+  background: #fff;
   border: 0px solid rgba(255, 255, 255, 0);
   border-radius: 50%;
   pointer-events: none;
