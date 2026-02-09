@@ -391,14 +391,27 @@ img.thumb-zoomed {
 }
 
 .project-info {
-  padding: var(--spacing-xs) 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.35) 60%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.project-card:hover .project-info {
+  opacity: 1;
 }
 
 .project-title {
   display: block;
   font-size: var(--font-size-small);
   font-weight: var(--font-weight-regular);
-  color: var(--color-gray-medium);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .project-title .studio {
@@ -409,7 +422,7 @@ img.thumb-zoomed {
   display: block;
   font-size: var(--font-size-small);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-dark);
+  color: #fff;
 }
 
 /* Fade-in animation on scroll */
