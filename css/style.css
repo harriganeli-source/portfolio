@@ -481,6 +481,7 @@ img.thumb-zoomed {
   overflow: hidden;
   margin-bottom: var(--spacing-xl);
   border-radius: 4px;
+  background: #000;
 }
 
 .video-container iframe {
