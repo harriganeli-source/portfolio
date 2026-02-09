@@ -365,7 +365,7 @@ function initThumbnailScrub() {
         // Animate from the i position toward the current mouse position
         const fromX = startX;
         const fromY = startY;
-        const duration = 800;
+        const duration = 1400;
         const startTime = performance.now();
 
         function launchAnim(now) {
@@ -402,10 +402,6 @@ function initThumbnailScrub() {
     function spawnRipple() {
       if (rippleCooldown || !iDot) return;
       rippleCooldown = true;
-
-      // Flash the i-dot back on briefly
-      iDot.style.opacity = '1';
-      setTimeout(() => { iDot.style.opacity = '0'; }, 600);
 
       // Recalculate i-dot position (may have changed due to scroll/resize)
       const rect = iDot.getBoundingClientRect();
