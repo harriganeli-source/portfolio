@@ -406,7 +406,8 @@ img.thumb-zoomed {
   text-align: center;
 }
 
-.project-card:hover .project-info {
+.project-card:hover .project-info,
+.project-card.mobile-active .project-info {
   opacity: 1;
 }
 
@@ -1161,7 +1162,11 @@ img.thumb-zoomed {
   }
 
   .client-logos-inner {
-    gap: var(--spacing-lg) var(--spacing-xl);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    justify-items: center;
+    align-items: center;
   }
 
   .client-logos-inner img {

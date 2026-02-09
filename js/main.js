@@ -743,19 +743,26 @@ function initPhotoStripScroll() {
   const strip = document.querySelector('.about-photo-grid');
   if (!strip) return;
 
-  let speed = 0.5; // pixels per frame
+  const speed = 0.5; // pixels per frame
   let paused = false;
-  let rafId;
+  let running = false;
 
   function scroll() {
-    if (!paused) {
+    if (!paused && strip.scrollWidth > strip.clientWidth) {
       strip.scrollLeft += speed;
-      // Loop back to start when reaching the end
       if (strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1) {
         strip.scrollLeft = 0;
       }
     }
-    rafId = requestAnimationFrame(scroll);
+    requestAnimationFrame(scroll);
+  }
+
+  function startIfReady() {
+    if (running) return;
+    if (strip.scrollWidth > strip.clientWidth) {
+      running = true;
+      requestAnimationFrame(scroll);
+    }
   }
 
   // Pause on hover / touch
@@ -764,16 +771,81 @@ function initPhotoStripScroll() {
   strip.addEventListener('touchstart', () => { paused = true; }, { passive: true });
   strip.addEventListener('touchend', () => { paused = false; });
 
-  // Start when strip scrolls into view
+  // Wait for images to load before starting
+  const imgs = strip.querySelectorAll('img');
+  let loaded = 0;
+  imgs.forEach(img => {
+    if (img.complete) {
+      loaded++;
+    } else {
+      img.addEventListener('load', () => {
+        loaded++;
+        if (loaded >= imgs.length) startIfReady();
+      });
+    }
+  });
+  if (loaded >= imgs.length) startIfReady();
+
+  // Also try on intersection (fallback)
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        rafId = requestAnimationFrame(scroll);
-        observer.disconnect();
-      }
-    });
+    if (entries[0].isIntersecting) {
+      startIfReady();
+      observer.disconnect();
+    }
   }, { threshold: 0.1 });
   observer.observe(strip);
+}
+
+/**
+ * On mobile, show project-info overlay on the card nearest viewport center
+ */
+function initMobileActiveCard() {
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  const cards = document.querySelectorAll('.project-card');
+  if (!cards.length) return;
+
+  let activeCard = null;
+
+  function update() {
+    const center = window.innerHeight / 2;
+    let closest = null;
+    let closestDist = Infinity;
+
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.top + rect.height / 2;
+      const dist = Math.abs(cardCenter - center);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = card;
+      }
+    });
+
+    if (closest !== activeCard) {
+      if (activeCard) activeCard.classList.remove('mobile-active');
+      if (closest && closestDist < window.innerHeight * 0.4) {
+        closest.classList.add('mobile-active');
+        activeCard = closest;
+      } else {
+        activeCard = null;
+      }
+    }
+  }
+
+  // Throttled scroll listener
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    }
+  }, { passive: true });
+
+  update();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -786,6 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackButton();
   initThumbnailScrub();
   initPhotoStripScroll();
+  initMobileActiveCard();
 });
 
 /**
