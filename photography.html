@@ -128,8 +128,13 @@
         .then(r => r.json())
         .then(data => {
           loading.remove();
+          if (data.error) {
+            console.error('Instagram API:', data.error);
+            grid.innerHTML = '';
+            return;
+          }
           if (!data.posts || !data.posts.length) {
-            grid.innerHTML = '<p style="color:var(--color-text-secondary);font-size:14px;">No posts found.</p>';
+            grid.innerHTML = '';
             return;
           }
           data.posts.forEach(post => {
@@ -149,8 +154,9 @@
             grid.appendChild(a);
           });
         })
-        .catch(() => {
+        .catch(err => {
           loading.textContent = '';
+          console.error('Instagram feed error:', err);
         });
     })();
   </script>
