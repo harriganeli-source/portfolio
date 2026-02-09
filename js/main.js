@@ -748,7 +748,7 @@ function initPhotoStripScroll() {
   let running = false;
 
   function scroll() {
-    if (!paused && strip.scrollWidth > strip.clientWidth) {
+    if (!paused) {
       strip.scrollLeft += speed;
       if (strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1) {
         strip.scrollLeft = 0;
@@ -757,43 +757,33 @@ function initPhotoStripScroll() {
     requestAnimationFrame(scroll);
   }
 
-  function startIfReady() {
+  function start() {
     if (running) return;
-    if (strip.scrollWidth > strip.clientWidth) {
-      running = true;
-      requestAnimationFrame(scroll);
-    }
+    running = true;
+    requestAnimationFrame(scroll);
   }
 
-  // Pause on hover / touch
+  // Desktop: pause on hover
   strip.addEventListener('mouseenter', () => { paused = true; });
   strip.addEventListener('mouseleave', () => { paused = false; });
-  strip.addEventListener('touchstart', () => { paused = true; }, { passive: true });
-  strip.addEventListener('touchend', () => { paused = false; });
 
-  // Wait for images to load before starting
-  const imgs = strip.querySelectorAll('img');
-  let loaded = 0;
-  imgs.forEach(img => {
-    if (img.complete) {
-      loaded++;
-    } else {
-      img.addEventListener('load', () => {
-        loaded++;
-        if (loaded >= imgs.length) startIfReady();
-      });
-    }
+  // Mobile: only pause while finger is actively swiping the strip
+  let touchTimeout;
+  strip.addEventListener('touchstart', () => {
+    paused = true;
+    clearTimeout(touchTimeout);
+  }, { passive: true });
+  strip.addEventListener('touchend', () => {
+    // Brief delay so the strip doesn't jerk right as finger lifts
+    clearTimeout(touchTimeout);
+    touchTimeout = setTimeout(() => { paused = false; }, 1500);
   });
-  if (loaded >= imgs.length) startIfReady();
 
-  // Also try on intersection (fallback)
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      startIfReady();
-      observer.disconnect();
-    }
-  }, { threshold: 0.1 });
-  observer.observe(strip);
+  // Start immediately — the .about-photo divs have fixed CSS widths
+  // so scrollWidth > clientWidth even before images load
+  start();
+  // Also retry after load in case something delayed
+  window.addEventListener('load', start);
 }
 
 /**
