@@ -496,12 +496,11 @@ img.thumb-zoomed {
   max-width: 1200px;
 }
 
-/* Side-by-side video + credit layout */
+/* Video + credit layout — stacked vertically, full width */
 .project-layout {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: var(--spacing-xl);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .project-layout .video-container {
@@ -527,12 +526,6 @@ img.thumb-zoomed {
 
 .videos-stacked .video-container {
   margin-bottom: 0;
-}
-
-@media (max-width: 767px) {
-  .project-layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Project page heading */
