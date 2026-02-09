@@ -303,9 +303,10 @@ function initBackButton() {
 function initThumbnailScrub() {
   const cards = document.querySelectorAll('.project-card');
 
-  // Detect pointer device (no trailing dot on touch-only devices or photography page)
-  const isPhotography = window.location.pathname.includes('photography');
-  const hasPointer = !isPhotography && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // Trailing dot only on the main work page (index / root)
+  const path = window.location.pathname;
+  const isHomepage = path === '/' || path.endsWith('/index.html') || path.endsWith('/');
+  const hasPointer = isHomepage && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   // ---- Trailing dot cursor (page-wide) ----
   let dot = null;
