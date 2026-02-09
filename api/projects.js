@@ -40,11 +40,15 @@ function parseProjects(html) {
     // Check for laurels overlay in the full match
     hasLaurels = m[0].includes('laurels-overlay');
 
-    // Check for scrub frame count
+    // Check for scrub frame count (legacy)
     const framesMatch = m[0].match(/data-frames="(\d+)"/);
     const frameCount = framesMatch ? parseInt(framesMatch[1], 10) : 0;
 
-    projects.push({ slug, title, studio, role, thumbnail, hasLaurels, frameCount });
+    // Check for preview video
+    const previewMatch = m[0].match(/data-preview="([^"]+)"/);
+    const previewVideo = previewMatch ? previewMatch[1] : '';
+
+    projects.push({ slug, title, studio, role, thumbnail, hasLaurels, frameCount, previewVideo });
   }
   return projects;
 }
@@ -104,9 +108,10 @@ function generateCardHtml(project) {
   }
 
   const framesAttr = project.frameCount > 0 ? ` data-frames="${project.frameCount}"` : '';
+  const previewAttr = project.previewVideo ? ` data-preview="${project.previewVideo}"` : '';
 
   return `        <a href="projects/${project.slug}.html" class="project-card grid-item fade-in">
-          <div class="project-thumb"${framesAttr}>
+          <div class="project-thumb"${previewAttr}${framesAttr}>
             <img src="${project.thumbnail}" alt="${titleEsc}" loading="lazy">${laurelsHtml}
           </div>
           <div class="project-info">

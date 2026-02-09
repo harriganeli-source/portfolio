@@ -297,22 +297,18 @@ main {
   transform: scale(1.05);
 }
 
-/* Thumbnail scrub — disable zoom when scrubbing */
-.project-thumb.scrubbing img {
-  transform: none !important;
-  transition: none;
-}
-
-.scrub-bar {
+/* Hover video preview overlay */
+.thumb-video-preview {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.9);
-  width: 0;
-  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
   pointer-events: none;
-  transition: width 30ms linear;
 }
 
 /* Play icon cursor on thumbnails (pointer devices only) */

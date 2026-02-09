@@ -362,8 +362,8 @@ function initThumbnailScrub() {
 
   if (!cards.length) return;
 
-  // Track all scrubbable thumbnails so we can restore on back-navigation
-  const scrubData = [];
+  // Track previews for cleanup on back-navigation
+  const previewData = [];
 
   cards.forEach(card => {
     const thumb = card.querySelector('.project-thumb');
@@ -376,51 +376,50 @@ function initThumbnailScrub() {
       thumb.addEventListener('mouseleave', shrinkDot);
     }
 
-    // Scrub logic only for thumbnails with frames
-    const frameCount = parseInt(thumb.dataset.frames || '0', 10);
-    if (frameCount < 2) return;
+    // Video preview on hover
+    const previewSrc = thumb.dataset.preview;
+    if (!previewSrc) return;
 
-    const href = card.getAttribute('href') || '';
-    const slugMatch = href.match(/projects\/([^.]+)\.html/);
-    if (!slugMatch) return;
-    const slug = slugMatch[1];
+    let video = null;
+    let videoReady = false;
 
-    const originalSrc = img.getAttribute('src');
-    const frames = [];
-    for (let i = 1; i <= frameCount; i++) {
-      frames.push('images/' + slug + '-frame-' + i + '.webp');
+    // Preload video element
+    function ensureVideo() {
+      if (video) return;
+      video = document.createElement('video');
+      video.className = 'thumb-video-preview';
+      video.src = previewSrc;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = 'auto';
+      video.addEventListener('canplay', () => { videoReady = true; }, { once: true });
+      thumb.appendChild(video);
     }
 
-    scrubData.push({ img, originalSrc, thumb });
-
-    let preloaded = false;
-
-    const bar = document.createElement('div');
-    bar.className = 'scrub-bar';
-    thumb.appendChild(bar);
+    previewData.push({ thumb, img, getVideo: () => video });
 
     thumb.addEventListener('mouseenter', () => {
-      if (!preloaded) {
-        frames.forEach(src => { const im = new Image(); im.src = src; });
-        preloaded = true;
+      ensureVideo();
+      if (videoReady) {
+        video.style.opacity = '1';
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      } else {
+        video.addEventListener('canplay', () => {
+          videoReady = true;
+          video.style.opacity = '1';
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        }, { once: true });
       }
     });
 
-    thumb.addEventListener('mousemove', (e) => {
-      const rect = thumb.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const pct = Math.max(0, Math.min(1, x / rect.width));
-      const idx = Math.min(Math.floor(pct * frames.length), frames.length - 1);
-
-      img.src = frames[idx];
-      bar.style.width = (pct * 100) + '%';
-      thumb.classList.add('scrubbing');
-    });
-
     thumb.addEventListener('mouseleave', () => {
-      img.src = originalSrc;
-      thumb.classList.remove('scrubbing');
-      bar.style.width = '0%';
+      if (video) {
+        video.pause();
+        video.style.opacity = '0';
+      }
     });
   });
 
@@ -428,11 +427,12 @@ function initThumbnailScrub() {
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) {
       shrinkDot();
-      scrubData.forEach(({ img, originalSrc, thumb }) => {
-        img.src = originalSrc;
-        thumb.classList.remove('scrubbing');
-        const bar = thumb.querySelector('.scrub-bar');
-        if (bar) bar.style.width = '0%';
+      previewData.forEach(({ thumb, getVideo }) => {
+        const v = getVideo();
+        if (v) {
+          v.pause();
+          v.style.opacity = '0';
+        }
       });
     }
   });
