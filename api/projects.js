@@ -19,7 +19,7 @@ async function githubGet(path) {
 function parseProjects(html) {
   const projects = [];
   // Match each project card block
-  const cardRegex = /<a href="projects\/([^"]+)" class="project-card[^"]*">\s*<div class="project-thumb"[^>]*>\s*<img src="([^"]+)"[^>]*>\s*(?:<div class="laurels-overlay">[\s\S]*?<\/div>\s*)?<div class="project-info">\s*<span class="project-title">([\s\S]*?)<\/span>\s*<span class="project-role">([\s\S]*?)<\/span>\s*<\/div>\s*<\/div>\s*<\/a>/g;
+  const cardRegex = /<a href="projects\/([^"]+)" class="project-card[^"]*">\s*<div class="project-thumb"[^>]*>\s*<img src="([^"]+)"[^>]*>\s*(?:<div class="laurels-overlay">[\s\S]*?<\/div>\s*)?<div class="project-info">\s*<span class="project-title">([\s\S]*?)<\/span>\s*<\/div>\s*<\/div>\s*<span class="project-role">([\s\S]*?)<\/span>\s*<\/a>/g;
   let m;
   while ((m = cardRegex.exec(html)) !== null) {
     const slug = m[1].replace('.html', '');
@@ -115,9 +115,9 @@ function generateCardHtml(project) {
             <img src="${project.thumbnail}" alt="${titleEsc}" loading="lazy">${laurelsHtml}
             <div class="project-info">
               ${titleSpan}
-              <span class="project-role">${roleEsc}</span>
             </div>
           </div>
+          <span class="project-role">${roleEsc}</span>
         </a>`;
 }
 

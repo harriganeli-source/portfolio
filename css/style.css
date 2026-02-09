@@ -421,8 +421,9 @@ img.thumb-zoomed {
 .project-role {
   display: block;
   font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium);
-  color: #fff;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-medium);
+  margin-top: var(--spacing-xs);
 }
 
 /* Fade-in animation on scroll */
