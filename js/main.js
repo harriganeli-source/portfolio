@@ -669,35 +669,24 @@ function initThumbnailScrub() {
 
     previewData.push({ thumb, img, getVideo: () => video, ensureVideo });
 
-    thumb.addEventListener('mouseenter', () => {
-      ensureVideo();
-      if (videoReady) {
-        video.style.opacity = '1';
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      } else {
-        video.addEventListener('canplay', () => {
-          videoReady = true;
+    // On hover: hide video to reveal static thumbnail underneath
+    if (hasPointer) {
+      thumb.addEventListener('mouseenter', () => {
+        if (video) {
+          video.style.opacity = '0';
+        }
+      });
+      thumb.addEventListener('mouseleave', () => {
+        if (video && !video.paused) {
           video.style.opacity = '1';
-          video.currentTime = 0;
-          video.play().catch(() => {});
-        }, { once: true });
-      }
-    });
-
-    thumb.addEventListener('mouseleave', () => {
-      if (video) {
-        video.pause();
-        video.style.opacity = '0';
-      }
-    });
+        }
+      });
+    }
   });
 
-  // ---- Mobile: auto-play previews on scroll into view ----
-  const isMobile = isHomepage && !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-  if (isMobile && previewData.length) {
-    const mobileObserver = new IntersectionObserver((entries) => {
+  // ---- Auto-play previews on scroll into view (all devices) ----
+  if (isHomepage && previewData.length) {
+    const autoPlayObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const data = previewData.find(d => d.thumb === entry.target);
         if (!data) return;
@@ -706,8 +695,6 @@ function initThumbnailScrub() {
           data.ensureVideo();
           const v = data.getVideo();
           if (!v) return;
-          // On mobile, don't wait for canplay — call play() directly
-          // which forces the browser to start loading + playing
           v.muted = true;
           v.play().then(() => {
             v.style.opacity = '1';
@@ -723,7 +710,7 @@ function initThumbnailScrub() {
     }, { threshold: 0.35 });
 
     previewData.forEach(entry => {
-      mobileObserver.observe(entry.thumb);
+      autoPlayObserver.observe(entry.thumb);
     });
   }
 
