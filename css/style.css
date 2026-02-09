@@ -307,8 +307,10 @@ main {
 }
 
 .project-card img {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
   object-fit: cover;
   transition: transform var(--transition-normal);
 }
@@ -320,10 +322,9 @@ main {
 /* Hover video preview overlay */
 .thumb-video-preview {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.3s ease;
