@@ -1245,6 +1245,30 @@ document.getElementById('editSave').addEventListener('click', async () => {
       p._thumbPreview = thumbPreview;
     }
   } else {
+    // Auto-fetch posters for each video in new projects
+    const autoPosters = [];
+    for (let i = 0; i < videoUrls.length; i++) {
+      try {
+        const posterBase64 = await fetchVideoThumbnail(videoUrls[i]);
+        if (posterBase64) {
+          const posterName = videoUrls.length > 1
+            ? `${slug}-poster-${i + 1}.webp`
+            : `${slug}-poster.webp`;
+          const uploadResult = await apiCall('/api/upload', {
+            method: 'POST',
+            body: JSON.stringify({ filename: posterName, data: posterBase64 }),
+          });
+          stagedFiles.push(uploadResult.stagedFile);
+          autoPosters.push('../images/' + uploadResult.filename);
+        } else {
+          autoPosters.push('');
+        }
+      } catch (err) {
+        console.warn('Auto-poster failed for video ' + (i + 1) + ':', err);
+        autoPosters.push('');
+      }
+    }
+
     // Add new
     projects.push({
       slug,
@@ -1255,7 +1279,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
       credit: credit || role + '.',
       description,
       videoUrls,
-      posters: [],
+      posters: autoPosters,
       thumbnail: thumbnail || `images/${slug}.webp`,
       hasLaurels: false,
       _thumbPreview: thumbPreview,
@@ -1705,8 +1729,29 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
         });
         stagedFiles.push(uploadResult.stagedFile);
         newPosters.push('../images/' + uploadResult.filename);
+      } else if (v.posterPath) {
+        newPosters.push(v.posterPath);
       } else {
-        newPosters.push(v.posterPath || '');
+        // Auto-fetch poster from video source
+        try {
+          const autoBase64 = await fetchVideoThumbnail(v.url);
+          if (autoBase64) {
+            const posterName = p.videoUrls.length > 1
+              ? `${p.slug}-poster-${i + 1}.webp`
+              : `${p.slug}-poster.webp`;
+            const uploadResult = await apiCall('/api/upload', {
+              method: 'POST',
+              body: JSON.stringify({ filename: posterName, data: autoBase64 }),
+            });
+            stagedFiles.push(uploadResult.stagedFile);
+            newPosters.push('../images/' + uploadResult.filename);
+          } else {
+            newPosters.push('');
+          }
+        } catch (err) {
+          console.warn('Auto-poster failed for video ' + (i + 1) + ':', err);
+          newPosters.push('');
+        }
       }
     }
     p.posters = newPosters;
