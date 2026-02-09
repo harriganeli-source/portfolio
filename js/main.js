@@ -353,7 +353,7 @@ function initThumbnailScrub() {
       dotX = startX;
       dotY = startY;
 
-      // Launch the dot toward the cursor on first mouse move
+      // Launch the dot: first lift off the "i", then fly toward cursor
       function launchOnFirstMove() {
         if (launched) return;
         launched = true;
@@ -361,32 +361,59 @@ function initThumbnailScrub() {
 
         iDot.style.opacity = '0';
         dot.style.opacity = '1';
+        dot.style.transition = 'none'; // control animation manually
 
-        // Animate from the i position toward the current mouse position
-        const fromX = startX;
-        const fromY = startY;
-        const duration = 1400;
-        const startTime = performance.now();
+        // Phase 1: Lift — grow and rise above the "i"
+        const liftDuration = 600;
+        const liftHeight = 30;        // pixels to rise
+        const liftStart = performance.now();
 
-        function launchAnim(now) {
-          const t = Math.min((now - startTime) / duration, 1);
-          // Ease out cubic
-          const ec = 1 - Math.pow(1 - t, 3);
-          // Animate toward the live mouse position (so it feels alive)
-          dotX = fromX + (mouseX - fromX) * ec;
-          dotY = fromY + (mouseY - fromY) * ec;
+        function liftAnim(now) {
+          const t = Math.min((now - liftStart) / liftDuration, 1);
+          // Ease out — decelerates as it lifts
+          const e = 1 - Math.pow(1 - t, 2);
+
+          dotX = startX;
+          dotY = startY - liftHeight * e;
           dot.style.left = dotX + 'px';
           dot.style.top = dotY + 'px';
 
+          // Grow from i-dot size (~5px) to cursor size (14px)
+          const size = 5 + (14 - 5) * e;
+          dot.style.width = size + 'px';
+          dot.style.height = size + 'px';
+
           if (t < 1) {
-            requestAnimationFrame(launchAnim);
+            requestAnimationFrame(liftAnim);
           } else {
-            // Animation done — switch to mouse-following mode
-            cursorReady = true;
-            rafId = requestAnimationFrame(tick);
+            // Phase 2: Fly toward the cursor
+            const flyFromX = dotX;
+            const flyFromY = dotY;
+            const flyDuration = 1200;
+            const flyStart = performance.now();
+
+            // Restore CSS transitions for later morphing
+            dot.style.transition = '';
+
+            function flyAnim(now) {
+              const t2 = Math.min((now - flyStart) / flyDuration, 1);
+              const ec = 1 - Math.pow(1 - t2, 3);
+              dotX = flyFromX + (mouseX - flyFromX) * ec;
+              dotY = flyFromY + (mouseY - flyFromY) * ec;
+              dot.style.left = dotX + 'px';
+              dot.style.top = dotY + 'px';
+
+              if (t2 < 1) {
+                requestAnimationFrame(flyAnim);
+              } else {
+                cursorReady = true;
+                rafId = requestAnimationFrame(tick);
+              }
+            }
+            requestAnimationFrame(flyAnim);
           }
         }
-        requestAnimationFrame(launchAnim);
+        requestAnimationFrame(liftAnim);
       }
       document.addEventListener('mousemove', launchOnFirstMove);
     } else {
