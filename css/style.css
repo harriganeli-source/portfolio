@@ -599,8 +599,20 @@ img.thumb-zoomed {
   margin-bottom: 0;
 }
 
+/* 4-across row for secondary videos */
+.videos-four-up {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .videos-four-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 767px) {
-  .videos-stacked {
+  .videos-stacked,
+  .videos-four-up {
     grid-template-columns: 1fr;
   }
 }
