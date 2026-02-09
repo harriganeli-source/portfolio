@@ -285,7 +285,7 @@ main {
 .grid-projects {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: var(--spacing-xl);
+  column-gap: 64px;
   row-gap: 64px;
   margin-top: var(--spacing-xl);
 }
