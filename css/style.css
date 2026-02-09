@@ -269,7 +269,7 @@ main {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
 }
 
 .container-narrow {
@@ -285,8 +285,9 @@ main {
 .grid-projects {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-lg);
+  column-gap: var(--spacing-xl);
+  row-gap: 64px;
+  margin-top: var(--spacing-xl);
 }
 
 .project-card {
@@ -431,14 +432,16 @@ img.thumb-zoomed {
 @media (max-width: 1024px) {
   .grid-projects {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
+    column-gap: var(--spacing-lg);
+    row-gap: var(--spacing-xl);
   }
 }
 
 @media (max-width: 767px) {
   .grid-projects {
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    column-gap: var(--spacing-md);
+    row-gap: var(--spacing-xl);
   }
 
   .project-thumb {
