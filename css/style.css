@@ -269,7 +269,7 @@ main {
 .container {
   max-width: 1500px;
   margin: 0 auto;
-  padding: 0 var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
 .container-narrow {
