@@ -359,7 +359,7 @@ function initThumbnailScrub() {
         launched = true;
         document.removeEventListener('mousemove', launchOnFirstMove);
 
-        iDot.classList.add('outline');
+        iDot.style.opacity = '0';
         dot.style.opacity = '1';
         dot.style.transition = 'none'; // control animation manually
 
@@ -469,7 +469,7 @@ function initThumbnailScrub() {
           requestAnimationFrame(dockAnim);
         } else {
           // Dot has landed — restore filled i-dot, hide the cursor dot
-          iDot.classList.remove('outline');
+          iDot.style.opacity = '1';
           dot.style.opacity = '0';
 
           // Restore CSS transition
@@ -503,7 +503,7 @@ function initThumbnailScrub() {
             dot.style.border = '0px solid rgba(255, 255, 255, 0)';
             dot.style.borderRadius = '50%';
 
-            iDot.classList.add('outline');
+            iDot.style.opacity = '0';
             dot.style.opacity = '1';
             docking = false;
 

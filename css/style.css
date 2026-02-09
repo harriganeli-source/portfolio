@@ -165,16 +165,7 @@ nav {
   border-radius: 50%;
   transform: translate(-50%, 0);
   z-index: 10000;
-  transition: opacity 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.i-dot.outline {
-  background: transparent !important;
-  width: 0.4em;
-  height: 0.4em;
-  border: 1.5px solid currentColor;
-  margin-left: -0.11em;
-  margin-top: -0.11em;
+  transition: opacity 0.3s ease;
 }
 
 .nav-links {
