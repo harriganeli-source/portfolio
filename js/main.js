@@ -308,8 +308,8 @@ function initThumbnailScrub() {
   const cursor = document.createElement('div');
   cursor.className = 'custom-cursor';
   cursor.innerHTML = `
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="6" cy="6" r="4" fill="rgba(255,255,255,0.9)"/>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="10" r="7" fill="rgba(255,255,255,0.9)"/>
     </svg>`;
   document.body.appendChild(cursor);
 
