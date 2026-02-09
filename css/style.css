@@ -267,9 +267,9 @@ main {
 }
 
 .container {
-  max-width: 1232px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: 0 var(--spacing-lg);
 }
 
 .container-narrow {
