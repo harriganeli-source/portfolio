@@ -736,6 +736,46 @@ function initThumbnailScrub() {
 /**
  * Initialize all functionality when DOM is ready
  */
+/**
+ * Slow auto-scroll for the about page photo strip
+ */
+function initPhotoStripScroll() {
+  const strip = document.querySelector('.about-photo-grid');
+  if (!strip) return;
+
+  let speed = 0.5; // pixels per frame
+  let paused = false;
+  let rafId;
+
+  function scroll() {
+    if (!paused) {
+      strip.scrollLeft += speed;
+      // Loop back to start when reaching the end
+      if (strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1) {
+        strip.scrollLeft = 0;
+      }
+    }
+    rafId = requestAnimationFrame(scroll);
+  }
+
+  // Pause on hover / touch
+  strip.addEventListener('mouseenter', () => { paused = true; });
+  strip.addEventListener('mouseleave', () => { paused = false; });
+  strip.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+  strip.addEventListener('touchend', () => { paused = false; });
+
+  // Start when strip scrolls into view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        rafId = requestAnimationFrame(scroll);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
+  observer.observe(strip);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   setActiveNavLink();
@@ -745,6 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initVideoPoster();
   initBackButton();
   initThumbnailScrub();
+  initPhotoStripScroll();
 });
 
 /**
