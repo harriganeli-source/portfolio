@@ -333,10 +333,12 @@ function initThumbnailScrub() {
     });
 
     function tick() {
-      dotX += (mouseX - dotX) * ease;
-      dotY += (mouseY - dotY) * ease;
-      dot.style.left = dotX + 'px';
-      dot.style.top = dotY + 'px';
+      if (!onNav) {
+        dotX += (mouseX - dotX) * ease;
+        dotY += (mouseY - dotY) * ease;
+        dot.style.left = dotX + 'px';
+        dot.style.top = dotY + 'px';
+      }
       rafId = requestAnimationFrame(tick);
     }
     rafId = requestAnimationFrame(tick);
@@ -362,21 +364,34 @@ function initThumbnailScrub() {
     dot.style.borderRadius = '50%';
   }
 
-  // ---- Nav link underline morph ----
+  // ---- Nav link box morph ----
+  let onNav = false;
+  let navTargetX = 0, navTargetY = 0;
+
   if (hasPointer) {
     const navLinks = document.querySelectorAll('.nav-links a');
     navLinks.forEach(link => {
       link.addEventListener('mouseenter', () => {
         if (!dot) return;
+        onNav = true;
         const rect = link.getBoundingClientRect();
-        // Morph dot into an underline beneath the link text
-        dot.style.width = rect.width + 'px';
-        dot.style.height = '2px';
-        dot.style.background = 'rgba(0, 0, 0, 0.8)';
-        dot.style.border = 'none';
-        dot.style.borderRadius = '1px';
+        const pad = 8;
+        // Snap dot position to center of the link
+        navTargetX = rect.left + rect.width / 2;
+        navTargetY = rect.top + rect.height / 2;
+        dotX = navTargetX;
+        dotY = navTargetY;
+        dot.style.left = dotX + 'px';
+        dot.style.top = dotY + 'px';
+        // Morph into a box around the link
+        dot.style.width = (rect.width + pad * 2) + 'px';
+        dot.style.height = (rect.height + pad * 2) + 'px';
+        dot.style.background = 'transparent';
+        dot.style.border = '1.5px solid rgba(0, 0, 0, 0.8)';
+        dot.style.borderRadius = '6px';
       });
       link.addEventListener('mouseleave', () => {
+        onNav = false;
         shrinkDot();
       });
     });
