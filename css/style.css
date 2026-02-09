@@ -1129,7 +1129,6 @@ img.thumb-zoomed {
 }
 
 .client-logos-inner img {
-  height: 30px;
   width: auto;
   object-fit: contain;
   opacity: 0.85;
@@ -1164,7 +1163,7 @@ img.thumb-zoomed {
   }
 
   .client-logos-inner img {
-    height: 22px;
+    transform: scale(0.75);
   }
 }
 
