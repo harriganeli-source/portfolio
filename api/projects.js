@@ -187,9 +187,6 @@ ${videoHtml}
   } else {
     mainContent = `      <div class="project-layout">
 ${videoHtml}
-        <div class="project-credit">
-          <p>${credit}</p>
-        </div>
       </div>`;
   }
 
@@ -222,6 +219,9 @@ ${videoHtml}
     <div class="container-narrow">
       <a href="../index.html" class="back-link">Back to Work</a>
       <h1 class="project-heading">${titleEsc}</h1>
+      <div class="project-credit">
+        <p>${credit}</p>
+      </div>
 ${mainContent}
     </div>
   </main>
