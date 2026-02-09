@@ -689,6 +689,44 @@ function initThumbnailScrub() {
     });
   });
 
+  // ---- Mobile: auto-play previews on scroll into view ----
+  const isMobile = isHomepage && !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (isMobile && previewData.length) {
+    const mobileObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const data = previewData.find(d => d.thumb === entry.target);
+        if (!data) return;
+
+        if (entry.isIntersecting) {
+          data.ensureVideo();
+          const v = data.getVideo();
+          if (!v) return;
+          const tryPlay = () => {
+            v.style.opacity = '1';
+            v.currentTime = 0;
+            v.play().catch(() => {});
+          };
+          if (v.readyState >= 3) {
+            tryPlay();
+          } else {
+            v.addEventListener('canplay', tryPlay, { once: true });
+          }
+        } else {
+          const v = data.getVideo();
+          if (v) {
+            v.pause();
+            v.style.opacity = '0';
+          }
+        }
+      });
+    }, { threshold: 0.35 });
+
+    previewData.forEach(entry => {
+      mobileObserver.observe(entry.thumb);
+    });
+  }
+
   // Restore thumbnails when navigating back (bfcache)
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) {
