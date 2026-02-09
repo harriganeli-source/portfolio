@@ -315,33 +315,22 @@ main {
   transition: width 30ms linear;
 }
 
-/* Custom ball cursor for all clickable thumbnails — hide native cursor (pointer devices only) */
-@media (hover: hover) and (pointer: fine) {
-  .project-thumb {
-    cursor: none;
-  }
-  .project-thumb.scrubbing {
-    cursor: none;
-  }
-}
-
-/* Floating cursor element */
-.custom-cursor {
+/* Trailing dot cursor */
+.cursor-dot {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.2s ease, transform 0.15s ease;
-  transform: translate(-50%, -50%) scale(0.5);
-  will-change: transform, opacity, left, top;
-}
-.custom-cursor.visible {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-.custom-cursor svg {
-  display: block;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+  transform: translate(-50%, -50%);
+  transition: width 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
+              height 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
+              background 0.35s ease;
+  will-change: left, top, width, height;
 }
 
 /* Tighter crop for specific thumbnails */

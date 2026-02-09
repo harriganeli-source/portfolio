@@ -302,55 +302,61 @@ function initBackButton() {
  */
 function initThumbnailScrub() {
   const cards = document.querySelectorAll('.project-card');
-  if (!cards.length) return;
 
-  // Detect pointer device (no custom cursor on touch-only devices)
+  // Detect pointer device (no trailing dot on touch-only devices)
   const hasPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  // Create shared custom cursor element — always a small white ball
-  let cursor = null;
-  let cursorActive = false;
+  // ---- Trailing dot cursor (page-wide) ----
+  let dot = null;
+  let mouseX = -100, mouseY = -100;
+  let dotX = -100, dotY = -100;
+  let onThumb = false;
   let rafId = null;
-  let mouseX = 0, mouseY = 0;
+  const ease = 0.15;
 
   if (hasPointer) {
-    cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    cursor.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="10" cy="10" r="7" fill="rgba(255,255,255,0.9)"/>
-      </svg>`;
-    document.body.appendChild(cursor);
+    dot = document.createElement('div');
+    dot.className = 'cursor-dot';
+    document.body.appendChild(dot);
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Hide when mouse leaves the viewport
+    document.addEventListener('mouseleave', () => {
+      mouseX = -100;
+      mouseY = -100;
+    });
+
+    function tick() {
+      dotX += (mouseX - dotX) * ease;
+      dotY += (mouseY - dotY) * ease;
+      dot.style.left = dotX + 'px';
+      dot.style.top = dotY + 'px';
+      rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
   }
 
-  function updateCursorPos() {
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-    if (cursorActive) rafId = requestAnimationFrame(updateCursorPos);
+  function expandDot() {
+    if (!dot) return;
+    onThumb = true;
+    dot.style.width = '60px';
+    dot.style.height = '60px';
+    dot.style.background = 'rgba(0, 0, 0, 0.15)';
   }
 
-  function showCursor(e) {
-    if (!cursor) return;
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
-    cursor.classList.add('visible');
-    cursorActive = true;
-    rafId = requestAnimationFrame(updateCursorPos);
+  function shrinkDot() {
+    if (!dot) return;
+    onThumb = false;
+    dot.style.width = '10px';
+    dot.style.height = '10px';
+    dot.style.background = 'rgba(0, 0, 0, 0.8)';
   }
 
-  function trackCursor(e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  }
-
-  function hideCursor() {
-    if (!cursor) return;
-    cursor.classList.remove('visible');
-    cursorActive = false;
-    if (rafId) cancelAnimationFrame(rafId);
-  }
+  if (!cards.length) return;
 
   // Track all scrubbable thumbnails so we can restore on back-navigation
   const scrubData = [];
@@ -360,11 +366,10 @@ function initThumbnailScrub() {
     const img = thumb ? thumb.querySelector('img') : null;
     if (!thumb || !img) return;
 
-    // Ball cursor on ALL thumbnails (pointer devices only)
+    // Expand dot on ALL thumbnails (pointer devices only)
     if (hasPointer) {
-      thumb.addEventListener('mouseenter', showCursor);
-      thumb.addEventListener('mousemove', trackCursor);
-      thumb.addEventListener('mouseleave', hideCursor);
+      thumb.addEventListener('mouseenter', expandDot);
+      thumb.addEventListener('mouseleave', shrinkDot);
     }
 
     // Scrub logic only for thumbnails with frames
@@ -382,7 +387,6 @@ function initThumbnailScrub() {
       frames.push('images/' + slug + '-frame-' + i + '.webp');
     }
 
-    // Save for pageshow restore
     scrubData.push({ img, originalSrc, thumb });
 
     let preloaded = false;
@@ -419,7 +423,7 @@ function initThumbnailScrub() {
   // Restore thumbnails when navigating back (bfcache)
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) {
-      hideCursor();
+      shrinkDot();
       scrubData.forEach(({ img, originalSrc, thumb }) => {
         img.src = originalSrc;
         thumb.classList.remove('scrubbing');
