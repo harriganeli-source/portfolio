@@ -397,7 +397,10 @@ function initThumbnailScrub() {
 
             function flyAnim(now) {
               const t2 = Math.min((now - flyStart) / flyDuration, 1);
-              const ec = t2 * t2 * t2;
+              // Ease-in-out: slow start, fast middle, gentle arrival
+              const ec = t2 < 0.5
+                ? 4 * t2 * t2 * t2
+                : 1 - Math.pow(-2 * t2 + 2, 3) / 2;
               dotX = flyFromX + (mouseX - flyFromX) * ec;
               dotY = flyFromY + (mouseY - flyFromY) * ec;
               dot.style.left = dotX + 'px';
