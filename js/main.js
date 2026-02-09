@@ -304,20 +304,25 @@ function initThumbnailScrub() {
   const cards = document.querySelectorAll('.project-card');
   if (!cards.length) return;
 
-  // Create shared custom cursor element — always a small white ball
-  const cursor = document.createElement('div');
-  cursor.className = 'custom-cursor';
-  cursor.innerHTML = `
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="10" cy="10" r="7" fill="rgba(255,255,255,0.9)"/>
-    </svg>`;
-  document.body.appendChild(cursor);
+  // Detect pointer device (no custom cursor on touch-only devices)
+  const hasPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+  // Create shared custom cursor element — always a small white ball
+  let cursor = null;
   let cursorActive = false;
   let rafId = null;
   let mouseX = 0, mouseY = 0;
 
-  // Smooth cursor follow using requestAnimationFrame
+  if (hasPointer) {
+    cursor = document.createElement('div');
+    cursor.className = 'custom-cursor';
+    cursor.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="7" fill="rgba(255,255,255,0.9)"/>
+      </svg>`;
+    document.body.appendChild(cursor);
+  }
+
   function updateCursorPos() {
     cursor.style.left = mouseX + 'px';
     cursor.style.top = mouseY + 'px';
@@ -325,6 +330,7 @@ function initThumbnailScrub() {
   }
 
   function showCursor(e) {
+    if (!cursor) return;
     mouseX = e.clientX;
     mouseY = e.clientY;
     cursor.style.left = mouseX + 'px';
@@ -340,26 +346,31 @@ function initThumbnailScrub() {
   }
 
   function hideCursor() {
+    if (!cursor) return;
     cursor.classList.remove('visible');
     cursorActive = false;
     if (rafId) cancelAnimationFrame(rafId);
   }
+
+  // Track all scrubbable thumbnails so we can restore on back-navigation
+  const scrubData = [];
 
   cards.forEach(card => {
     const thumb = card.querySelector('.project-thumb');
     const img = thumb ? thumb.querySelector('img') : null;
     if (!thumb || !img) return;
 
-    // Ball cursor on ALL thumbnails
-    thumb.addEventListener('mouseenter', showCursor);
-    thumb.addEventListener('mousemove', trackCursor);
-    thumb.addEventListener('mouseleave', hideCursor);
+    // Ball cursor on ALL thumbnails (pointer devices only)
+    if (hasPointer) {
+      thumb.addEventListener('mouseenter', showCursor);
+      thumb.addEventListener('mousemove', trackCursor);
+      thumb.addEventListener('mouseleave', hideCursor);
+    }
 
     // Scrub logic only for thumbnails with frames
     const frameCount = parseInt(thumb.dataset.frames || '0', 10);
     if (frameCount < 2) return;
 
-    // Derive slug from card href: "projects/fc-26.html" → "fc-26"
     const href = card.getAttribute('href') || '';
     const slugMatch = href.match(/projects\/([^.]+)\.html/);
     if (!slugMatch) return;
@@ -371,10 +382,11 @@ function initThumbnailScrub() {
       frames.push('images/' + slug + '-frame-' + i + '.webp');
     }
 
-    // Preload flag
+    // Save for pageshow restore
+    scrubData.push({ img, originalSrc, thumb });
+
     let preloaded = false;
 
-    // Create scrub progress bar
     const bar = document.createElement('div');
     bar.className = 'scrub-bar';
     thumb.appendChild(bar);
@@ -402,6 +414,19 @@ function initThumbnailScrub() {
       thumb.classList.remove('scrubbing');
       bar.style.width = '0%';
     });
+  });
+
+  // Restore thumbnails when navigating back (bfcache)
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      hideCursor();
+      scrubData.forEach(({ img, originalSrc, thumb }) => {
+        img.src = originalSrc;
+        thumb.classList.remove('scrubbing');
+        const bar = thumb.querySelector('.scrub-bar');
+        if (bar) bar.style.width = '0%';
+      });
+    }
   });
 }
 
