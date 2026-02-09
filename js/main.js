@@ -659,6 +659,10 @@ function initThumbnailScrub() {
       video.loop = true;
       video.playsInline = true;
       video.preload = 'auto';
+      // iOS Safari needs these as HTML attributes for autoplay
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
       video.addEventListener('canplay', () => { videoReady = true; }, { once: true });
       thumb.appendChild(video);
     }
@@ -702,16 +706,12 @@ function initThumbnailScrub() {
           data.ensureVideo();
           const v = data.getVideo();
           if (!v) return;
-          const tryPlay = () => {
+          // On mobile, don't wait for canplay — call play() directly
+          // which forces the browser to start loading + playing
+          v.muted = true;
+          v.play().then(() => {
             v.style.opacity = '1';
-            v.currentTime = 0;
-            v.play().catch(() => {});
-          };
-          if (v.readyState >= 3) {
-            tryPlay();
-          } else {
-            v.addEventListener('canplay', tryPlay, { once: true });
-          }
+          }).catch(() => {});
         } else {
           const v = data.getVideo();
           if (v) {
