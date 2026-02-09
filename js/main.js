@@ -389,7 +389,7 @@ function initThumbnailScrub() {
             // Phase 2: Fly toward the cursor
             const flyFromX = dotX;
             const flyFromY = dotY;
-            const flyDuration = 1200;
+            const flyDuration = 2400;
             const flyStart = performance.now();
 
             // Restore CSS transitions for later morphing
