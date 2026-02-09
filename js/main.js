@@ -398,37 +398,91 @@ function initThumbnailScrub() {
       rafId = requestAnimationFrame(tick);
     }
 
-    // ---- Easter egg: color ripple when dot returns to the "i" ----
-    function spawnRipple() {
-      if (rippleCooldown || !iDot) return;
+    // ---- Easter egg: dot clicks back into the "i", ripple fires ----
+    let docking = false;
+
+    function dockAndRipple() {
+      if (rippleCooldown || !iDot || docking) return;
+      docking = true;
       rippleCooldown = true;
 
-      // Recalculate i-dot position (may have changed due to scroll/resize)
       const rect = iDot.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
+      const homeX = rect.left + rect.width / 2;
+      const homeY = rect.top + rect.height / 2;
+      // i-dot is 0.18em at 30px font ≈ 5.4px
+      const iDotSize = rect.width || 5;
 
-      // Create ripple element
-      const ripple = document.createElement('div');
-      ripple.className = 'i-dot-ripple';
-      ripple.style.left = cx + 'px';
-      ripple.style.top = cy + 'px';
-      document.body.appendChild(ripple);
+      // Animate cursor dot shrinking and snapping into the i position
+      const fromX = dotX, fromY = dotY;
+      const dockDuration = 250;
+      const dockStart = performance.now();
 
-      // Trigger expansion on next frame
-      requestAnimationFrame(() => {
-        ripple.classList.add('expanding');
-      });
+      // Temporarily disable CSS transition so we control the animation
+      dot.style.transition = 'none';
 
-      // Clean up after animation
-      setTimeout(() => {
-        ripple.remove();
-        rippleCooldown = false;
-      }, 1200);
+      function dockAnim(now) {
+        const t = Math.min((now - dockStart) / dockDuration, 1);
+        // Ease in quad — accelerates into place
+        const e = t * t;
+
+        dotX = fromX + (homeX - fromX) * e;
+        dotY = fromY + (homeY - fromY) * e;
+        dot.style.left = dotX + 'px';
+        dot.style.top = dotY + 'px';
+
+        // Shrink from current size toward the i-dot size
+        const currentSize = 14 - (14 - iDotSize) * e;
+        dot.style.width = currentSize + 'px';
+        dot.style.height = currentSize + 'px';
+
+        if (t < 1) {
+          requestAnimationFrame(dockAnim);
+        } else {
+          // Dot has landed — show the real i-dot, hide the cursor dot
+          iDot.style.opacity = '1';
+          dot.style.opacity = '0';
+
+          // Restore CSS transition
+          dot.style.transition = '';
+
+          // Fire the ripple from the i position
+          const ripple = document.createElement('div');
+          ripple.className = 'i-dot-ripple';
+          ripple.style.left = homeX + 'px';
+          ripple.style.top = homeY + 'px';
+          document.body.appendChild(ripple);
+          requestAnimationFrame(() => { ripple.classList.add('expanding'); });
+
+          // After a pause, re-launch the dot off the "i"
+          setTimeout(() => {
+            const r2 = iDot.getBoundingClientRect();
+            const sx = r2.left + r2.width / 2;
+            const sy = r2.top + r2.height / 2;
+            dotX = sx;
+            dotY = sy;
+            dot.style.left = sx + 'px';
+            dot.style.top = sy + 'px';
+            // Reset dot to normal size
+            dot.style.width = '14px';
+            dot.style.height = '14px';
+            dot.style.background = 'rgba(0, 0, 0, 0.8)';
+            dot.style.border = '0px solid rgba(0, 0, 0, 0)';
+            dot.style.borderRadius = '50%';
+
+            iDot.style.opacity = '0';
+            dot.style.opacity = '1';
+            docking = false;
+
+            ripple.remove();
+            rippleCooldown = false;
+          }, 1400);
+        }
+      }
+      requestAnimationFrame(dockAnim);
     }
 
     function tick() {
-      if (!onNav) {
+      if (!onNav && !docking) {
         dotX += (mouseX - dotX) * ease;
         dotY += (mouseY - dotY) * ease;
         dot.style.left = dotX + 'px';
@@ -436,13 +490,13 @@ function initThumbnailScrub() {
       }
 
       // Check if dot has returned home to the "i"
-      if (cursorReady && iDot && !rippleCooldown) {
+      if (cursorReady && iDot && !rippleCooldown && !docking) {
         const rect = iDot.getBoundingClientRect();
         const homeX = rect.left + rect.width / 2;
         const homeY = rect.top + rect.height / 2;
         const dist = Math.hypot(dotX - homeX, dotY - homeY);
         if (dist < 18) {
-          spawnRipple();
+          dockAndRipple();
         }
       }
 
