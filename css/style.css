@@ -130,7 +130,7 @@ nav {
   top: 0;
   left: 0;
   right: 0;
-  height: 85px;
+  height: 100px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -140,11 +140,11 @@ nav {
   align-items: center;
   padding: 0 var(--spacing-xl);
   z-index: var(--z-navigation);
-  font-size: var(--font-size-base);
+  font-size: 18px;
 }
 
 .nav-logo {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.5px;
   white-space: nowrap;
@@ -153,7 +153,7 @@ nav {
 .nav-links {
   display: flex;
   list-style: none;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
   align-items: center;
 }
 
@@ -215,7 +215,7 @@ nav {
 .nav-mobile {
   display: none;
   position: fixed;
-  top: 85px;
+  top: 100px;
   left: 0;
   right: 0;
   background: var(--color-white);
@@ -244,8 +244,8 @@ nav {
    ============================================ */
 
 main {
-  margin-top: 85px;
-  min-height: calc(100vh - 85px);
+  margin-top: 100px;
+  min-height: calc(100vh - 100px);
 }
 
 .container {
@@ -1048,13 +1048,13 @@ footer {
   }
 
   .nav-logo {
-    font-size: var(--font-size-base);
+    font-size: 20px;
   }
 
   .nav-links {
     display: none;
     position: fixed;
-    top: 85px;
+    top: 100px;
     left: 0;
     right: 0;
     background: var(--color-white);
