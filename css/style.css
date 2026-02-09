@@ -540,6 +540,14 @@ img.thumb-zoomed {
   }
 }
 
+/* Project page heading */
+.project-heading {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.3;
+}
+
 /* Video grid layout (2-up with per-video captions) */
 .project-role-label {
   font-size: var(--font-size-small);
