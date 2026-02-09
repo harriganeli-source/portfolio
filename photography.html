@@ -124,30 +124,30 @@
       const grid = document.getElementById('igFeed');
       const loading = document.getElementById('igLoading');
 
-      fetch('/api/instagram?limit=12')
+      fetch('https://feeds.behold.so/j0LByfJz7ExKyZJxesZH')
         .then(r => r.json())
         .then(data => {
           loading.remove();
-          if (data.error) {
-            console.error('Instagram API:', data.error);
+          const posts = (data.posts || [])
+            .filter(p => p.mediaType === 'IMAGE' || p.mediaType === 'CAROUSEL_ALBUM')
+            .slice(0, 12);
+          if (!posts.length) {
             grid.innerHTML = '';
             return;
           }
-          if (!data.posts || !data.posts.length) {
-            grid.innerHTML = '';
-            return;
-          }
-          data.posts.forEach(post => {
+          posts.forEach(post => {
             const a = document.createElement('a');
-            a.href = post.link;
+            a.href = post.permalink;
             a.target = '_blank';
             a.rel = 'noopener';
             a.className = 'ig-feed-item';
-            a.title = post.caption.slice(0, 100) || 'Instagram post';
+            a.title = post.caption || 'Instagram post';
 
             const img = document.createElement('img');
-            img.src = post.src;
-            img.alt = post.caption.slice(0, 60) || 'Photo from Instagram';
+            img.src = post.sizes && post.sizes.medium
+              ? post.sizes.medium.mediaUrl
+              : post.mediaUrl;
+            img.alt = post.caption ? post.caption.slice(0, 60) : 'Photo from Instagram';
             img.loading = 'lazy';
 
             a.appendChild(img);
