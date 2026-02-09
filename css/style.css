@@ -556,7 +556,7 @@ img.thumb-zoomed {
 .container-narrow:has(.project-layout),
 .container-narrow:has(.doc-layout),
 .container-narrow:has(.videos-grid) {
-  max-width: 1200px;
+  max-width: 1700px;
 }
 
 /* Video + credit layout — stacked vertically, full width */
