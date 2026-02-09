@@ -453,8 +453,12 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
+          // Cascade all preview videos
+          playAllPreviews();
+
           // After a pause, re-launch the dot off the "i"
           setTimeout(() => {
+            stopAllPreviews();
             const r2 = iDot.getBoundingClientRect();
             const sx = r2.left + r2.width / 2;
             const sy = r2.top + r2.height / 2;
@@ -475,7 +479,7 @@ function initThumbnailScrub() {
 
             ripple.remove();
             rippleCooldown = false;
-          }, 1400);
+          }, 3500);
         }
       }
       requestAnimationFrame(dockAnim);
@@ -559,8 +563,43 @@ function initThumbnailScrub() {
 
   if (!cards.length) return;
 
-  // Track previews for cleanup on back-navigation
+  // Track previews for cleanup and easter-egg auto-play
   const previewData = [];
+  let allPreviewsPlaying = false;
+
+  function playAllPreviews() {
+    if (allPreviewsPlaying) return;
+    allPreviewsPlaying = true;
+    previewData.forEach((entry, i) => {
+      if (!entry.ensureVideo) return;
+      setTimeout(() => {
+        entry.ensureVideo();
+        const v = entry.getVideo();
+        if (!v) return;
+        const tryPlay = () => {
+          v.style.opacity = '1';
+          v.currentTime = 0;
+          v.play().catch(() => {});
+        };
+        if (v.readyState >= 3) {
+          tryPlay();
+        } else {
+          v.addEventListener('canplay', tryPlay, { once: true });
+        }
+      }, i * 120); // stagger each card
+    });
+  }
+
+  function stopAllPreviews() {
+    previewData.forEach(entry => {
+      const v = entry.getVideo();
+      if (v) {
+        v.pause();
+        v.style.opacity = '0';
+      }
+    });
+    allPreviewsPlaying = false;
+  }
 
   cards.forEach(card => {
     const thumb = card.querySelector('.project-thumb');
@@ -594,7 +633,7 @@ function initThumbnailScrub() {
       thumb.appendChild(video);
     }
 
-    previewData.push({ thumb, img, getVideo: () => video });
+    previewData.push({ thumb, img, getVideo: () => video, ensureVideo });
 
     thumb.addEventListener('mouseenter', () => {
       ensureVideo();
