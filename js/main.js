@@ -483,10 +483,11 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
-          // ---- PHASE 1: 3D Burst — cards explode outward from impact ----
+          // ---- PHASE 1: Scatter — cards explode outward from impact ----
           const grid = document.querySelector('.grid-projects');
           const allCards = Array.from(grid.querySelectorAll('.project-card'));
-          grid.style.perspective = '1200px';
+          const viewW = window.innerWidth;
+          const viewH = window.innerHeight;
 
           allCards.forEach(card => {
             const cr = card.getBoundingClientRect();
@@ -494,33 +495,34 @@ function initThumbnailScrub() {
             const cy = cr.top + cr.height / 2;
             const angle = Math.atan2(cy - homeY, cx - homeX);
             const dist = Math.hypot(cx - homeX, cy - homeY);
-            const force = Math.max(0.4, 1 - dist / 2000);
+            const force = Math.max(0.5, 1 - dist / 2000);
 
-            const burstX = Math.cos(angle) * (80 + Math.random() * 120) * force;
-            const burstY = Math.sin(angle) * (60 + Math.random() * 100) * force;
-            const burstZ = 40 + Math.random() * 180;
+            // Big outward push + random jitter
+            const scatterX = Math.cos(angle) * (250 + Math.random() * 350) * force
+                           + (Math.random() - 0.5) * 200;
+            const scatterY = Math.sin(angle) * (200 + Math.random() * 300) * force
+                           + (Math.random() - 0.5) * 150;
+            const rot = (Math.random() - 0.5) * 25;
 
-            // Shockwave delay — closer cards burst first
-            const delay = Math.min(dist * 0.3, 300);
-            card.style.transition = `transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms`;
-            card.style.transform = `translate3d(${burstX}px, ${burstY}px, ${burstZ}px)`;
-            card.style.zIndex = Math.round(burstZ);
+            // Shockwave: closer cards scatter first
+            const delay = Math.min(dist * 0.25, 250);
+            card.style.transition = `transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) ${delay}ms`;
+            card.style.transform = `translate(${scatterX}px, ${scatterY}px) rotate(${rot}deg)`;
           });
 
           // Cascade all preview videos
           playAllPreviews();
 
-          // ---- PHASE 2: Settle into shuffled positions (after burst) ----
+          // ---- PHASE 2: Converge into shuffled grid positions ----
           setTimeout(() => {
-            // FIRST: snapshot burst positions
-            const burstRects = new Map();
-            allCards.forEach(card => burstRects.set(card, card.getBoundingClientRect()));
+            // FIRST: snapshot scatter positions
+            const scatterRects = new Map();
+            allCards.forEach(card => scatterRects.set(card, card.getBoundingClientRect()));
 
-            // Clear burst transforms
+            // Clear scatter transforms
             allCards.forEach(card => {
               card.style.transition = 'none';
-              card.style.transform = 'none';
-              card.style.zIndex = '';
+              card.style.transform = '';
             });
 
             // Fisher-Yates shuffle and reinsert into DOM
@@ -531,36 +533,34 @@ function initThumbnailScrub() {
             }
             shuffled.forEach(card => grid.appendChild(card));
 
-            // INVERT: position cards at their burst locations
+            // INVERT: position cards at their scatter locations
             allCards.forEach(card => {
-              const first = burstRects.get(card);
+              const first = scatterRects.get(card);
               const last = card.getBoundingClientRect();
               const dx = first.left - last.left;
               const dy = first.top - last.top;
-              card.style.transform = `translate3d(${dx}px, ${dy}px, 80px)`;
+              card.style.transform = `translate(${dx}px, ${dy}px)`;
               card.style.transition = 'none';
             });
 
-            // PLAY: animate from burst positions down to new grid spots
+            // PLAY: animate from scatter positions into grid
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
                 allCards.forEach((card, ci) => {
                   const stagger = ci * 25;
                   card.style.transition = `transform 0.9s cubic-bezier(0.23, 1, 0.32, 1) ${stagger}ms`;
-                  card.style.transform = 'translate3d(0, 0, 0)';
+                  card.style.transform = '';
                 });
                 // Clean up inline styles after settle
                 setTimeout(() => {
                   allCards.forEach(card => {
                     card.style.transform = '';
                     card.style.transition = '';
-                    card.style.zIndex = '';
                   });
-                  grid.style.perspective = '';
                 }, 1500);
               });
             });
-          }, 1100); // after burst completes
+          }, 1000); // after scatter completes
 
           // Stop video cascade and re-launch dot
           setTimeout(() => {
