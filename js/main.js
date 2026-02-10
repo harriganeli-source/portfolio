@@ -754,11 +754,14 @@ function initThumbnailScrub() {
     }
 
     if (isMobile) {
-      // MOBILE: single reusable video element, moved between cards
+      // MOBILE: single reusable video element, moved between cards.
       // iOS Safari severely limits concurrent <video> elements, so we
       // create exactly ONE and re-parent it as the user scrolls.
+      // IMPORTANT: iOS requires a user gesture before video.play() works,
+      // so we don't attempt playback until the first touch event.
       let mobileVideo = null;
       let mobileActiveThumb = null;
+      let touchUnlocked = false;
 
       function ensureMobileVideo() {
         if (mobileVideo) return;
@@ -767,11 +770,9 @@ function initThumbnailScrub() {
         mobileVideo.muted = true;
         mobileVideo.loop = true;
         mobileVideo.playsInline = true;
-        mobileVideo.preload = 'auto';
         mobileVideo.setAttribute('muted', '');
         mobileVideo.setAttribute('playsinline', '');
         mobileVideo.setAttribute('webkit-playsinline', '');
-        mobileVideo.setAttribute('autoplay', '');
       }
 
       function playMobileVideo(data) {
@@ -779,18 +780,22 @@ function initThumbnailScrub() {
         const src = data.thumb.dataset.preview;
         if (!src) return;
         // Move video to new thumb
-        mobileVideo.style.opacity = '0';
         mobileVideo.pause();
+        mobileVideo.style.opacity = '0';
         data.thumb.appendChild(mobileVideo);
         mobileVideo.src = src;
         mobileVideo.load();
-        mobileVideo.play().then(() => {
+        // Show when actually playing
+        mobileVideo.onplaying = () => {
           mobileVideo.style.opacity = '1';
-        }).catch(() => {});
+        };
+        mobileVideo.play().catch(() => {});
         mobileActiveThumb = data.thumb;
       }
 
       function updateMobileVideo() {
+        if (!touchUnlocked) return; // Don't attempt before user gesture
+
         const center = window.innerHeight / 2;
         let closest = null;
         let closestDist = Infinity;
@@ -821,6 +826,7 @@ function initThumbnailScrub() {
 
       // Allow easter egg to resume autoplay after it finishes
       resumeAutoplay = () => {
+        mobileActiveThumb = null; // Force re-play
         updateMobileVideo();
       };
 
@@ -835,13 +841,12 @@ function initThumbnailScrub() {
         }
       }, { passive: true });
 
-      // iOS: unlock video playback on first touch
-      document.addEventListener('touchstart', function unlockVideos() {
-        document.removeEventListener('touchstart', unlockVideos);
+      // iOS: first touch unlocks video playback
+      document.addEventListener('touchstart', () => {
+        if (touchUnlocked) return;
+        touchUnlocked = true;
         updateMobileVideo();
       }, { once: true, passive: true });
-
-      updateMobileVideo();
 
     } else {
       // DESKTOP: multiple videos via IntersectionObserver
