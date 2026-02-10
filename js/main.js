@@ -483,54 +483,84 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
-          // Page shake
-          const main = document.querySelector('main');
-          main.classList.add('page-shaking');
-          main.addEventListener('animationend', () => {
-            main.classList.remove('page-shaking');
-          }, { once: true });
+          // FLIP shuffle — rearrange cards into random grid positions
+          const grid = document.querySelector('.grid-projects');
+          const allCards = Array.from(grid.querySelectorAll('.project-card'));
+          const originalOrder = allCards.slice();
 
-          // Shockwave bounce — cards scatter outward from impact point
-          const allCards = document.querySelectorAll('.project-card');
+          // FIRST: snapshot current positions
+          const firstRects = new Map();
+          allCards.forEach(card => firstRects.set(card, card.getBoundingClientRect()));
+
+          // Fisher-Yates shuffle and reinsert into DOM
+          const shuffled = allCards.slice();
+          for (let si = shuffled.length - 1; si > 0; si--) {
+            const sj = Math.floor(Math.random() * (si + 1));
+            [shuffled[si], shuffled[sj]] = [shuffled[sj], shuffled[si]];
+          }
+          shuffled.forEach(card => grid.appendChild(card));
+
+          // LAST + INVERT: place each card at its old position via transform
           allCards.forEach(card => {
-            const cr = card.getBoundingClientRect();
-            const cx = cr.left + cr.width / 2;
-            const cy = cr.top + cr.height / 2;
-            const dist = Math.hypot(cx - homeX, cy - homeY);
-            const delay = Math.min(dist * 0.35, 400); // shockwave delay
-            // Direction away from impact point
-            const angle = Math.atan2(cy - homeY, cx - homeX);
-            // Intensity decreases with distance but has a floor
-            const intensity = Math.max(0.4, 1 - dist / 2000);
-            // Random bounce values per card — BIG
-            const jumpY = -(30 + Math.random() * 40) * intensity;
-            const jumpX = Math.cos(angle) * (15 + Math.random() * 25) * intensity;
-            const jumpY2 = jumpY * 0.3;
-            const rot = (Math.random() - 0.5) * 12 * intensity;
-            card.style.setProperty('--bounce-y', jumpY + 'px');
-            card.style.setProperty('--bounce-x', jumpX + 'px');
-            card.style.setProperty('--bounce-y2', jumpY2 + 'px');
-            card.style.setProperty('--bounce-rot', rot + 'deg');
-            card.style.animationDelay = delay + 'ms';
-            card.classList.add('card-bouncing');
-            card.addEventListener('animationend', () => {
-              card.classList.remove('card-bouncing');
-              card.style.animationDelay = '';
-              card.style.removeProperty('--bounce-y');
-              card.style.removeProperty('--bounce-x');
-              card.style.removeProperty('--bounce-y2');
-              card.style.removeProperty('--bounce-rot');
-            }, { once: true });
+            const first = firstRects.get(card);
+            const last = card.getBoundingClientRect();
+            const dx = first.left - last.left;
+            const dy = first.top - last.top;
+            card.style.transform = `translate(${dx}px, ${dy}px)`;
+            card.style.transition = 'none';
+          });
+
+          // PLAY: animate to new positions with stagger
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              allCards.forEach((card, ci) => {
+                const stagger = ci * 25;
+                card.style.transition = `transform 0.9s cubic-bezier(0.23, 1, 0.32, 1) ${stagger}ms`;
+                card.style.transform = '';
+              });
+            });
           });
 
           // Cascade all preview videos
           playAllPreviews();
 
-          // After a pause, re-launch the dot off the "i"
+          // After a pause, unshuffle back to original order and re-launch dot
           setTimeout(() => {
             stopAllPreviews();
-            // Re-start autoplay for videos still in view
             if (resumeAutoplay) resumeAutoplay();
+
+            // FLIP unshuffle — restore original card order
+            const unFirst = new Map();
+            allCards.forEach(card => unFirst.set(card, card.getBoundingClientRect()));
+            originalOrder.forEach(card => grid.appendChild(card));
+
+            allCards.forEach(card => {
+              const first = unFirst.get(card);
+              const last = card.getBoundingClientRect();
+              const dx = first.left - last.left;
+              const dy = first.top - last.top;
+              card.style.transform = `translate(${dx}px, ${dy}px)`;
+              card.style.transition = 'none';
+            });
+
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                allCards.forEach((card, ci) => {
+                  const stagger = ci * 25;
+                  card.style.transition = `transform 0.9s cubic-bezier(0.23, 1, 0.32, 1) ${stagger}ms`;
+                  card.style.transform = '';
+                });
+                // Clean up inline styles after animation settles
+                setTimeout(() => {
+                  allCards.forEach(card => {
+                    card.style.transform = '';
+                    card.style.transition = '';
+                  });
+                }, 1200);
+              });
+            });
+
+            // Re-launch the dot off the "i"
             const r2 = iDot.getBoundingClientRect();
             const sx = r2.left + r2.width / 2;
             const sy = r2.top + r2.height / 2;
@@ -538,7 +568,6 @@ function initThumbnailScrub() {
             dotY = sy;
             dot.style.left = sx + 'px';
             dot.style.top = sy + 'px';
-            // Reset dot to normal size
             dot.style.width = '14px';
             dot.style.height = '14px';
             dot.style.background = '#fff';
