@@ -77,26 +77,18 @@ function initFadeInAnimations() {
   const fadeElements = document.querySelectorAll('.fade-in');
   if (!fadeElements.length) return;
 
-  // Set stagger delays on project cards
+  // Set stagger delays on project cards and reveal them all at once
   let cardIndex = 0;
   fadeElements.forEach(el => {
     if (el.classList.contains('project-card')) {
-      el.style.setProperty('--card-delay', (cardIndex * 0.04) + 's');
+      el.style.setProperty('--card-delay', (cardIndex * 0.06) + 's');
       cardIndex++;
     }
   });
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-  fadeElements.forEach(element => {
-    observer.observe(element);
+  // Make all cards visible immediately (stagger handles the entrance feel)
+  requestAnimationFrame(() => {
+    fadeElements.forEach(el => el.classList.add('visible'));
   });
 }
 
@@ -1045,7 +1037,7 @@ function initAboutAnimations() {
 
     // Stagger each logo individually at 30ms apart
     logos.forEach((logo, i) => {
-      logo.style.setProperty('--logo-delay', (i * 0.03) + 's');
+      logo.style.setProperty('--logo-delay', (i * 0.05) + 's');
     });
 
     const logoObserver = new IntersectionObserver((entries) => {
