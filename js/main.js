@@ -665,11 +665,7 @@ function initThumbnailScrub() {
 
   function stopAllPreviews() {
     previewData.forEach(entry => {
-      const v = entry.getVideo();
-      if (v) {
-        v.pause();
-        v.style.opacity = '0';
-      }
+      if (entry.destroyVideo) entry.destroyVideo();
     });
     allPreviewsPlaying = false;
   }
@@ -713,7 +709,19 @@ function initThumbnailScrub() {
       video.load();
     }
 
-    previewData.push({ thumb, img, getVideo: () => video, ensureVideo });
+    // Fully remove video element to free iOS video slot
+    function destroyVideo() {
+      if (video) {
+        video.pause();
+        video.removeAttribute('src');
+        video.load(); // release media resource
+        video.remove();
+        video = null;
+        videoReady = false;
+      }
+    }
+
+    previewData.push({ thumb, img, getVideo: () => video, ensureVideo, destroyVideo });
 
     // On hover: hide video to reveal static thumbnail underneath
     if (hasPointer) {
@@ -760,11 +768,8 @@ function initThumbnailScrub() {
           tryPlay(data);
         } else {
           visibleThumbs.delete(data);
-          const v = data.getVideo();
-          if (v) {
-            v.pause();
-            v.style.opacity = '0';
-          }
+          // Fully destroy video to free iOS video slot
+          if (data.destroyVideo) data.destroyVideo();
         }
       });
     }, { threshold: 0.35 });
