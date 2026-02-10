@@ -483,6 +483,39 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
+          // Page shake
+          const main = document.querySelector('main');
+          main.classList.add('page-shaking');
+          main.addEventListener('animationend', () => {
+            main.classList.remove('page-shaking');
+          }, { once: true });
+
+          // Shockwave bounce — cards bounce outward from impact point
+          const allCards = document.querySelectorAll('.project-card');
+          allCards.forEach(card => {
+            const cr = card.getBoundingClientRect();
+            const cx = cr.left + cr.width / 2;
+            const cy = cr.top + cr.height / 2;
+            const dist = Math.hypot(cx - homeX, cy - homeY);
+            const delay = Math.min(dist * 0.4, 500); // shockwave delay
+            // Random bounce values per card
+            const jumpY = -(12 + Math.random() * 18);
+            const jumpY2 = jumpY * 0.3;
+            const rot = (Math.random() - 0.5) * 6;
+            card.style.setProperty('--bounce-y', jumpY + 'px');
+            card.style.setProperty('--bounce-y2', jumpY2 + 'px');
+            card.style.setProperty('--bounce-rot', rot + 'deg');
+            card.style.animationDelay = delay + 'ms';
+            card.classList.add('card-bouncing');
+            card.addEventListener('animationend', () => {
+              card.classList.remove('card-bouncing');
+              card.style.animationDelay = '';
+              card.style.removeProperty('--bounce-y');
+              card.style.removeProperty('--bounce-y2');
+              card.style.removeProperty('--bounce-rot');
+            }, { once: true });
+          });
+
           // Cascade all preview videos
           playAllPreviews();
 
