@@ -738,10 +738,11 @@ function initThumbnailScrub() {
     }
   });
 
-  // ---- Auto-play previews on scroll into view (all devices) ----
+  // ---- Auto-play previews on scroll into view ----
   if (isHomepage && previewData.length) {
-    // Track which thumbs are currently in view
+    const isMobile = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const visibleThumbs = new Set();
+    let mobileActiveData = null;
 
     function tryPlay(data) {
       data.ensureVideo();
@@ -755,38 +756,91 @@ function initThumbnailScrub() {
 
     // Allow easter egg to resume autoplay after it finishes
     resumeAutoplay = () => {
-      visibleThumbs.forEach(data => tryPlay(data));
+      if (isMobile) {
+        if (mobileActiveData) tryPlay(mobileActiveData);
+      } else {
+        visibleThumbs.forEach(data => tryPlay(data));
+      }
     };
 
-    const autoPlayObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const data = previewData.find(d => d.thumb === entry.target);
-        if (!data) return;
+    if (isMobile) {
+      // MOBILE: only one video at a time — the card nearest viewport center
 
-        if (entry.isIntersecting) {
-          visibleThumbs.add(data);
-          tryPlay(data);
-        } else {
-          visibleThumbs.delete(data);
-          // Fully destroy video to free iOS video slot
-          if (data.destroyVideo) data.destroyVideo();
+      function updateMobileVideo() {
+        const center = window.innerHeight / 2;
+        let closest = null;
+        let closestDist = Infinity;
+
+        previewData.forEach(data => {
+          const rect = data.thumb.getBoundingClientRect();
+          const cardCenter = rect.top + rect.height / 2;
+          const dist = Math.abs(cardCenter - center);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = data;
+          }
+        });
+
+        // Only play if card is reasonably near center
+        if (closestDist > window.innerHeight * 0.5) closest = null;
+
+        if (closest !== mobileActiveData) {
+          // Destroy the old video first to free the iOS slot
+          if (mobileActiveData && mobileActiveData.destroyVideo) {
+            mobileActiveData.destroyVideo();
+          }
+          mobileActiveData = closest;
+          // Small delay to let iOS release the resource
+          if (mobileActiveData) {
+            setTimeout(() => tryPlay(mobileActiveData), 50);
+          }
         }
+      }
+
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => {
+            updateMobileVideo();
+            ticking = false;
+          });
+        }
+      }, { passive: true });
+
+      // iOS: unlock on first touch, then start
+      let touchUnlocked = false;
+      document.addEventListener('touchstart', function unlockVideos() {
+        if (touchUnlocked) return;
+        touchUnlocked = true;
+        document.removeEventListener('touchstart', unlockVideos);
+        updateMobileVideo();
+      }, { once: true, passive: true });
+
+      // Also try on load
+      updateMobileVideo();
+
+    } else {
+      // DESKTOP: multiple videos via IntersectionObserver
+      const autoPlayObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const data = previewData.find(d => d.thumb === entry.target);
+          if (!data) return;
+
+          if (entry.isIntersecting) {
+            visibleThumbs.add(data);
+            tryPlay(data);
+          } else {
+            visibleThumbs.delete(data);
+            if (data.destroyVideo) data.destroyVideo();
+          }
+        });
+      }, { threshold: 0.35 });
+
+      previewData.forEach(entry => {
+        autoPlayObserver.observe(entry.thumb);
       });
-    }, { threshold: 0.35 });
-
-    previewData.forEach(entry => {
-      autoPlayObserver.observe(entry.thumb);
-    });
-
-    // iOS fallback: on first touch, try playing all visible videos
-    // iOS sometimes blocks autoplay until a user gesture occurs
-    let touchUnlocked = false;
-    document.addEventListener('touchstart', function unlockVideos() {
-      if (touchUnlocked) return;
-      touchUnlocked = true;
-      document.removeEventListener('touchstart', unlockVideos);
-      visibleThumbs.forEach(data => tryPlay(data));
-    }, { once: true, passive: true });
+    }
   }
 
   // Restore thumbnails when navigating back (bfcache)
