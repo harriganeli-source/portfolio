@@ -503,7 +503,12 @@
       user-select: none;
       flex-shrink: 0;
       letter-spacing: -2px;
+      padding: 8px 4px;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
     }
+    .video-item .drag-handle:hover { background: var(--surface-hover); color: var(--text); }
+    .video-item .drag-handle:active { cursor: grabbing; }
     .video-item .video-poster-preview {
       width: 100px;
       aspect-ratio: 16/9;
@@ -659,10 +664,106 @@
       color: var(--text-dim);
       opacity: 0.5;
     }
+    /* ---- Tab Nav ---- */
+    .top-bar .tab-nav { display: flex; gap: 4px; }
+    .top-bar .tab-nav button {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-family: var(--font);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .top-bar .tab-nav button:hover { color: var(--text); background: var(--surface-hover); }
+    .top-bar .tab-nav button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ---- About Editor ---- */
+    .about-editor { display: none; }
+    .about-editor.active { display: block; }
+    .about-editor-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+      padding-bottom: 120px;
+    }
+    .about-bio-para {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .about-bio-para textarea {
+      width: 100%;
+      padding: 10px 14px;
+      padding-right: 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      font-family: var(--font);
+      resize: vertical;
+      min-height: 80px;
+    }
+    .about-bio-para textarea:focus { outline: none; border-color: var(--accent); }
+    .about-bio-para .remove-para {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-bio-para .remove-para:hover { border-color: var(--danger); color: var(--danger); }
+    .about-photo-item {
+      display: inline-block;
+      position: relative;
+      margin: 6px;
+    }
+    .about-photo-item img {
+      width: 140px;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #333;
+      display: block;
+    }
+    .about-photo-item .photo-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .about-photo-item:hover .photo-remove { opacity: 1; }
+    .about-photo-item .photo-remove:hover { background: var(--danger); }
+
     @media (max-width: 600px) {
       .editor-row { grid-template-columns: 1fr; }
       .video-item { flex-wrap: wrap; }
       .video-item .video-poster-preview { width: 80px; }
+      .about-photo-item img { width: 100px; }
     }
   </style>
 </head>
@@ -683,7 +784,10 @@
   <!-- Dashboard -->
   <div class="dashboard" id="dashboard">
     <div class="top-bar">
-      <h1>Projects</h1>
+      <div class="tab-nav">
+        <button class="active" id="tabProjects">Projects</button>
+        <button id="tabAbout">About</button>
+      </div>
       <div class="actions">
         <button class="btn" id="refreshBtn" title="Refresh from live site">Refresh</button>
         <button class="btn" id="logoutBtn">Log Out</button>
@@ -846,6 +950,46 @@
             <input type="file" id="editorDocPosterUpload" accept="image/*">
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Editor -->
+  <div class="about-editor" id="aboutEditor">
+    <div class="about-editor-body">
+      <!-- Heading -->
+      <div class="editor-section">
+        <h3>Heading</h3>
+        <input type="text" id="aboutHeading" value="" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;font-family:var(--font);">
+      </div>
+      <!-- Bio Paragraphs -->
+      <div class="editor-section">
+        <h3>Bio Paragraphs</h3>
+        <div id="aboutBioList"></div>
+        <button class="editor-add-btn" id="aboutAddParaBtn">+ Add Paragraph</button>
+      </div>
+      <!-- Contact Line -->
+      <div class="editor-section">
+        <h3>Contact Line (HTML)</h3>
+        <input type="text" id="aboutContact" value="" placeholder='e.g. Drop me a line: &lt;a href="mailto:..."&gt;email&lt;/a&gt;' style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;font-family:var(--font);">
+      </div>
+      <!-- Headshot -->
+      <div class="editor-section">
+        <h3>Headshot</h3>
+        <img id="aboutHeadshotPreview" style="width:180px;aspect-ratio:3/4;object-fit:cover;border-radius:6px;background:#333;display:block;margin-bottom:10px;" src="" alt="">
+        <input type="file" id="aboutHeadshotUpload" accept="image/*">
+      </div>
+      <!-- Photo Grid -->
+      <div class="editor-section">
+        <h3>Photo Grid</h3>
+        <div id="aboutPhotoGrid"></div>
+        <div style="margin-top:10px;">
+          <input type="file" id="aboutPhotoUpload" accept="image/*" multiple>
+        </div>
+      </div>
+      <!-- Save -->
+      <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" id="aboutSaveBtn" style="padding:12px 28px;">Save About Page</button>
       </div>
     </div>
   </div>
@@ -1593,10 +1737,10 @@ function renderEditorVideos() {
   editorVideoData.forEach((v, i) => {
     const item = document.createElement('div');
     item.className = 'video-item';
-    item.draggable = true;
+    item.draggable = false;
     item.dataset.vi = i;
     item.innerHTML = `
-      <span class="drag-handle">&#8942;&#8942;</span>
+      <span class="drag-handle" title="Drag to reorder">&#8942;&#8942;</span>
       <img class="video-poster-preview" src="${v.posterPreview || ''}" alt="" onerror="this.src=''">
       <div class="video-fields">
         <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
@@ -1607,8 +1751,11 @@ function renderEditorVideos() {
         <button title="Remove">&times;</button>
       </div>
     `;
+    // Only allow drag when grabbing the handle
+    const handle = item.querySelector('.drag-handle');
+    handle.addEventListener('mousedown', () => { item.draggable = true; });
+    item.addEventListener('dragend', (e) => { item.draggable = false; onEditorVideoDragEnd(e); });
     item.addEventListener('dragstart', onEditorVideoDragStart);
-    item.addEventListener('dragend', onEditorVideoDragEnd);
     item.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
     item.addEventListener('drop', onEditorVideoDrop);
     item.addEventListener('dragenter', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
@@ -1826,6 +1973,223 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Save';
+  }
+});
+
+// ---- Tab Navigation ----
+const tabProjectsBtn = document.getElementById('tabProjects');
+const tabAboutBtn = document.getElementById('tabAbout');
+const projectGrid = document.getElementById('projectGrid');
+const aboutEditorEl = document.getElementById('aboutEditor');
+const publishBar = document.getElementById('publishBar');
+
+tabProjectsBtn.addEventListener('click', () => {
+  tabProjectsBtn.classList.add('active');
+  tabAboutBtn.classList.remove('active');
+  projectGrid.style.display = '';
+  aboutEditorEl.classList.remove('active');
+  publishBar.style.display = '';
+});
+
+tabAboutBtn.addEventListener('click', async () => {
+  tabAboutBtn.classList.add('active');
+  tabProjectsBtn.classList.remove('active');
+  projectGrid.style.display = 'none';
+  aboutEditorEl.classList.add('active');
+  publishBar.style.display = 'none';
+  await loadAboutData();
+});
+
+// ---- About Editor ----
+let aboutData = null;
+let aboutNewHeadshotFile = null;
+let aboutNewPhotos = []; // { file, preview } for newly added photos
+
+async function loadAboutData() {
+  try {
+    aboutData = await apiCall('/api/about');
+    renderAboutEditor();
+  } catch (err) {
+    showToast('Failed to load about page: ' + err.message);
+  }
+}
+
+function renderAboutEditor() {
+  if (!aboutData) return;
+
+  document.getElementById('aboutHeading').value = aboutData.heading || '';
+  document.getElementById('aboutContact').value = aboutData.contactHtml || '';
+
+  // Headshot
+  const headshotPrev = document.getElementById('aboutHeadshotPreview');
+  headshotPrev.src = aboutData.headshotSrc ? '/' + aboutData.headshotSrc : '';
+  aboutNewHeadshotFile = null;
+  document.getElementById('aboutHeadshotUpload').value = '';
+
+  // Bio paragraphs
+  renderAboutBio();
+
+  // Photo grid
+  aboutNewPhotos = [];
+  renderAboutPhotos();
+}
+
+function renderAboutBio() {
+  const list = document.getElementById('aboutBioList');
+  list.innerHTML = '';
+  (aboutData.bioParas || []).forEach((text, i) => {
+    const div = document.createElement('div');
+    div.className = 'about-bio-para';
+    div.innerHTML = `
+      <textarea>${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+      <button class="remove-para" title="Remove paragraph">&times;</button>
+    `;
+    div.querySelector('textarea').addEventListener('input', (e) => {
+      aboutData.bioParas[i] = e.target.value;
+    });
+    div.querySelector('.remove-para').addEventListener('click', () => {
+      aboutData.bioParas.splice(i, 1);
+      renderAboutBio();
+    });
+    list.appendChild(div);
+  });
+}
+
+document.getElementById('aboutAddParaBtn').addEventListener('click', () => {
+  if (!aboutData) return;
+  aboutData.bioParas.push('');
+  renderAboutBio();
+  // Focus the new textarea
+  const textareas = document.querySelectorAll('#aboutBioList textarea');
+  if (textareas.length) textareas[textareas.length - 1].focus();
+});
+
+function renderAboutPhotos() {
+  const grid = document.getElementById('aboutPhotoGrid');
+  grid.innerHTML = '';
+
+  // Existing photos
+  const allPhotos = aboutData.photos || [];
+  allPhotos.forEach((src, i) => {
+    const item = document.createElement('div');
+    item.className = 'about-photo-item';
+    item.innerHTML = `
+      <img src="/${src}" alt="" onerror="this.style.background='#333'">
+      <button class="photo-remove" title="Remove">&times;</button>
+    `;
+    item.querySelector('.photo-remove').addEventListener('click', () => {
+      aboutData.photos.splice(i, 1);
+      renderAboutPhotos();
+    });
+    grid.appendChild(item);
+  });
+
+  // Newly added photos (not yet uploaded)
+  aboutNewPhotos.forEach((np, i) => {
+    const item = document.createElement('div');
+    item.className = 'about-photo-item';
+    item.innerHTML = `
+      <img src="${np.preview}" alt="">
+      <button class="photo-remove" title="Remove">&times;</button>
+    `;
+    item.querySelector('.photo-remove').addEventListener('click', () => {
+      aboutNewPhotos.splice(i, 1);
+      renderAboutPhotos();
+    });
+    grid.appendChild(item);
+  });
+}
+
+// Headshot upload
+document.getElementById('aboutHeadshotUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  aboutNewHeadshotFile = file;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('aboutHeadshotPreview').src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+// Photo uploads (multiple)
+document.getElementById('aboutPhotoUpload').addEventListener('change', (e) => {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      aboutNewPhotos.push({ file, preview: ev.target.result });
+      renderAboutPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+});
+
+// Save About
+document.getElementById('aboutSaveBtn').addEventListener('click', async () => {
+  if (!aboutData) return;
+  const btn = document.getElementById('aboutSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const updates = {
+      heading: document.getElementById('aboutHeading').value.trim(),
+      bioParas: aboutData.bioParas,
+      contactHtml: document.getElementById('aboutContact').value.trim(),
+      headshotSrc: aboutData.headshotSrc,
+      photos: [...aboutData.photos],
+    };
+
+    // Upload new headshot if changed
+    if (aboutNewHeadshotFile) {
+      const base64 = await compressImage(aboutNewHeadshotFile);
+      const uploadResult = await apiCall('/api/upload', {
+        method: 'POST',
+        body: JSON.stringify({ filename: 'headshot.webp', data: base64 }),
+      });
+      stagedFiles.push(uploadResult.stagedFile);
+      updates.headshotSrc = uploadResult.stagedFile.path;
+    }
+
+    // Upload new grid photos
+    for (let i = 0; i < aboutNewPhotos.length; i++) {
+      const np = aboutNewPhotos[i];
+      const base64 = await compressImage(np.file);
+      const safeName = 'about-' + Date.now() + '-' + i + '.webp';
+      const uploadResult = await apiCall('/api/upload', {
+        method: 'POST',
+        body: JSON.stringify({ filename: safeName, data: base64 }),
+      });
+      stagedFiles.push(uploadResult.stagedFile);
+      updates.photos.push(uploadResult.stagedFile.path);
+    }
+
+    // Generate updated about.html via API
+    const result = await apiCall('/api/about', {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+
+    // Add to staged files for publish
+    if (result.stagedFiles) {
+      stagedFiles.push(...result.stagedFiles);
+    }
+
+    aboutNewPhotos = [];
+    aboutNewHeadshotFile = null;
+    markChanged();
+    showToast('About page saved — publish to deploy');
+
+    // Switch back to Projects tab so they can see the publish bar
+    tabProjectsBtn.click();
+
+  } catch (err) {
+    showToast('Error: ' + (err.message || err));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save About Page';
   }
 });
 
