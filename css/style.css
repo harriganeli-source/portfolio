@@ -834,8 +834,13 @@ img.thumb-zoomed {
   100% { transform: translateX(-50%); }
 }
 
-/* Laurels hover overlay on homepage thumbnail */
+/* Laurels overlay — hidden via CSS so admin-panel rebuilds can't bring it back */
 .laurels-overlay {
+  display: none !important;
+}
+
+/* (Original laurels styles kept for reference but overridden above) */
+.laurels-overlay-original-unused {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);

@@ -1006,7 +1006,28 @@ function initMobileActiveCard() {
   update();
 }
 
+/**
+ * Strip "for" from project titles so admin-panel rebuilds can't bring it back.
+ * Turns "FC 26 · for Electronic Arts" into "FC 26 · Electronic Arts"
+ */
+function cleanProjectTitles() {
+  document.querySelectorAll('.project-title').forEach(title => {
+    // Walk text nodes inside .project-title and remove " for " (or "for ")
+    // that appears right before the <span class="studio">
+    const children = Array.from(title.childNodes);
+    children.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        // Remove patterns like "· for " → "· " or " for " at end of text node
+        node.textContent = node.textContent
+          .replace(/·\s*for\s*$/i, '· ')
+          .replace(/\s+for\s*$/i, ' ');
+      }
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  cleanProjectTitles();
   initMobileMenu();
   setActiveNavLink();
   initFadeInAnimations();
