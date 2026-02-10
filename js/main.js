@@ -688,19 +688,34 @@ function initThumbnailScrub() {
   if (isHomepage && previewData.length) {
     function playWhenReady(v) {
       v.muted = true;
+      // Clear any previous retry
+      if (v._retryId) { clearInterval(v._retryId); v._retryId = null; }
+
       function tryPlay() {
-        v.play().then(() => {
+        const p = v.play();
+        if (p && p.then) {
+          p.then(() => {
+            v.style.opacity = '1';
+            if (v._retryId) { clearInterval(v._retryId); v._retryId = null; }
+          }).catch(() => {});
+        }
+      }
+
+      // Try immediately
+      tryPlay();
+      // Retry every 500ms until it works (covers slow mobile loading)
+      v._retryId = setInterval(() => {
+        if (!v.paused) {
+          // Already playing, stop retrying
           v.style.opacity = '1';
-        }).catch(() => {});
-      }
-      // If enough data is loaded, play immediately; otherwise wait
-      if (v.readyState >= 2) {
-        tryPlay();
-      } else {
-        v.addEventListener('canplay', tryPlay, { once: true });
-        // Nudge mobile browsers to start loading
-        v.load();
-      }
+          clearInterval(v._retryId);
+          v._retryId = null;
+          return;
+        }
+        if (v.readyState >= 2) {
+          tryPlay();
+        }
+      }, 500);
     }
 
     const autoPlayObserver = new IntersectionObserver((entries) => {
@@ -718,6 +733,7 @@ function initThumbnailScrub() {
           if (v) {
             v.pause();
             v.style.opacity = '0';
+            if (v._retryId) { clearInterval(v._retryId); v._retryId = null; }
           }
         }
       });
