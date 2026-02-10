@@ -1229,12 +1229,14 @@ img.thumb-zoomed {
   width: auto;
   object-fit: contain;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
   transition-delay: var(--logo-delay, 0s);
 }
 
 .client-logos.logos-visible img {
   opacity: 0.85;
+  transform: translateY(0);
 }
 
 .client-logos.logos-visible img:hover {
@@ -1271,7 +1273,11 @@ img.thumb-zoomed {
   }
 
   .client-logos-inner img {
-    transform: scale(0.75);
+    transform: translateY(10px) scale(0.75);
+  }
+
+  .client-logos.logos-visible img {
+    transform: translateY(0) scale(0.75);
   }
 }
 

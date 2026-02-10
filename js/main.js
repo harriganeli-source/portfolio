@@ -1038,22 +1038,9 @@ function initAboutAnimations() {
   if (logosSection) {
     const logos = Array.from(logosSection.querySelectorAll('.client-logos-inner img'));
 
-    // Group logos by visual row (same offsetTop = same row)
-    const rowMap = new Map();
-    logos.forEach(logo => {
-      const top = logo.offsetTop;
-      if (!rowMap.has(top)) rowMap.set(top, []);
-      rowMap.get(top).push(logo);
-    });
-
-    // Assign delay per row (all logos in same row share one delay)
-    let rowIndex = 0;
-    rowMap.forEach(rowLogos => {
-      const delay = rowIndex * 0.12; // 120ms between rows
-      rowLogos.forEach(logo => {
-        logo.style.setProperty('--logo-delay', delay + 's');
-      });
-      rowIndex++;
+    // Stagger each logo individually at 30ms apart
+    logos.forEach((logo, i) => {
+      logo.style.setProperty('--logo-delay', (i * 0.03) + 's');
     });
 
     const logoObserver = new IntersectionObserver((entries) => {
