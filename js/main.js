@@ -664,8 +664,11 @@ function initThumbnailScrub() {
       video.playsInline = true;
       video.autoplay = true;
       video.preload = 'auto';
+      // Show video as soon as it actually starts playing
+      video.addEventListener('playing', () => {
+        video.style.opacity = '1';
+      });
       video.src = previewSrc;
-      video.addEventListener('canplay', () => { videoReady = true; }, { once: true });
       thumb.appendChild(video);
     }
 
@@ -688,38 +691,6 @@ function initThumbnailScrub() {
 
   // ---- Auto-play previews on scroll into view (all devices) ----
   if (isHomepage && previewData.length) {
-    function playWhenReady(v) {
-      v.muted = true;
-      // Clear any previous retry
-      if (v._retryId) { clearInterval(v._retryId); v._retryId = null; }
-
-      function tryPlay() {
-        const p = v.play();
-        if (p && p.then) {
-          p.then(() => {
-            v.style.opacity = '1';
-            if (v._retryId) { clearInterval(v._retryId); v._retryId = null; }
-          }).catch(() => {});
-        }
-      }
-
-      // Try immediately
-      tryPlay();
-      // Retry every 500ms until it works (covers slow mobile loading)
-      v._retryId = setInterval(() => {
-        if (!v.paused) {
-          // Already playing, stop retrying
-          v.style.opacity = '1';
-          clearInterval(v._retryId);
-          v._retryId = null;
-          return;
-        }
-        if (v.readyState >= 2) {
-          tryPlay();
-        }
-      }, 500);
-    }
-
     const autoPlayObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const data = previewData.find(d => d.thumb === entry.target);
@@ -729,13 +700,15 @@ function initThumbnailScrub() {
           data.ensureVideo();
           const v = data.getVideo();
           if (!v) return;
-          playWhenReady(v);
+          // Ensure muted (required for autoplay policy)
+          v.muted = true;
+          // Nudge play — the 'playing' event listener in ensureVideo handles showing it
+          v.play().catch(() => {});
         } else {
           const v = data.getVideo();
           if (v) {
             v.pause();
             v.style.opacity = '0';
-            if (v._retryId) { clearInterval(v._retryId); v._retryId = null; }
           }
         }
       });
