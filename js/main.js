@@ -654,21 +654,16 @@ function initThumbnailScrub() {
       if (video) return;
       video = document.createElement('video');
       video.className = 'thumb-video-preview';
-      // iOS Safari requires all three as HTML attributes BEFORE appending to DOM
-      video.setAttribute('autoplay', '');
-      video.setAttribute('muted', '');
-      video.setAttribute('playsinline', '');
-      video.setAttribute('webkit-playsinline', '');
+      video.src = previewSrc;
       video.muted = true;
       video.loop = true;
       video.playsInline = true;
-      video.autoplay = true;
       video.preload = 'auto';
-      // Show video as soon as it actually starts playing
-      video.addEventListener('playing', () => {
-        video.style.opacity = '1';
-      });
-      video.src = previewSrc;
+      // iOS Safari needs these as HTML attributes for autoplay
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      video.addEventListener('canplay', () => { videoReady = true; }, { once: true });
       thumb.appendChild(video);
     }
 
@@ -700,10 +695,10 @@ function initThumbnailScrub() {
           data.ensureVideo();
           const v = data.getVideo();
           if (!v) return;
-          // Ensure muted (required for autoplay policy)
           v.muted = true;
-          // Nudge play — the 'playing' event listener in ensureVideo handles showing it
-          v.play().catch(() => {});
+          v.play().then(() => {
+            v.style.opacity = '1';
+          }).catch(() => {});
         } else {
           const v = data.getVideo();
           if (v) {
