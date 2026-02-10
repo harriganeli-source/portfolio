@@ -521,7 +521,15 @@ img.thumb-zoomed {
 }
 
 .project-card.fade-in {
-  animation: fade-in-up var(--transition-slow) ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: var(--card-delay, 0s);
+}
+
+.project-card.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Grid responsive */

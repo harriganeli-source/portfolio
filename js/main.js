@@ -74,10 +74,17 @@ function setActiveNavLink() {
  * Initialize fade-in animations using IntersectionObserver
  */
 function initFadeInAnimations() {
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-  };
+  const fadeElements = document.querySelectorAll('.fade-in');
+  if (!fadeElements.length) return;
+
+  // Set stagger delays on project cards
+  let cardIndex = 0;
+  fadeElements.forEach(el => {
+    if (el.classList.contains('project-card')) {
+      el.style.setProperty('--card-delay', (cardIndex * 0.04) + 's');
+      cardIndex++;
+    }
+  });
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -86,10 +93,8 @@ function initFadeInAnimations() {
         observer.unobserve(entry.target);
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  // Observe all elements with fade-in class
-  const fadeElements = document.querySelectorAll('.fade-in');
   fadeElements.forEach(element => {
     observer.observe(element);
   });
