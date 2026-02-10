@@ -389,7 +389,7 @@ function initThumbnailScrub() {
             // Phase 2: Fly toward the cursor
             const flyFromX = dotX;
             const flyFromY = dotY;
-            const flyDuration = 2400;
+            const flyDuration = 1200;
             const flyStart = performance.now();
 
             // Restore CSS transitions for later morphing
@@ -482,12 +482,6 @@ function initThumbnailScrub() {
           ripple.style.top = homeY + 'px';
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
-
-          // Screen flash
-          const flash = document.createElement('div');
-          flash.className = 'impact-flash';
-          document.body.appendChild(flash);
-          flash.addEventListener('animationend', () => flash.remove(), { once: true });
 
           // Page shake
           const main = document.querySelector('main');
