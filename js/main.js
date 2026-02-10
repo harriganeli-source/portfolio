@@ -686,6 +686,23 @@ function initThumbnailScrub() {
 
   // ---- Auto-play previews on scroll into view (all devices) ----
   if (isHomepage && previewData.length) {
+    function playWhenReady(v) {
+      v.muted = true;
+      function tryPlay() {
+        v.play().then(() => {
+          v.style.opacity = '1';
+        }).catch(() => {});
+      }
+      // If enough data is loaded, play immediately; otherwise wait
+      if (v.readyState >= 2) {
+        tryPlay();
+      } else {
+        v.addEventListener('canplay', tryPlay, { once: true });
+        // Nudge mobile browsers to start loading
+        v.load();
+      }
+    }
+
     const autoPlayObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const data = previewData.find(d => d.thumb === entry.target);
@@ -695,10 +712,7 @@ function initThumbnailScrub() {
           data.ensureVideo();
           const v = data.getVideo();
           if (!v) return;
-          v.muted = true;
-          v.play().then(() => {
-            v.style.opacity = '1';
-          }).catch(() => {});
+          playWhenReady(v);
         } else {
           const v = data.getVideo();
           if (v) {
@@ -746,12 +760,18 @@ function initPhotoStripScroll() {
   const speed = 0.5; // pixels per frame
   let paused = false;
   let running = false;
+  let acc = 0; // accumulator for sub-pixel scrolling
 
   function scroll() {
     if (!paused) {
-      strip.scrollLeft += speed;
-      if (strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1) {
-        strip.scrollLeft = 0;
+      acc += speed;
+      if (acc >= 1) {
+        const px = Math.floor(acc);
+        acc -= px;
+        strip.scrollLeft += px;
+        if (strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1) {
+          strip.scrollLeft = 0;
+        }
       }
     }
     requestAnimationFrame(scroll);
