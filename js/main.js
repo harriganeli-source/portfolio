@@ -1028,6 +1028,45 @@ function cleanProjectTitles() {
   });
 }
 
+/**
+ * Animate about-page elements on scroll: headshot fades in,
+ * client logos stagger in with individual delays
+ */
+function initAboutAnimations() {
+  // Headshot fade-in
+  const headshot = document.querySelector('.about-headshot');
+  if (headshot) {
+    const hsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          headshot.classList.add('headshot-visible');
+          hsObserver.unobserve(headshot);
+        }
+      });
+    }, { threshold: 0.2 });
+    hsObserver.observe(headshot);
+  }
+
+  // Client logos staggered fade-in
+  const logosSection = document.querySelector('.client-logos');
+  if (logosSection) {
+    const logos = logosSection.querySelectorAll('.client-logos-inner img');
+    logos.forEach((logo, i) => {
+      logo.style.setProperty('--logo-delay', (i * 0.06) + 's');
+    });
+
+    const logoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          logosSection.classList.add('logos-visible');
+          logoObserver.unobserve(logosSection);
+        }
+      });
+    }, { threshold: 0.15 });
+    logoObserver.observe(logosSection);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cleanProjectTitles();
   initMobileMenu();
@@ -1040,6 +1079,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initThumbnailScrub();
   initPhotoStripScroll();
   initMobileActiveCard();
+  initAboutAnimations();
 });
 
 /**
