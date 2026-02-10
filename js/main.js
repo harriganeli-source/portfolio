@@ -483,84 +483,51 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
-          // ---- PHASE 1: Scatter — cards explode outward from impact ----
+          // ---- FLIP shuffle — cards slide directly to new positions ----
           const grid = document.querySelector('.grid-projects');
           const allCards = Array.from(grid.querySelectorAll('.project-card'));
-          const viewW = window.innerWidth;
-          const viewH = window.innerHeight;
 
+          // FIRST: snapshot current positions
+          const firstRects = new Map();
+          allCards.forEach(card => firstRects.set(card, card.getBoundingClientRect()));
+
+          // Fisher-Yates shuffle and reinsert into DOM
+          const shuffled = allCards.slice();
+          for (let si = shuffled.length - 1; si > 0; si--) {
+            const sj = Math.floor(Math.random() * (si + 1));
+            [shuffled[si], shuffled[sj]] = [shuffled[sj], shuffled[si]];
+          }
+          shuffled.forEach(card => grid.appendChild(card));
+
+          // INVERT: place each card at its old position via transform
           allCards.forEach(card => {
-            const cr = card.getBoundingClientRect();
-            const cx = cr.left + cr.width / 2;
-            const cy = cr.top + cr.height / 2;
-            const angle = Math.atan2(cy - homeY, cx - homeX);
-            const dist = Math.hypot(cx - homeX, cy - homeY);
-            const force = Math.max(0.5, 1 - dist / 2000);
+            const first = firstRects.get(card);
+            const last = card.getBoundingClientRect();
+            const dx = first.left - last.left;
+            const dy = first.top - last.top;
+            card.style.transform = `translate(${dx}px, ${dy}px)`;
+            card.style.transition = 'none';
+          });
 
-            // Big outward push + random jitter
-            const scatterX = Math.cos(angle) * (250 + Math.random() * 350) * force
-                           + (Math.random() - 0.5) * 200;
-            const scatterY = Math.sin(angle) * (200 + Math.random() * 300) * force
-                           + (Math.random() - 0.5) * 150;
-            const rot = (Math.random() - 0.5) * 25;
-
-            // Shockwave: closer cards scatter first
-            const delay = Math.min(dist * 0.25, 250);
-            card.style.transition = `transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) ${delay}ms`;
-            card.style.transform = `translate(${scatterX}px, ${scatterY}px) rotate(${rot}deg)`;
+          // PLAY: all cards animate to new positions simultaneously
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              allCards.forEach(card => {
+                card.style.transition = 'transform 0.8s cubic-bezier(0.23, 1, 0.32, 1)';
+                card.style.transform = '';
+              });
+              // Clean up inline styles after animation
+              setTimeout(() => {
+                allCards.forEach(card => {
+                  card.style.transform = '';
+                  card.style.transition = '';
+                });
+              }, 1000);
+            });
           });
 
           // Cascade all preview videos
           playAllPreviews();
-
-          // ---- PHASE 2: Converge into shuffled grid positions ----
-          setTimeout(() => {
-            // FIRST: snapshot scatter positions
-            const scatterRects = new Map();
-            allCards.forEach(card => scatterRects.set(card, card.getBoundingClientRect()));
-
-            // Clear scatter transforms
-            allCards.forEach(card => {
-              card.style.transition = 'none';
-              card.style.transform = '';
-            });
-
-            // Fisher-Yates shuffle and reinsert into DOM
-            const shuffled = allCards.slice();
-            for (let si = shuffled.length - 1; si > 0; si--) {
-              const sj = Math.floor(Math.random() * (si + 1));
-              [shuffled[si], shuffled[sj]] = [shuffled[sj], shuffled[si]];
-            }
-            shuffled.forEach(card => grid.appendChild(card));
-
-            // INVERT: position cards at their scatter locations
-            allCards.forEach(card => {
-              const first = scatterRects.get(card);
-              const last = card.getBoundingClientRect();
-              const dx = first.left - last.left;
-              const dy = first.top - last.top;
-              card.style.transform = `translate(${dx}px, ${dy}px)`;
-              card.style.transition = 'none';
-            });
-
-            // PLAY: animate from scatter positions into grid
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                allCards.forEach((card, ci) => {
-                  const stagger = ci * 25;
-                  card.style.transition = `transform 0.9s cubic-bezier(0.23, 1, 0.32, 1) ${stagger}ms`;
-                  card.style.transform = '';
-                });
-                // Clean up inline styles after settle
-                setTimeout(() => {
-                  allCards.forEach(card => {
-                    card.style.transform = '';
-                    card.style.transition = '';
-                  });
-                }, 1500);
-              });
-            });
-          }, 1000); // after scatter completes
 
           // Stop video cascade and re-launch dot
           setTimeout(() => {
