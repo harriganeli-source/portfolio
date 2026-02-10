@@ -981,7 +981,7 @@ function renderGrid() {
       </div>
       <div class="card-body">
         <div class="card-title" contenteditable="true" data-field="title" data-index="${i}" data-placeholder="Title">${esc(p.title)}</div>
-        <div class="card-studio" contenteditable="true" data-field="studio" data-index="${i}" data-placeholder="Studio">${p.studio ? 'for ' + esc(p.studio) : ''}</div>
+        <div class="card-studio" contenteditable="true" data-field="studio" data-index="${i}" data-placeholder="Studio">${p.studio ? esc(p.studio) : ''}</div>
         <div class="card-role" contenteditable="true" data-field="role" data-index="${i}" data-placeholder="Role">${esc(p.role)}</div>
       </div>
     `;
@@ -1020,9 +1020,7 @@ function renderGrid() {
         const idx = parseInt(el.dataset.index);
         const p = projects[idx];
         let val = el.textContent.trim();
-        if (field === 'studio') {
-          val = val.replace(/^for\s*/i, '');
-        }
+
         if (p[field] !== val) {
           p[field] = val;
           p._edited = true;
