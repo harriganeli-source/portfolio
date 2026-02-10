@@ -742,7 +742,6 @@ function initThumbnailScrub() {
   if (isHomepage && previewData.length) {
     const isMobile = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const visibleThumbs = new Set();
-    let mobileActiveData = null;
 
     function tryPlay(data) {
       data.ensureVideo();
@@ -754,17 +753,42 @@ function initThumbnailScrub() {
       }).catch(() => {});
     }
 
-    // Allow easter egg to resume autoplay after it finishes
-    resumeAutoplay = () => {
-      if (isMobile) {
-        if (mobileActiveData) tryPlay(mobileActiveData);
-      } else {
-        visibleThumbs.forEach(data => tryPlay(data));
-      }
-    };
-
     if (isMobile) {
-      // MOBILE: only one video at a time — the card nearest viewport center
+      // MOBILE: single reusable video element, moved between cards
+      // iOS Safari severely limits concurrent <video> elements, so we
+      // create exactly ONE and re-parent it as the user scrolls.
+      let mobileVideo = null;
+      let mobileActiveThumb = null;
+
+      function ensureMobileVideo() {
+        if (mobileVideo) return;
+        mobileVideo = document.createElement('video');
+        mobileVideo.className = 'thumb-video-preview';
+        mobileVideo.muted = true;
+        mobileVideo.loop = true;
+        mobileVideo.playsInline = true;
+        mobileVideo.preload = 'auto';
+        mobileVideo.setAttribute('muted', '');
+        mobileVideo.setAttribute('playsinline', '');
+        mobileVideo.setAttribute('webkit-playsinline', '');
+        mobileVideo.setAttribute('autoplay', '');
+      }
+
+      function playMobileVideo(data) {
+        ensureMobileVideo();
+        const src = data.thumb.dataset.preview;
+        if (!src) return;
+        // Move video to new thumb
+        mobileVideo.style.opacity = '0';
+        mobileVideo.pause();
+        data.thumb.appendChild(mobileVideo);
+        mobileVideo.src = src;
+        mobileVideo.load();
+        mobileVideo.play().then(() => {
+          mobileVideo.style.opacity = '1';
+        }).catch(() => {});
+        mobileActiveThumb = data.thumb;
+      }
 
       function updateMobileVideo() {
         const center = window.innerHeight / 2;
@@ -781,21 +805,24 @@ function initThumbnailScrub() {
           }
         });
 
-        // Only play if card is reasonably near center
         if (closestDist > window.innerHeight * 0.5) closest = null;
 
-        if (closest !== mobileActiveData) {
-          // Destroy the old video first to free the iOS slot
-          if (mobileActiveData && mobileActiveData.destroyVideo) {
-            mobileActiveData.destroyVideo();
-          }
-          mobileActiveData = closest;
-          // Small delay to let iOS release the resource
-          if (mobileActiveData) {
-            setTimeout(() => tryPlay(mobileActiveData), 50);
+        const newThumb = closest ? closest.thumb : null;
+        if (newThumb !== mobileActiveThumb) {
+          if (closest) {
+            playMobileVideo(closest);
+          } else if (mobileVideo) {
+            mobileVideo.pause();
+            mobileVideo.style.opacity = '0';
+            mobileActiveThumb = null;
           }
         }
       }
+
+      // Allow easter egg to resume autoplay after it finishes
+      resumeAutoplay = () => {
+        updateMobileVideo();
+      };
 
       let ticking = false;
       window.addEventListener('scroll', () => {
@@ -808,20 +835,21 @@ function initThumbnailScrub() {
         }
       }, { passive: true });
 
-      // iOS: unlock on first touch, then start
-      let touchUnlocked = false;
+      // iOS: unlock video playback on first touch
       document.addEventListener('touchstart', function unlockVideos() {
-        if (touchUnlocked) return;
-        touchUnlocked = true;
         document.removeEventListener('touchstart', unlockVideos);
         updateMobileVideo();
       }, { once: true, passive: true });
 
-      // Also try on load
       updateMobileVideo();
 
     } else {
       // DESKTOP: multiple videos via IntersectionObserver
+      // Allow easter egg to resume autoplay after it finishes
+      resumeAutoplay = () => {
+        visibleThumbs.forEach(data => tryPlay(data));
+      };
+
       const autoPlayObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const data = previewData.find(d => d.thumb === entry.target);
