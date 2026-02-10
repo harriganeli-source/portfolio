@@ -483,6 +483,12 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
+          // Screen flash
+          const flash = document.createElement('div');
+          flash.className = 'impact-flash';
+          document.body.appendChild(flash);
+          flash.addEventListener('animationend', () => flash.remove(), { once: true });
+
           // Page shake
           const main = document.querySelector('main');
           main.classList.add('page-shaking');
@@ -490,19 +496,25 @@ function initThumbnailScrub() {
             main.classList.remove('page-shaking');
           }, { once: true });
 
-          // Shockwave bounce — cards bounce outward from impact point
+          // Shockwave bounce — cards scatter outward from impact point
           const allCards = document.querySelectorAll('.project-card');
           allCards.forEach(card => {
             const cr = card.getBoundingClientRect();
             const cx = cr.left + cr.width / 2;
             const cy = cr.top + cr.height / 2;
             const dist = Math.hypot(cx - homeX, cy - homeY);
-            const delay = Math.min(dist * 0.4, 500); // shockwave delay
-            // Random bounce values per card
-            const jumpY = -(12 + Math.random() * 18);
+            const delay = Math.min(dist * 0.35, 400); // shockwave delay
+            // Direction away from impact point
+            const angle = Math.atan2(cy - homeY, cx - homeX);
+            // Intensity decreases with distance but has a floor
+            const intensity = Math.max(0.4, 1 - dist / 2000);
+            // Random bounce values per card — BIG
+            const jumpY = -(30 + Math.random() * 40) * intensity;
+            const jumpX = Math.cos(angle) * (15 + Math.random() * 25) * intensity;
             const jumpY2 = jumpY * 0.3;
-            const rot = (Math.random() - 0.5) * 6;
+            const rot = (Math.random() - 0.5) * 12 * intensity;
             card.style.setProperty('--bounce-y', jumpY + 'px');
+            card.style.setProperty('--bounce-x', jumpX + 'px');
             card.style.setProperty('--bounce-y2', jumpY2 + 'px');
             card.style.setProperty('--bounce-rot', rot + 'deg');
             card.style.animationDelay = delay + 'ms';
@@ -511,6 +523,7 @@ function initThumbnailScrub() {
               card.classList.remove('card-bouncing');
               card.style.animationDelay = '';
               card.style.removeProperty('--bounce-y');
+              card.style.removeProperty('--bounce-x');
               card.style.removeProperty('--bounce-y2');
               card.style.removeProperty('--bounce-rot');
             }, { once: true });
