@@ -97,15 +97,12 @@ function generateCardHtml(project) {
 
   let titleSpan;
   if (studioEsc) {
-    titleSpan = `<span class="project-title">${titleEsc} · for <span class="studio">${studioEsc}</span></span>`;
+    titleSpan = `<span class="project-title">${titleEsc} · <span class="studio">${studioEsc}</span></span>`;
   } else {
     titleSpan = `<span class="project-title">${titleEsc}</span>`;
   }
 
   let laurelsHtml = '';
-  if (project.hasLaurels) {
-    laurelsHtml = `\n            <div class="laurels-overlay">\n              <img src="images/laurels-overlay.webp" alt="Festival Laurels">\n            </div>`;
-  }
 
   const framesAttr = project.frameCount > 0 ? ` data-frames="${project.frameCount}"` : '';
   const previewAttr = project.previewVideo ? ` data-preview="${project.previewVideo}"` : '';
