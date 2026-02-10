@@ -483,84 +483,90 @@ function initThumbnailScrub() {
           document.body.appendChild(ripple);
           requestAnimationFrame(() => { ripple.classList.add('expanding'); });
 
-          // FLIP shuffle — rearrange cards into random grid positions
+          // ---- PHASE 1: 3D Burst — cards explode outward from impact ----
           const grid = document.querySelector('.grid-projects');
           const allCards = Array.from(grid.querySelectorAll('.project-card'));
-          const originalOrder = allCards.slice();
+          grid.style.perspective = '1200px';
 
-          // FIRST: snapshot current positions
-          const firstRects = new Map();
-          allCards.forEach(card => firstRects.set(card, card.getBoundingClientRect()));
-
-          // Fisher-Yates shuffle and reinsert into DOM
-          const shuffled = allCards.slice();
-          for (let si = shuffled.length - 1; si > 0; si--) {
-            const sj = Math.floor(Math.random() * (si + 1));
-            [shuffled[si], shuffled[sj]] = [shuffled[sj], shuffled[si]];
-          }
-          shuffled.forEach(card => grid.appendChild(card));
-
-          // LAST + INVERT: place each card at its old position via transform
           allCards.forEach(card => {
-            const first = firstRects.get(card);
-            const last = card.getBoundingClientRect();
-            const dx = first.left - last.left;
-            const dy = first.top - last.top;
-            card.style.transform = `translate(${dx}px, ${dy}px)`;
-            card.style.transition = 'none';
-          });
+            const cr = card.getBoundingClientRect();
+            const cx = cr.left + cr.width / 2;
+            const cy = cr.top + cr.height / 2;
+            const angle = Math.atan2(cy - homeY, cx - homeX);
+            const dist = Math.hypot(cx - homeX, cy - homeY);
+            const force = Math.max(0.4, 1 - dist / 2000);
 
-          // PLAY: animate to new positions with stagger
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              allCards.forEach((card, ci) => {
-                const stagger = ci * 25;
-                card.style.transition = `transform 0.9s cubic-bezier(0.23, 1, 0.32, 1) ${stagger}ms`;
-                card.style.transform = '';
-              });
-            });
+            const burstX = Math.cos(angle) * (80 + Math.random() * 120) * force;
+            const burstY = Math.sin(angle) * (60 + Math.random() * 100) * force;
+            const burstZ = 40 + Math.random() * 180;
+
+            // Shockwave delay — closer cards burst first
+            const delay = Math.min(dist * 0.3, 300);
+            card.style.transition = `transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms`;
+            card.style.transform = `translate3d(${burstX}px, ${burstY}px, ${burstZ}px)`;
+            card.style.zIndex = Math.round(burstZ);
           });
 
           // Cascade all preview videos
           playAllPreviews();
 
-          // After a pause, unshuffle back to original order and re-launch dot
+          // ---- PHASE 2: Settle into shuffled positions (after burst) ----
           setTimeout(() => {
-            stopAllPreviews();
-            if (resumeAutoplay) resumeAutoplay();
+            // FIRST: snapshot burst positions
+            const burstRects = new Map();
+            allCards.forEach(card => burstRects.set(card, card.getBoundingClientRect()));
 
-            // FLIP unshuffle — restore original card order
-            const unFirst = new Map();
-            allCards.forEach(card => unFirst.set(card, card.getBoundingClientRect()));
-            originalOrder.forEach(card => grid.appendChild(card));
-
+            // Clear burst transforms
             allCards.forEach(card => {
-              const first = unFirst.get(card);
+              card.style.transition = 'none';
+              card.style.transform = 'none';
+              card.style.zIndex = '';
+            });
+
+            // Fisher-Yates shuffle and reinsert into DOM
+            const shuffled = allCards.slice();
+            for (let si = shuffled.length - 1; si > 0; si--) {
+              const sj = Math.floor(Math.random() * (si + 1));
+              [shuffled[si], shuffled[sj]] = [shuffled[sj], shuffled[si]];
+            }
+            shuffled.forEach(card => grid.appendChild(card));
+
+            // INVERT: position cards at their burst locations
+            allCards.forEach(card => {
+              const first = burstRects.get(card);
               const last = card.getBoundingClientRect();
               const dx = first.left - last.left;
               const dy = first.top - last.top;
-              card.style.transform = `translate(${dx}px, ${dy}px)`;
+              card.style.transform = `translate3d(${dx}px, ${dy}px, 80px)`;
               card.style.transition = 'none';
             });
 
+            // PLAY: animate from burst positions down to new grid spots
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
                 allCards.forEach((card, ci) => {
                   const stagger = ci * 25;
                   card.style.transition = `transform 0.9s cubic-bezier(0.23, 1, 0.32, 1) ${stagger}ms`;
-                  card.style.transform = '';
+                  card.style.transform = 'translate3d(0, 0, 0)';
                 });
-                // Clean up inline styles after animation settles
+                // Clean up inline styles after settle
                 setTimeout(() => {
                   allCards.forEach(card => {
                     card.style.transform = '';
                     card.style.transition = '';
+                    card.style.zIndex = '';
                   });
-                }, 1200);
+                  grid.style.perspective = '';
+                }, 1500);
               });
             });
+          }, 1100); // after burst completes
 
-            // Re-launch the dot off the "i"
+          // Stop video cascade and re-launch dot
+          setTimeout(() => {
+            stopAllPreviews();
+            if (resumeAutoplay) resumeAutoplay();
+
             const r2 = iDot.getBoundingClientRect();
             const sx = r2.left + r2.width / 2;
             const sy = r2.top + r2.height / 2;
