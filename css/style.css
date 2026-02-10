@@ -1134,7 +1134,6 @@ img.thumb-zoomed {
 .client-logos {
   padding: var(--spacing-xl) var(--spacing-lg);
   border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
 }
 
 .client-logos-inner {
@@ -1202,6 +1201,10 @@ footer {
   text-align: center;
   color: var(--color-gray-medium);
   font-size: var(--font-size-small);
+}
+
+.page-about footer {
+  border-top: none;
 }
 
 /* ============================================
