@@ -654,7 +654,6 @@ function initThumbnailScrub() {
       if (video) return;
       video = document.createElement('video');
       video.className = 'thumb-video-preview';
-      video.src = previewSrc;
       video.muted = true;
       video.loop = true;
       video.playsInline = true;
@@ -663,8 +662,12 @@ function initThumbnailScrub() {
       video.setAttribute('muted', '');
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
+      video.setAttribute('autoplay', '');
       video.addEventListener('canplay', () => { videoReady = true; }, { once: true });
       thumb.appendChild(video);
+      // Set src AFTER appending to DOM (iOS sometimes needs this)
+      video.src = previewSrc;
+      video.load();
     }
 
     previewData.push({ thumb, img, getVideo: () => video, ensureVideo });
@@ -686,20 +689,29 @@ function initThumbnailScrub() {
 
   // ---- Auto-play previews on scroll into view (all devices) ----
   if (isHomepage && previewData.length) {
+    // Track which thumbs are currently in view
+    const visibleThumbs = new Set();
+
+    function tryPlay(data) {
+      data.ensureVideo();
+      const v = data.getVideo();
+      if (!v) return;
+      v.muted = true;
+      v.play().then(() => {
+        v.style.opacity = '1';
+      }).catch(() => {});
+    }
+
     const autoPlayObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const data = previewData.find(d => d.thumb === entry.target);
         if (!data) return;
 
         if (entry.isIntersecting) {
-          data.ensureVideo();
-          const v = data.getVideo();
-          if (!v) return;
-          v.muted = true;
-          v.play().then(() => {
-            v.style.opacity = '1';
-          }).catch(() => {});
+          visibleThumbs.add(data);
+          tryPlay(data);
         } else {
+          visibleThumbs.delete(data);
           const v = data.getVideo();
           if (v) {
             v.pause();
@@ -712,6 +724,16 @@ function initThumbnailScrub() {
     previewData.forEach(entry => {
       autoPlayObserver.observe(entry.thumb);
     });
+
+    // iOS fallback: on first touch, try playing all visible videos
+    // iOS sometimes blocks autoplay until a user gesture occurs
+    let touchUnlocked = false;
+    document.addEventListener('touchstart', function unlockVideos() {
+      if (touchUnlocked) return;
+      touchUnlocked = true;
+      document.removeEventListener('touchstart', unlockVideos);
+      visibleThumbs.forEach(data => tryPlay(data));
+    }, { once: true, passive: true });
   }
 
   // Restore thumbnails when navigating back (bfcache)
