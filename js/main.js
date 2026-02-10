@@ -529,6 +529,8 @@ function initThumbnailScrub() {
           // After a pause, re-launch the dot off the "i"
           setTimeout(() => {
             stopAllPreviews();
+            // Re-start autoplay for videos still in view
+            if (resumeAutoplay) resumeAutoplay();
             const r2 = iDot.getBoundingClientRect();
             const sx = r2.left + r2.width / 2;
             const sy = r2.top + r2.height / 2;
@@ -636,6 +638,7 @@ function initThumbnailScrub() {
   // Track previews for cleanup and easter-egg auto-play
   const previewData = [];
   let allPreviewsPlaying = false;
+  let resumeAutoplay = null; // set by autoplay observer block
 
   function playAllPreviews() {
     if (allPreviewsPlaying) return;
@@ -741,6 +744,11 @@ function initThumbnailScrub() {
         v.style.opacity = '1';
       }).catch(() => {});
     }
+
+    // Allow easter egg to resume autoplay after it finishes
+    resumeAutoplay = () => {
+      visibleThumbs.forEach(data => tryPlay(data));
+    };
 
     const autoPlayObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
