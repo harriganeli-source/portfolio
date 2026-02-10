@@ -1207,14 +1207,6 @@ img.thumb-zoomed {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.about-headshot.headshot-visible img {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* Client logos grid */
@@ -1237,14 +1229,12 @@ img.thumb-zoomed {
   width: auto;
   object-fit: contain;
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.35s ease;
   transition-delay: var(--logo-delay, 0s);
 }
 
 .client-logos.logos-visible img {
   opacity: 0.85;
-  transform: translateY(0);
 }
 
 .client-logos.logos-visible img:hover {
@@ -1281,11 +1271,7 @@ img.thumb-zoomed {
   }
 
   .client-logos-inner img {
-    transform: translateY(10px) scale(0.75);
-  }
-
-  .client-logos.logos-visible img {
-    transform: translateY(0) scale(0.75);
+    transform: scale(0.75);
   }
 }
 

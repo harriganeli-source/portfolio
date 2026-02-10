@@ -1033,26 +1033,27 @@ function cleanProjectTitles() {
  * client logos stagger in with individual delays
  */
 function initAboutAnimations() {
-  // Headshot fade-in
-  const headshot = document.querySelector('.about-headshot');
-  if (headshot) {
-    const hsObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          headshot.classList.add('headshot-visible');
-          hsObserver.unobserve(headshot);
-        }
-      });
-    }, { threshold: 0.2 });
-    hsObserver.observe(headshot);
-  }
-
-  // Client logos staggered fade-in
+  // Client logos — fade in row by row
   const logosSection = document.querySelector('.client-logos');
   if (logosSection) {
-    const logos = logosSection.querySelectorAll('.client-logos-inner img');
-    logos.forEach((logo, i) => {
-      logo.style.setProperty('--logo-delay', (i * 0.06) + 's');
+    const logos = Array.from(logosSection.querySelectorAll('.client-logos-inner img'));
+
+    // Group logos by visual row (same offsetTop = same row)
+    const rowMap = new Map();
+    logos.forEach(logo => {
+      const top = logo.offsetTop;
+      if (!rowMap.has(top)) rowMap.set(top, []);
+      rowMap.get(top).push(logo);
+    });
+
+    // Assign delay per row (all logos in same row share one delay)
+    let rowIndex = 0;
+    rowMap.forEach(rowLogos => {
+      const delay = rowIndex * 0.12; // 120ms between rows
+      rowLogos.forEach(logo => {
+        logo.style.setProperty('--logo-delay', delay + 's');
+      });
+      rowIndex++;
     });
 
     const logoObserver = new IntersectionObserver((entries) => {
