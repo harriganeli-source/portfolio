@@ -774,10 +774,10 @@
     <div class="login-box">
       <h1>editwitheli.com admin</h1>
       <form id="loginForm">
-        <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
+        <input type="text" id="patInput" placeholder="GitHub Personal Access Token" autocomplete="off" spellcheck="false">
         <button type="submit">Log In</button>
       </form>
-      <div class="login-error" id="loginError">Invalid password. Try again.</div>
+      <div class="login-error" id="loginError">Invalid token. Try again.</div>
     </div>
   </div>
 
@@ -998,8 +998,11 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const API = '';  // same origin
-let token = sessionStorage.getItem('admin_token') || '';
+const GITHUB_API = 'https://api.github.com';
+const OWNER = 'harriganeli-source';
+const REPO = 'portfolio';
+const BRANCH = 'main';
+let token = localStorage.getItem('admin_token') || '';
 let projects = [];
 let stagedFiles = [];
 let deletedFiles = [];
@@ -1013,30 +1016,37 @@ const loginError = document.getElementById('loginError');
 const loginScreen = document.getElementById('loginScreen');
 const dashboard = document.getElementById('dashboard');
 
+function handleAuthFailure() {
+  token = '';
+  localStorage.removeItem('admin_token');
+  loginScreen.style.display = 'flex';
+  dashboard.classList.remove('active');
+  document.getElementById('projectEditor').classList.remove('active');
+  document.getElementById('aboutEditor').classList.remove('active');
+}
+
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   loginError.style.display = 'none';
-  const password = document.getElementById('passwordInput').value;
+  const pat = document.getElementById('patInput').value.trim();
+  if (!pat) { loginError.textContent = 'Token required'; loginError.style.display = 'block'; return; }
   try {
-    const r = await fetch(`${API}/api/auth`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+    const r = await fetch(`${GITHUB_API}/user`, {
+      headers: { Authorization: `token ${pat}` },
     });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error);
-    token = data.token;
-    sessionStorage.setItem('admin_token', token);
+    if (!r.ok) throw new Error('Invalid token');
+    token = pat;
+    localStorage.setItem('admin_token', token);
     showDashboard();
   } catch (err) {
-    loginError.textContent = err.message || 'Invalid password';
+    loginError.textContent = err.message || 'Invalid token';
     loginError.style.display = 'block';
   }
 });
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
   token = '';
-  sessionStorage.removeItem('admin_token');
+  localStorage.removeItem('admin_token');
   loginScreen.style.display = 'flex';
   dashboard.classList.remove('active');
 });
@@ -1054,44 +1064,429 @@ async function showDashboard() {
   await loadProjects();
 }
 
-// ---- Projects ----
-async function apiCall(path, options = {}) {
-  const r = await fetch(`${API}${path}`, {
+// ---- GitHub API ----
+async function githubGet(path) {
+  const r = await fetch(`${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${path}`, {
+    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' },
+  });
+  if (r.status === 401) { handleAuthFailure(); throw new Error('Session expired'); }
+  if (!r.ok) throw new Error(`GitHub GET ${path}: ${r.status}`);
+  const json = await r.json();
+  const binary = atob(json.content.replace(/\n/g, ''));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+async function ghFetch(path, options = {}) {
+  const url = `${GITHUB_API}/repos/${OWNER}/${REPO}${path}`;
+  const r = await fetch(url, {
     ...options,
     headers: {
+      Authorization: `token ${token}`,
+      Accept: 'application/vnd.github.v3+json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
       ...(options.headers || {}),
     },
   });
-  if (r.status === 401) {
-    token = '';
-    sessionStorage.removeItem('admin_token');
-    loginScreen.style.display = 'flex';
-    dashboard.classList.remove('active');
-    throw new Error('Session expired');
-  }
-  let data;
-  const text = await r.text();
-  try {
-    data = JSON.parse(text);
-  } catch (_) {
-    throw new Error(`Server returned ${r.status}: ${text.slice(0, 200)}`);
-  }
+  if (r.status === 401) { handleAuthFailure(); throw new Error('Session expired'); }
   if (!r.ok) {
-    const msg = typeof data.error === 'string' ? data.error
-      : data.error && data.error.message ? data.error.message
-      : `Request failed (${r.status})`;
-    throw new Error(msg);
+    const text = await r.text();
+    throw new Error(`GitHub ${options.method || 'GET'} ${path}: ${r.status} ${text}`);
+  }
+  return r.json();
+}
+
+async function commitToGitHub(files, deletedPaths, message) {
+  if ((!files || !files.length) && (!deletedPaths || !deletedPaths.length)) {
+    throw new Error('No changes to publish');
+  }
+  const ref = await ghFetch(`/git/refs/heads/${BRANCH}`);
+  const latestSha = ref.object.sha;
+  const commit = await ghFetch(`/git/commits/${latestSha}`);
+  const baseTreeSha = commit.tree.sha;
+  const treeItems = [];
+  if (files) {
+    for (const file of files) {
+      const blob = await ghFetch('/git/blobs', {
+        method: 'POST',
+        body: JSON.stringify({ content: file.content, encoding: file.encoding === 'base64' ? 'base64' : 'utf-8' }),
+      });
+      treeItems.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
+    }
+  }
+  if (deletedPaths) {
+    for (const p of deletedPaths) {
+      treeItems.push({ path: p, mode: '100644', type: 'blob', sha: null });
+    }
+  }
+  const newTree = await ghFetch('/git/trees', {
+    method: 'POST',
+    body: JSON.stringify({ base_tree: baseTreeSha, tree: treeItems }),
+  });
+  const newCommit = await ghFetch('/git/commits', {
+    method: 'POST',
+    body: JSON.stringify({ message: message || `Update from admin — ${new Date().toLocaleString()}`, tree: newTree.sha, parents: [latestSha] }),
+  });
+  await ghFetch(`/git/refs/heads/${BRANCH}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ sha: newCommit.sha }),
+  });
+  return { commitSha: newCommit.sha };
+}
+
+// ---- Local Upload Staging ----
+function stageUpload(filename, base64) {
+  const outputFilename = filename.replace(/\.\w+$/, '.webp');
+  const filePath = `images/${outputFilename}`;
+  return {
+    stagedFile: { path: filePath, content: base64, encoding: 'base64' },
+    filename: outputFilename,
+  };
+}
+
+function stageVideoUpload(filename, base64) {
+  const filePath = `images/${filename}`;
+  return {
+    stagedFile: { path: filePath, content: base64, encoding: 'base64' },
+    filename,
+  };
+}
+
+// ---- HTML Parsers & Generators (ported from server) ----
+function parseProjects(html) {
+  const projects = [];
+  const cardRegex = /<a href="projects\/([^"]+)" class="project-card[^"]*">\s*<div class="project-thumb"[^>]*>\s*<img src="([^"]+)"[^>]*>\s*(?:<div class="laurels-overlay">[\s\S]*?<\/div>\s*)?<div class="project-info">\s*<span class="project-title">([\s\S]*?)<\/span>\s*<span class="project-role">([\s\S]*?)<\/span>\s*<\/div>\s*<\/div>\s*<\/a>/g;
+  let m;
+  while ((m = cardRegex.exec(html)) !== null) {
+    const slug = m[1].replace('.html', '');
+    const thumbnail = m[2];
+    const titleHtml = m[3];
+    const role = m[4].replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim();
+    let title, studio = '', hasLaurels = false;
+    const studioMatch = titleHtml.match(/^(.*?)(?:\s*·\s*(?:for\s*)?<span class="studio">(.*?)<\/span>)?$/);
+    if (studioMatch) {
+      title = studioMatch[1].replace(/&#39;/g, "'").replace(/&amp;/g, '&').trim();
+      studio = (studioMatch[2] || '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim();
+    } else {
+      title = titleHtml.replace(/&#39;/g, "'").replace(/&amp;/g, '&').trim();
+    }
+    hasLaurels = m[0].includes('laurels-overlay');
+    const framesMatch = m[0].match(/data-frames="(\d+)"/);
+    const frameCount = framesMatch ? parseInt(framesMatch[1], 10) : 0;
+    const previewMatch = m[0].match(/data-preview="([^"]+)"/);
+    const previewVideo = previewMatch ? previewMatch[1] : '';
+    projects.push({ slug, title, studio, role, thumbnail, hasLaurels, frameCount, previewVideo });
+  }
+  return projects;
+}
+
+function parseProjectPage(html) {
+  const data = {};
+  const videoMatches = [...html.matchAll(/data-src="([^"]+)"/g)];
+  data.videoUrls = videoMatches.map(m => m[1]);
+  const posterMatches = [...html.matchAll(/class="video-poster"[^>]*src="([^"]+)"|src="([^"]+)"[^>]*class="video-poster"/g)];
+  data.posters = posterMatches.map(m => m[1] || m[2]);
+  const creditMatch = html.match(/<div class="project-credit">\s*<p>([\s\S]*?)<\/p>/);
+  if (creditMatch) data.credit = creditMatch[1].trim();
+  if (html.includes('doc-layout')) data.pageType = 'documentary';
+  else if (html.includes('videos-grid')) data.pageType = 'grid';
+  else if (html.includes('videos-stacked')) data.pageType = 'stacked';
+  else data.pageType = 'single';
+  if (data.pageType === 'grid') {
+    const captionMatches = [...html.matchAll(/<p class="video-caption">([\s\S]*?)<\/p>/g)];
+    data.videoCaptions = captionMatches.map(m => m[1].trim());
+  }
+  if (data.pageType === 'documentary') {
+    const descMatch = html.match(/<p class="doc-description">([\s\S]*?)<\/p>/);
+    if (descMatch) data.description = descMatch[1].trim();
+    const posterImgMatch = html.match(/<div class="doc-poster">\s*<img src="([^"]+)"/);
+    if (posterImgMatch) data.docPoster = posterImgMatch[1];
   }
   return data;
 }
 
+function generateCardHtml(project) {
+  const titleEsc = project.title.replace(/&/g, '&amp;').replace(/'/g, '&#39;');
+  const roleEsc = project.role.replace(/&/g, '&amp;').replace(/'/g, '&#39;');
+  const studioEsc = project.studio ? project.studio.replace(/&/g, '&amp;').replace(/'/g, '&#39;') : '';
+  let titleSpan;
+  if (studioEsc) {
+    titleSpan = `<span class="project-title">${titleEsc} · <span class="studio">${studioEsc}</span></span>`;
+  } else {
+    titleSpan = `<span class="project-title">${titleEsc}</span>`;
+  }
+  const previewAttr = project.previewVideo ? ` data-preview="${project.previewVideo}"` : '';
+  const framesAttr = project.frameCount > 0 ? ` data-frames="${project.frameCount}"` : '';
+  return `        <a href="projects/${project.slug}.html" class="project-card grid-item fade-in">
+          <div class="project-thumb"${previewAttr}${framesAttr}>
+            <img src="${project.thumbnail}" alt="${titleEsc}" loading="lazy">
+            <div class="project-info">
+              ${titleSpan}
+              <span class="project-role">${roleEsc}</span>
+            </div>
+          </div>
+        </a>`;
+}
+
+function generateProjectPage(project, pageData) {
+  const titleEsc = project.title.replace(/&/g, '&amp;').replace(/'/g, '&#39;');
+  let videoHtml = '';
+  if (pageData.pageType === 'stacked' && pageData.videoUrls.length > 1) {
+    const videos = pageData.videoUrls.map((url, i) => {
+      const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
+      return `        <div class="video-container" data-src="${url}">
+          <img src="${poster}" alt="${titleEsc}" class="video-poster">
+          <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+        </div>`;
+    }).join('\n');
+    videoHtml = `        <div class="videos-stacked">\n${videos}\n        </div>`;
+  } else {
+    const url = pageData.videoUrls[0] || '';
+    const poster = pageData.posters && pageData.posters[0] ? pageData.posters[0] : '';
+    videoHtml = `        <div class="video-container" data-src="${url}">
+          <img src="${poster}" alt="${titleEsc}" class="video-poster">
+          <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+        </div>`;
+  }
+  const credit = pageData.credit || project.role.replace(/&/g, '&amp;') + '.';
+  let mainContent;
+  if (pageData.pageType === 'grid') {
+    const roleEsc = (project.role || '').replace(/&/g, '&amp;');
+    const cards = pageData.videoUrls.map((url, i) => {
+      const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
+      const caption = pageData.videoCaptions && pageData.videoCaptions[i] ? pageData.videoCaptions[i] : '';
+      return `        <div class="video-card">
+          <div class="video-container" data-src="${url}">
+            <img src="${poster}" alt="${titleEsc}" class="video-poster">
+            <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+          </div>
+          <p class="video-caption">${caption}</p>
+        </div>`;
+    }).join('\n');
+    mainContent = `      <p class="project-role-label">${roleEsc}.</p>
+      <div class="videos-grid">
+${cards}
+      </div>`;
+  } else if (pageData.pageType === 'documentary') {
+    const desc = pageData.description || '';
+    const docPoster = pageData.docPoster || '';
+    mainContent = `      <div class="doc-layout">
+        <div class="doc-main">
+${videoHtml}
+          <div class="laurels-marquee">
+            <div class="laurels-track">
+              <img src="../images/laurels-strip.webp" alt="Festival Laurels">
+              <img src="../images/laurels-strip.webp" alt="Festival Laurels">
+            </div>
+          </div>
+          <p class="doc-description">${desc}</p>
+        </div>
+        <div class="doc-sidebar">
+          <div class="doc-poster">
+            <img src="${docPoster}" alt="${titleEsc} - Poster">
+          </div>
+        </div>
+      </div>`;
+  } else {
+    mainContent = `      <div class="project-layout">
+${videoHtml}
+      </div>`;
+  }
+  const studioSuffix = project.studio ? ` \u2014 ${project.studio}` : '';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${project.title}${studioSuffix} \u2014 Eli Harrigan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-logo">Eli Harr<span class="logo-i">\u0131<span class="i-dot"></span></span>gan</a>
+    <ul class="nav-links nav-menu">
+      <li><a href="../index.html" class="active">work</a></li>
+      <li><a href="../photography.html">photography</a></li>
+      <li><a href="../about.html">about</a></li>
+    </ul>
+    <div class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></div>
+  </nav>
+  <main>
+    <div class="container-narrow">
+      <a href="../index.html" class="back-link">Back to Work</a>
+      <h1 class="project-heading">${titleEsc}</h1>
+      <div class="project-credit">
+        <p>${credit}</p>
+      </div>
+${mainContent}
+    </div>
+  </main>
+  <footer><p>&copy; 2026 Eli Harrigan</p></footer>
+  \x3cscript src="../js/main.js">\x3c/script>
+</body>
+</html>
+`;
+}
+
+function rebuildIndexHtml(originalHtml, projects) {
+  const cardsHtml = projects.map(p => generateCardHtml(p)).join('\n\n');
+  const gridStart = originalHtml.indexOf('<div class="grid-projects">');
+  const gridContentStart = originalHtml.indexOf('>', gridStart) + 1;
+  let depth = 1;
+  let i = gridContentStart;
+  while (depth > 0 && i < originalHtml.length) {
+    const nextOpen = originalHtml.indexOf('<div', i);
+    const nextClose = originalHtml.indexOf('</div>', i);
+    if (nextClose === -1) break;
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth++;
+      i = nextOpen + 4;
+    } else {
+      depth--;
+      if (depth === 0) {
+        return originalHtml.substring(0, gridContentStart) + '\n\n' + cardsHtml + '\n\n\n      ' + originalHtml.substring(nextClose);
+      }
+      i = nextClose + 6;
+    }
+  }
+  return originalHtml;
+}
+
+function parseAboutPage(html) {
+  const data = {};
+  const headingMatch = html.match(/<h1>([\s\S]*?)<\/h1>/);
+  data.heading = headingMatch ? headingMatch[1].trim() : 'Hey there!';
+  const bioMatch = html.match(/<div class="about-bio">([\s\S]*?)<\/div>/);
+  if (bioMatch) {
+    const bioHtml = bioMatch[1];
+    const paragraphs = [...bioHtml.matchAll(/<p(?:\s+class="about-contact")?>([\s\S]*?)<\/p>/g)];
+    data.bioParas = [];
+    data.contactHtml = '';
+    for (const p of paragraphs) {
+      if (p[0].includes('about-contact')) {
+        data.contactHtml = p[1].trim();
+      } else {
+        data.bioParas.push(p[1].trim());
+      }
+    }
+  } else {
+    data.bioParas = [];
+    data.contactHtml = '';
+  }
+  const headshotMatch = html.match(/<div class="about-headshot">\s*<img src="([^"]+)"/);
+  data.headshotSrc = headshotMatch ? headshotMatch[1] : 'images/headshot.webp';
+  const photoGridMatch = html.match(/<div class="about-photo-grid">([\s\S]*?)<\/div>\s*<\/main>/);
+  if (photoGridMatch) {
+    data.photos = [...photoGridMatch[1].matchAll(/<img src="([^"]+)"/g)].map(m => m[1]);
+  } else {
+    data.photos = [];
+  }
+  return data;
+}
+
+function generateAboutPage(data) {
+  const bioParasHtml = data.bioParas.map(p => `            <p>${p}</p>`).join('\n');
+  const contactLine = data.contactHtml
+    ? `\n            <p class="about-contact">${data.contactHtml}</p>`
+    : '';
+  const photosHtml = data.photos.map(src =>
+    `      <div class="about-photo"><img src="${src}" alt="" loading="lazy"></div>`
+  ).join('\n');
+  const logosHtml = (data._logosHtml || '').trim();
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eli Harrigan \u2014 About</title>
+  <meta name="description" content="About Eli Harrigan \u2014 Multimedia producer, director, editor, and photographer.">
+  <meta property="og:title" content="Eli Harrigan \u2014 About">
+  <meta property="og:description" content="Multimedia producer, director, editor, and photographer.">
+  <meta property="og:image" content="https://editwitheli.com/images/og-image.jpg">
+  <meta property="og:url" content="https://editwitheli.com/about">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://editwitheli.com/images/og-image.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+</head>
+<body class="page-about">
+
+  <nav>
+    <a href="index.html" class="nav-logo">Eli Harr<span class="logo-i">\u0131<span class="i-dot"></span></span>gan</a>
+    <ul class="nav-links nav-menu">
+      <li><a href="index.html">work</a></li>
+      <li><a href="photography.html">photography</a></li>
+      <li><a href="about.html" class="active">about</a></li>
+    </ul>
+    <div class="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main>
+    <!-- About content -->
+    <div class="about-content">
+      <div class="about-content-inner">
+        <div class="about-hero">
+          <div class="about-bio">
+            <h1>${data.heading}</h1>
+${bioParasHtml}${contactLine}
+          </div>
+          <div class="about-headshot">
+            <img src="${data.headshotSrc}" alt="Eli Harrigan">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client logos -->
+${logosHtml}
+
+    <!-- Photo grids -->
+    <div class="about-photo-grid">
+${photosHtml}
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Eli Harrigan</p>
+  </footer>
+
+  \x3cscript src="js/main.js">\x3c/script>
+</body>
+</html>
+`;
+}
+
+// ---- Projects ----
 async function loadProjects() {
   try {
-    const data = await apiCall('/api/projects');
-    projects = data;
-    originalProjects = JSON.parse(JSON.stringify(data));
+    const indexHtml = await githubGet('index.html');
+    const parsed = parseProjects(indexHtml);
+    const enriched = await Promise.all(parsed.map(async (p) => {
+      try {
+        const pageHtml = await githubGet(`projects/${p.slug}.html`);
+        const pageData = parseProjectPage(pageHtml);
+        return { ...p, ...pageData };
+      } catch {
+        return { ...p, videoUrls: [], pageType: 'single', credit: '' };
+      }
+    }));
+    projects = enriched;
+    originalProjects = JSON.parse(JSON.stringify(enriched));
     stagedFiles = [];
     deletedFiles = [];
     renderGrid();
@@ -1337,13 +1732,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
   if (newThumbFile) {
     try {
       const base64 = await compressImage(newThumbFile);
-      const uploadResult = await apiCall('/api/upload', {
-        method: 'POST',
-        body: JSON.stringify({
-          filename: `${slug}.webp`,
-          data: base64,
-        }),
-      });
+      const uploadResult = stageUpload(`${slug}.webp`, base64);
       stagedFiles.push(uploadResult.stagedFile);
       thumbnail = uploadResult.stagedFile.path;
       thumbPreview = 'data:image/webp;base64,' + base64;
@@ -1359,10 +1748,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
       showToast('Fetching thumbnail from video...');
       const autoBase64 = await fetchVideoThumbnail(videoUrls[0]);
       if (autoBase64) {
-        const uploadResult = await apiCall('/api/upload', {
-          method: 'POST',
-          body: JSON.stringify({ filename: `${slug}.webp`, data: autoBase64 }),
-        });
+        const uploadResult = stageUpload(`${slug}.webp`, autoBase64);
         stagedFiles.push(uploadResult.stagedFile);
         thumbnail = uploadResult.stagedFile.path;
         thumbPreview = 'data:image/webp;base64,' + autoBase64;
@@ -1396,10 +1782,7 @@ document.getElementById('editSave').addEventListener('click', async () => {
           const posterName = videoUrls.length > 1
             ? `${slug}-poster-${i + 1}.webp`
             : `${slug}-poster.webp`;
-          const uploadResult = await apiCall('/api/upload', {
-            method: 'POST',
-            body: JSON.stringify({ filename: posterName, data: posterBase64 }),
-          });
+          const uploadResult = stageUpload(posterName, posterBase64);
           stagedFiles.push(uploadResult.stagedFile);
           autoPosters.push('../images/' + uploadResult.filename);
         } else {
@@ -1581,40 +1964,36 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
   status.className = 'publish-status';
 
   try {
-    // 1. Generate updated HTML via API
-    const result = await apiCall('/api/projects', {
-      method: 'PUT',
-      body: JSON.stringify({ projects }),
-    });
+    // 1. Fetch current index.html and rebuild with current project order
+    const indexHtml = await githubGet('index.html');
+    const newIndexHtml = rebuildIndexHtml(indexHtml, projects);
+    const allFiles = [{ path: 'index.html', content: newIndexHtml }];
 
-    // Combine all staged files
-    const allFiles = [...(result.stagedFiles || []), ...stagedFiles];
+    // 2. Add staged binary files (images/videos)
+    allFiles.push(...stagedFiles);
 
-    // 2. Regenerate project pages for edited projects
+    // 3. Regenerate project pages for edited projects
     for (const p of projects) {
       if (p._edited) {
-        const pageResult = await apiCall('/api/projects', {
-          method: 'PATCH',
-          body: JSON.stringify(p),
-        });
-        const pageFiles = pageResult.stagedFiles || [];
-        for (const pf of pageFiles) {
-          const existingIdx = allFiles.findIndex(f => f.path === pf.path);
-          if (existingIdx >= 0) allFiles[existingIdx] = pf;
-          else allFiles.push(pf);
-        }
+        const pageData = {
+          videoUrls: p.videoUrls || [''],
+          posters: p.posters || [],
+          credit: p.credit || (p.role || '') + '.',
+          pageType: p.pageType || 'single',
+          description: p.description || '',
+          docPoster: p.docPoster || '',
+          videoCaptions: p.videoCaptions || [],
+        };
+        const pageHtml = generateProjectPage(p, pageData);
+        const pageFile = { path: `projects/${p.slug}.html`, content: pageHtml };
+        const existingIdx = allFiles.findIndex(f => f.path === pageFile.path);
+        if (existingIdx >= 0) allFiles[existingIdx] = pageFile;
+        else allFiles.push(pageFile);
       }
     }
 
-    // 3. Publish to GitHub
-    const publishResult = await apiCall('/api/publish', {
-      method: 'POST',
-      body: JSON.stringify({
-        files: allFiles,
-        deletedFiles,
-        message: `Update from admin panel — ${new Date().toLocaleString()}`,
-      }),
-    });
+    // 4. Commit directly to GitHub
+    await commitToGitHub(allFiles, deletedFiles, `Update from admin panel \u2014 ${new Date().toLocaleString()}`);
 
     status.textContent = 'Published! Deploying...';
     status.className = 'publish-status success';
@@ -1868,10 +2247,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
         const posterName = p.videoUrls.length > 1
           ? `${p.slug}-poster-${i + 1}.webp`
           : `${p.slug}-poster.webp`;
-        const uploadResult = await apiCall('/api/upload', {
-          method: 'POST',
-          body: JSON.stringify({ filename: posterName, data: base64 }),
-        });
+        const uploadResult = stageUpload(posterName, base64);
         stagedFiles.push(uploadResult.stagedFile);
         newPosters.push('../images/' + uploadResult.filename);
       } else if (v.posterPath) {
@@ -1884,10 +2260,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
             const posterName = p.videoUrls.length > 1
               ? `${p.slug}-poster-${i + 1}.webp`
               : `${p.slug}-poster.webp`;
-            const uploadResult = await apiCall('/api/upload', {
-              method: 'POST',
-              body: JSON.stringify({ filename: posterName, data: autoBase64 }),
-            });
+            const uploadResult = stageUpload(posterName, autoBase64);
             stagedFiles.push(uploadResult.stagedFile);
             newPosters.push('../images/' + uploadResult.filename);
           } else {
@@ -1904,24 +2277,16 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
     // Upload thumbnail if changed
     if (editorNewThumbFile) {
       const base64 = await compressImage(editorNewThumbFile);
-      const uploadResult = await apiCall('/api/upload', {
-        method: 'POST',
-        body: JSON.stringify({ filename: p.slug + '.webp', data: base64 }),
-      });
+      const uploadResult = stageUpload(p.slug + '.webp', base64);
       stagedFiles.push(uploadResult.stagedFile);
       p.thumbnail = uploadResult.stagedFile.path;
-      // Store local preview so card shows the new image before publish
       p._thumbPreview = 'data:image/webp;base64,' + base64;
     } else if (!p.thumbnail && p.videoUrls.length > 0) {
-      // Auto-fetch thumbnail from first video if project has none
       try {
         showToast('Fetching thumbnail from video...');
         const autoBase64 = await fetchVideoThumbnail(p.videoUrls[0]);
         if (autoBase64) {
-          const uploadResult = await apiCall('/api/upload', {
-            method: 'POST',
-            body: JSON.stringify({ filename: p.slug + '.webp', data: autoBase64 }),
-          });
+          const uploadResult = stageUpload(p.slug + '.webp', autoBase64);
           stagedFiles.push(uploadResult.stagedFile);
           p.thumbnail = uploadResult.stagedFile.path;
           p._thumbPreview = 'data:image/webp;base64,' + autoBase64;
@@ -1934,10 +2299,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
     // Upload doc poster if changed
     if (editorDocPosterFile) {
       const base64 = await compressImage(editorDocPosterFile);
-      const uploadResult = await apiCall('/api/upload', {
-        method: 'POST',
-        body: JSON.stringify({ filename: p.slug + '-doc-poster.webp', data: base64 }),
-      });
+      const uploadResult = stageUpload(p.slug + '-doc-poster.webp', base64);
       stagedFiles.push(uploadResult.stagedFile);
       p.docPoster = '../images/' + uploadResult.filename;
     }
@@ -1951,10 +2313,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
         reader.readAsDataURL(editorPreviewFile);
       });
       const ext = editorPreviewFile.name.endsWith('.webm') ? '.webm' : '.mp4';
-      const uploadResult = await apiCall('/api/upload', {
-        method: 'POST',
-        body: JSON.stringify({ filename: p.slug + '-preview' + ext, data: videoBase64, convertToWebp: false }),
-      });
+      const uploadResult = stageVideoUpload(p.slug + '-preview' + ext, videoBase64);
       stagedFiles.push(uploadResult.stagedFile);
       p.previewVideo = uploadResult.stagedFile.path;
     } else if (editorPreviewCleared) {
@@ -2007,7 +2366,11 @@ let aboutNewPhotos = []; // { file, preview } for newly added photos
 
 async function loadAboutData() {
   try {
-    aboutData = await apiCall('/api/about');
+    const aboutHtml = await githubGet('about.html');
+    aboutData = parseAboutPage(aboutHtml);
+    // Preserve logos HTML for page regeneration
+    const logosMatch = aboutHtml.match(/(\s*<!-- Client logos -->[\s\S]*?<\/div>\s*<\/div>)/);
+    aboutData._logosHtml = logosMatch ? logosMatch[1] : '';
     renderAboutEditor();
   } catch (err) {
     showToast('Failed to load about page: ' + err.message);
@@ -2140,17 +2503,15 @@ document.getElementById('aboutSaveBtn').addEventListener('click', async () => {
       contactHtml: document.getElementById('aboutContact').value.trim(),
       headshotSrc: aboutData.headshotSrc,
       photos: [...aboutData.photos],
+      _logosHtml: aboutData._logosHtml || '',
     };
 
     // Upload new headshot if changed
     if (aboutNewHeadshotFile) {
       const base64 = await compressImage(aboutNewHeadshotFile);
-      const uploadResult = await apiCall('/api/upload', {
-        method: 'POST',
-        body: JSON.stringify({ filename: 'headshot.webp', data: base64 }),
-      });
-      stagedFiles.push(uploadResult.stagedFile);
-      updates.headshotSrc = uploadResult.stagedFile.path;
+      const result = stageUpload('headshot.webp', base64);
+      stagedFiles.push(result.stagedFile);
+      updates.headshotSrc = result.stagedFile.path;
     }
 
     // Upload new grid photos
@@ -2158,24 +2519,14 @@ document.getElementById('aboutSaveBtn').addEventListener('click', async () => {
       const np = aboutNewPhotos[i];
       const base64 = await compressImage(np.file);
       const safeName = 'about-' + Date.now() + '-' + i + '.webp';
-      const uploadResult = await apiCall('/api/upload', {
-        method: 'POST',
-        body: JSON.stringify({ filename: safeName, data: base64 }),
-      });
-      stagedFiles.push(uploadResult.stagedFile);
-      updates.photos.push(uploadResult.stagedFile.path);
+      const result = stageUpload(safeName, base64);
+      stagedFiles.push(result.stagedFile);
+      updates.photos.push(result.stagedFile.path);
     }
 
-    // Generate updated about.html via API
-    const result = await apiCall('/api/about', {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-
-    // Add to staged files for publish
-    if (result.stagedFiles) {
-      stagedFiles.push(...result.stagedFiles);
-    }
+    // Generate about page HTML client-side
+    const newAboutHtml = generateAboutPage(updates);
+    stagedFiles.push({ path: 'about.html', content: newAboutHtml });
 
     aboutNewPhotos = [];
     aboutNewHeadshotFile = null;
