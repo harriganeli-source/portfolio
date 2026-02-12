@@ -943,6 +943,11 @@
               <option value="documentary">Documentary</option>
             </select>
           </div>
+          <div class="editor-field" id="editorFourUpField" style="display:none; margin-top:8px;">
+            <label>Show 4-up row after video #</label>
+            <input type="number" id="editorFourUpAfter" min="0" value="0" style="width:60px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;">
+            <span style="font-size:11px;color:var(--text-dim);margin-left:6px;">0 = all in 2-up grid</span>
+          </div>
         </div>
         <div class="doc-fields" id="editorDocFields">
           <div class="editor-field" style="margin-bottom: 12px;">
@@ -1203,6 +1208,14 @@ function parseProjectPage(html) {
   else if (html.includes('videos-grid')) data.pageType = 'grid';
   else if (html.includes('videos-stacked')) data.pageType = 'stacked';
   else data.pageType = 'single';
+  // Detect 2+4 split: first .videos-stacked followed by .videos-four-up
+  if (data.pageType === 'stacked' && html.includes('videos-four-up')) {
+    const topMatches = html.match(/<div class="videos-stacked">([\s\S]*?)<\/div>\s*<div class="videos-stacked videos-four-up">/);
+    if (topMatches) {
+      const topCount = (topMatches[1].match(/class="video-container"/g) || []).length;
+      data.fourUpAfter = topCount;
+    }
+  }
   const captionMatches = [...html.matchAll(/<p class="video-caption">([\s\S]*?)<\/p>/g)];
   data.videoCaptions = captionMatches.map(m => m[1].trim());
   if (data.pageType === 'documentary') {
@@ -1243,18 +1256,26 @@ function generateProjectPage(project, pageData) {
   let videoHtml = '';
   if (pageData.pageType === 'stacked' && pageData.videoUrls.length > 1) {
     const captions = pageData.videoCaptions || [];
-    const videos = pageData.videoUrls.map((url, i) => {
+    const fourUpAfter = pageData.fourUpAfter || 0;
+    const makeCard = (url, i) => {
       const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
       const previewAttr = previews[i] ? ` data-preview="${previews[i]}"` : '';
       const caption = captions[i] ? `\n          <p class="video-caption">${captions[i]}</p>` : '';
-      return `        <div class="video-card">
-          <div class="video-container" data-src="${url}"${previewAttr}>
-            <img src="${poster}" alt="${titleEsc}" class="video-poster">
-            <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
-          </div>${caption}
-        </div>`;
-    }).join('\n');
-    videoHtml = `        <div class="videos-stacked">\n${videos}\n        </div>`;
+      return `          <div class="video-card">
+            <div class="video-container" data-src="${url}"${previewAttr}>
+              <img src="${poster}" alt="${titleEsc}" class="video-poster">
+              <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+            </div>${caption}
+          </div>`;
+    };
+    if (fourUpAfter > 0 && fourUpAfter < pageData.videoUrls.length) {
+      const topVideos = pageData.videoUrls.slice(0, fourUpAfter).map(makeCard).join('\n');
+      const bottomVideos = pageData.videoUrls.slice(fourUpAfter).map((url, i) => makeCard(url, i + fourUpAfter)).join('\n');
+      videoHtml = `        <div class="videos-stacked">\n${topVideos}\n        </div>\n        <div class="videos-stacked videos-four-up">\n${bottomVideos}\n        </div>`;
+    } else {
+      const videos = pageData.videoUrls.map(makeCard).join('\n');
+      videoHtml = `        <div class="videos-stacked">\n${videos}\n        </div>`;
+    }
   } else {
     const url = pageData.videoUrls[0] || '';
     const poster = pageData.posters && pageData.posters[0] ? pageData.posters[0] : '';
@@ -2001,6 +2022,7 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
           docPoster: p.docPoster || '',
           videoCaptions: p.videoCaptions || [],
           videoPreviews: p.videoPreviews || [],
+          fourUpAfter: p.fourUpAfter || 0,
         };
         const pageHtml = generateProjectPage(p, pageData);
         const pageFile = { path: `projects/${p.slug}.html`, content: pageHtml };
@@ -2065,6 +2087,7 @@ function openProjectEditor(index) {
   document.getElementById('editorProjRole').value = p.role || '';
   document.getElementById('editorCredits').innerHTML = p.credit || '';
   document.getElementById('editorPageType').value = p.pageType || 'single';
+  document.getElementById('editorFourUpAfter').value = p.fourUpAfter || 0;
   document.getElementById('editorDocDesc').value = p.description || '';
   document.getElementById('editorThumbUpload').value = '';
   const thumbPrev = document.getElementById('editorThumbPreview');
@@ -2128,8 +2151,9 @@ function updateRteToolbar() {
 
 document.getElementById('editorPageType').addEventListener('change', toggleEditorDocFields);
 function toggleEditorDocFields() {
-  const show = document.getElementById('editorPageType').value === 'documentary';
-  document.getElementById('editorDocFields').classList.toggle('active', show);
+  const val = document.getElementById('editorPageType').value;
+  document.getElementById('editorDocFields').classList.toggle('active', val === 'documentary');
+  document.getElementById('editorFourUpField').style.display = val === 'stacked' ? '' : 'none';
 }
 
 function renderEditorVideos() {
@@ -2280,6 +2304,7 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
     p.studio = document.getElementById('editorProjStudio').value.trim();
     p.role = document.getElementById('editorProjRole').value.trim();
     p.pageType = document.getElementById('editorPageType').value;
+    p.fourUpAfter = parseInt(document.getElementById('editorFourUpAfter').value, 10) || 0;
     p.credit = document.getElementById('editorCredits').innerHTML.trim();
     p.description = document.getElementById('editorDocDesc').value.trim();
     p.videoUrls = editorVideoData.map(v => v.url).filter(Boolean);
