@@ -835,6 +835,7 @@ img.thumb-zoomed {
   height: 70px;
   width: auto;
   margin-right: 0;
+  filter: invert(1) hue-rotate(180deg);
 }
 
 @keyframes marquee-scroll {
