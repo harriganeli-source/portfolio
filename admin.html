@@ -1203,10 +1203,8 @@ function parseProjectPage(html) {
   else if (html.includes('videos-grid')) data.pageType = 'grid';
   else if (html.includes('videos-stacked')) data.pageType = 'stacked';
   else data.pageType = 'single';
-  if (data.pageType === 'grid') {
-    const captionMatches = [...html.matchAll(/<p class="video-caption">([\s\S]*?)<\/p>/g)];
-    data.videoCaptions = captionMatches.map(m => m[1].trim());
-  }
+  const captionMatches = [...html.matchAll(/<p class="video-caption">([\s\S]*?)<\/p>/g)];
+  data.videoCaptions = captionMatches.map(m => m[1].trim());
   if (data.pageType === 'documentary') {
     const descMatch = html.match(/<p class="doc-description">([\s\S]*?)<\/p>/);
     if (descMatch) data.description = descMatch[1].trim();
@@ -1244,12 +1242,16 @@ function generateProjectPage(project, pageData) {
   const previews = pageData.videoPreviews || [];
   let videoHtml = '';
   if (pageData.pageType === 'stacked' && pageData.videoUrls.length > 1) {
+    const captions = pageData.videoCaptions || [];
     const videos = pageData.videoUrls.map((url, i) => {
       const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
       const previewAttr = previews[i] ? ` data-preview="${previews[i]}"` : '';
-      return `        <div class="video-container" data-src="${url}"${previewAttr}>
-          <img src="${poster}" alt="${titleEsc}" class="video-poster">
-          <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+      const caption = captions[i] ? `\n          <p class="video-caption">${captions[i]}</p>` : '';
+      return `        <div class="video-card">
+          <div class="video-container" data-src="${url}"${previewAttr}>
+            <img src="${poster}" alt="${titleEsc}" class="video-poster">
+            <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+          </div>${caption}
         </div>`;
     }).join('\n');
     videoHtml = `        <div class="videos-stacked">\n${videos}\n        </div>`;
@@ -1257,10 +1259,11 @@ function generateProjectPage(project, pageData) {
     const url = pageData.videoUrls[0] || '';
     const poster = pageData.posters && pageData.posters[0] ? pageData.posters[0] : '';
     const previewAttr = previews[0] ? ` data-preview="${previews[0]}"` : '';
+    const caption = pageData.videoCaptions && pageData.videoCaptions[0] ? `\n        <p class="video-caption">${pageData.videoCaptions[0]}</p>` : '';
     videoHtml = `        <div class="video-container" data-src="${url}"${previewAttr}>
           <img src="${poster}" alt="${titleEsc}" class="video-poster">
           <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
-        </div>`;
+        </div>${caption}`;
   }
   const credit = pageData.credit || project.role.replace(/&/g, '&amp;') + '.';
   let mainContent;
@@ -2143,7 +2146,7 @@ function renderEditorVideos() {
       <img class="video-poster-preview" src="${v.posterPreview || ''}" alt="" onerror="this.src=''">
       <div class="video-fields">
         <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
-        <input type="text" value="${esc(v.caption || '')}" placeholder="Caption (for grid layout)" class="ev-caption" style="margin-top:4px;">
+        <input type="text" value="${esc(v.caption || '')}" placeholder="Caption" class="ev-caption" style="margin-top:4px;">
         <label style="margin-top:6px; font-size:11px; color:var(--text-dim); display:block;">Poster Image</label>
         <input type="file" accept="image/*" class="ev-poster" title="Upload poster image (shown before play)">
         <label style="margin-top:6px; font-size:11px; color:var(--text-dim); display:block;">Preview Video</label>
