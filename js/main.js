@@ -234,23 +234,68 @@ function initLightbox() {
 // ============================================================================
 
 /**
- * Initialize video poster click-to-play
- * Replaces poster image + play button with autoplay iframe on click
+ * Normalize YouTube URLs to embed format (youtu.be/ and watch?v= don't work in iframes)
+ */
+function normalizeVideoUrl(src) {
+  if (!src) return src;
+
+  // youtu.be/VIDEO_ID → embed format
+  const shortMatch = src.match(/youtu\.be\/([^?&#]+)/);
+  if (shortMatch) {
+    const videoId = shortMatch[1];
+    const startParam = extractStartParam(src);
+    return 'https://www.youtube.com/embed/' + videoId + startParam;
+  }
+
+  // youtube.com/watch?v=VIDEO_ID → embed format
+  const watchMatch = src.match(/youtube\.com\/watch\?.*v=([^&#]+)/);
+  if (watchMatch) {
+    const videoId = watchMatch[1];
+    const startParam = extractStartParam(src);
+    return 'https://www.youtube.com/embed/' + videoId + startParam;
+  }
+
+  // Already embed or non-YouTube — return as-is
+  return src;
+}
+
+/**
+ * Extract ?t= or &t= from a YouTube URL and convert to ?start= for embed
+ */
+function extractStartParam(url) {
+  const tMatch = url.match(/[?&]t=(\d+)/);
+  if (tMatch) return '?start=' + tMatch[1];
+  return '';
+}
+
+/**
+ * Initialize video poster click-to-play and preview videos
+ * - Normalizes YouTube URLs for iframe compatibility
+ * - Creates auto-playing preview videos for containers with data-preview
+ * - Falls back to static poster when no preview is set
  */
 function initVideoPoster() {
-  const posters = document.querySelectorAll('.video-container[data-src]');
+  const containers = document.querySelectorAll('.video-container[data-src]');
+  if (!containers.length) return;
 
-  posters.forEach(container => {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // --- Click-to-play handler for all containers ---
+  containers.forEach(container => {
     container.addEventListener('click', () => {
       const src = container.getAttribute('data-src');
       if (!src) return;
 
+      // Normalize URL for iframe compatibility
+      const embedSrc = normalizeVideoUrl(src);
+
       // Add autoplay param
-      const sep = src.includes('?') ? '&' : '?';
-      const autoplaySrc = src + sep + 'autoplay=1';
+      const sep = embedSrc.includes('?') ? '&' : '?';
+      const autoplaySrc = embedSrc + sep + 'autoplay=1';
 
       // Determine allow attribute based on platform
-      const isVimeo = src.includes('vimeo');
+      const isVimeo = embedSrc.includes('vimeo');
       const allow = isVimeo
         ? 'autoplay; fullscreen; picture-in-picture'
         : 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
@@ -262,12 +307,139 @@ function initVideoPoster() {
       iframe.setAttribute('allow', allow);
       iframe.style.border = 'none';
 
-      // Clear poster and insert iframe
+      // Clear poster/preview and insert iframe
       container.innerHTML = '';
       container.appendChild(iframe);
       container.removeAttribute('data-src');
+      container.removeAttribute('data-preview');
     });
   });
+
+  // --- Preview videos (skip if user prefers reduced motion) ---
+  if (prefersReducedMotion) return;
+
+  const previewContainers = document.querySelectorAll('.video-container[data-preview]');
+  if (!previewContainers.length) return;
+
+  if (isMobile) {
+    // MOBILE: single reusable video element (iOS limits concurrent videos)
+    let mobileVideo = null;
+    let mobileActiveContainer = null;
+    let touchUnlocked = false;
+
+    function ensureMobilePreviewVideo() {
+      if (mobileVideo) return;
+      mobileVideo = document.createElement('video');
+      mobileVideo.className = 'video-preview';
+      mobileVideo.muted = true;
+      mobileVideo.loop = true;
+      mobileVideo.playsInline = true;
+      mobileVideo.setAttribute('muted', '');
+      mobileVideo.setAttribute('playsinline', '');
+      mobileVideo.setAttribute('webkit-playsinline', '');
+    }
+
+    function playMobilePreview(container) {
+      ensureMobilePreviewVideo();
+      const src = container.getAttribute('data-preview');
+      if (!src) return;
+      mobileVideo.pause();
+      mobileVideo.style.opacity = '0';
+      container.appendChild(mobileVideo);
+      mobileVideo.src = src;
+      mobileVideo.load();
+      mobileVideo.onplaying = () => { mobileVideo.style.opacity = '1'; };
+      mobileVideo.play().catch(() => {});
+      mobileActiveContainer = container;
+    }
+
+    function updateMobilePreview() {
+      if (!touchUnlocked) return;
+      const center = window.innerHeight / 2;
+      let closest = null;
+      let closestDist = Infinity;
+
+      previewContainers.forEach(container => {
+        if (!container.hasAttribute('data-preview')) return;
+        const rect = container.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const dist = Math.abs(cardCenter - center);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = container;
+        }
+      });
+
+      if (closestDist > window.innerHeight * 0.5) closest = null;
+
+      if (closest !== mobileActiveContainer) {
+        if (closest) {
+          playMobilePreview(closest);
+        } else if (mobileVideo) {
+          mobileVideo.pause();
+          mobileVideo.style.opacity = '0';
+          mobileActiveContainer = null;
+        }
+      }
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          updateMobilePreview();
+          ticking = false;
+        });
+      }
+    }, { passive: true });
+
+    // iOS: first touch unlocks video playback
+    document.addEventListener('touchstart', () => {
+      if (touchUnlocked) return;
+      touchUnlocked = true;
+      updateMobilePreview();
+    }, { once: true, passive: true });
+
+  } else {
+    // DESKTOP: IntersectionObserver — create/destroy preview videos as they scroll in/out
+    const previewObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const container = entry.target;
+        const src = container.getAttribute('data-preview');
+        if (!src) return;
+
+        if (entry.isIntersecting) {
+          // Create and play preview video
+          if (!container.querySelector('.video-preview')) {
+            const video = document.createElement('video');
+            video.className = 'video-preview';
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.setAttribute('muted', '');
+            video.setAttribute('playsinline', '');
+            video.src = src;
+            container.appendChild(video);
+            video.play().catch(() => {});
+          }
+        } else {
+          // Destroy off-screen preview to free resources
+          const video = container.querySelector('.video-preview');
+          if (video) {
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+            video.remove();
+          }
+        }
+      });
+    }, { threshold: 0.25 });
+
+    previewContainers.forEach(container => {
+      previewObserver.observe(container);
+    });
+  }
 }
 
 // ============================================================================

@@ -1191,6 +1191,12 @@ function parseProjectPage(html) {
   data.videoUrls = videoMatches.map(m => m[1]);
   const posterMatches = [...html.matchAll(/class="video-poster"[^>]*src="([^"]+)"|src="([^"]+)"[^>]*class="video-poster"/g)];
   data.posters = posterMatches.map(m => m[1] || m[2]);
+  // Extract per-video preview paths from data-preview attributes on .video-container
+  const containerMatches = [...html.matchAll(/<div class="video-container"[^>]*>/g)];
+  data.videoPreviews = containerMatches.map(m => {
+    const previewMatch = m[0].match(/data-preview="([^"]+)"/);
+    return previewMatch ? previewMatch[1] : '';
+  });
   const creditMatch = html.match(/<div class="project-credit">\s*<p>([\s\S]*?)<\/p>/);
   if (creditMatch) data.credit = creditMatch[1].trim();
   if (html.includes('doc-layout')) data.pageType = 'documentary';
@@ -1235,11 +1241,13 @@ function generateCardHtml(project) {
 
 function generateProjectPage(project, pageData) {
   const titleEsc = project.title.replace(/&/g, '&amp;').replace(/'/g, '&#39;');
+  const previews = pageData.videoPreviews || [];
   let videoHtml = '';
   if (pageData.pageType === 'stacked' && pageData.videoUrls.length > 1) {
     const videos = pageData.videoUrls.map((url, i) => {
       const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
-      return `        <div class="video-container" data-src="${url}">
+      const previewAttr = previews[i] ? ` data-preview="${previews[i]}"` : '';
+      return `        <div class="video-container" data-src="${url}"${previewAttr}>
           <img src="${poster}" alt="${titleEsc}" class="video-poster">
           <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>`;
@@ -1248,7 +1256,8 @@ function generateProjectPage(project, pageData) {
   } else {
     const url = pageData.videoUrls[0] || '';
     const poster = pageData.posters && pageData.posters[0] ? pageData.posters[0] : '';
-    videoHtml = `        <div class="video-container" data-src="${url}">
+    const previewAttr = previews[0] ? ` data-preview="${previews[0]}"` : '';
+    videoHtml = `        <div class="video-container" data-src="${url}"${previewAttr}>
           <img src="${poster}" alt="${titleEsc}" class="video-poster">
           <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>`;
@@ -1260,8 +1269,9 @@ function generateProjectPage(project, pageData) {
     const cards = pageData.videoUrls.map((url, i) => {
       const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
       const caption = pageData.videoCaptions && pageData.videoCaptions[i] ? pageData.videoCaptions[i] : '';
+      const previewAttr = previews[i] ? ` data-preview="${previews[i]}"` : '';
       return `        <div class="video-card">
-          <div class="video-container" data-src="${url}">
+          <div class="video-container" data-src="${url}"${previewAttr}>
             <img src="${poster}" alt="${titleEsc}" class="video-poster">
             <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
           </div>
@@ -1987,6 +1997,7 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
           description: p.description || '',
           docPoster: p.docPoster || '',
           videoCaptions: p.videoCaptions || [],
+          videoPreviews: p.videoPreviews || [],
         };
         const pageHtml = generateProjectPage(p, pageData);
         const pageFile = { path: `projects/${p.slug}.html`, content: pageHtml };
@@ -2070,12 +2081,16 @@ function openProjectEditor(index) {
 
   editorVideoData = (p.videoUrls && p.videoUrls.length ? p.videoUrls : ['']).map((url, i) => {
     const rawPoster = p.posters && p.posters[i] ? p.posters[i] : '';
+    const rawPreview = p.videoPreviews && p.videoPreviews[i] ? p.videoPreviews[i] : '';
     return {
       url,
       caption: p.videoCaptions && p.videoCaptions[i] ? p.videoCaptions[i] : '',
       posterPath: rawPoster,
       posterFile: null,
       posterPreview: rawPoster ? rawPoster.replace(/^\.\.\//, '/') : '',
+      previewPath: rawPreview,
+      previewFile: null,
+      previewCleared: false,
     };
   });
   renderEditorVideos();
@@ -2122,6 +2137,7 @@ function renderEditorVideos() {
     item.className = 'video-item';
     item.draggable = false;
     item.dataset.vi = i;
+    const previewLabel = v.previewPath ? v.previewPath.split('/').pop() : '';
     item.innerHTML = `
       <span class="drag-handle" title="Drag to reorder">&#8942;&#8942;</span>
       <img class="video-poster-preview" src="${v.posterPreview || ''}" alt="" onerror="this.src=''">
@@ -2129,6 +2145,11 @@ function renderEditorVideos() {
         <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
         <input type="text" value="${esc(v.caption || '')}" placeholder="Caption (for grid layout)" class="ev-caption" style="margin-top:4px;">
         <input type="file" accept="image/*" class="ev-poster" style="margin-top:4px;" title="Upload poster image (shown before play)">
+        <div style="margin-top:4px; display:flex; align-items:center; gap:6px;">
+          <input type="file" accept=".mp4,.webm" class="ev-video-preview" title="Upload preview video (auto-play loop)">
+          <button type="button" class="ev-clear-preview btn" style="font-size:11px; padding:2px 8px;${v.previewPath && !v.previewCleared ? '' : ' display:none;'}" title="Remove preview video">Clear</button>
+          <span class="ev-preview-label" style="font-size:11px; color:var(--text-dim);">${previewLabel}</span>
+        </div>
       </div>
       <div class="video-actions">
         <button title="Remove">&times;</button>
@@ -2161,6 +2182,24 @@ function renderEditorVideos() {
       };
       reader.readAsDataURL(file);
     });
+    item.querySelector('.ev-video-preview').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      editorVideoData[i].previewFile = file;
+      editorVideoData[i].previewCleared = false;
+      const label = item.querySelector('.ev-preview-label');
+      label.textContent = file.name;
+      const clearBtn = item.querySelector('.ev-clear-preview');
+      clearBtn.style.display = '';
+    });
+    item.querySelector('.ev-clear-preview').addEventListener('click', () => {
+      editorVideoData[i].previewFile = null;
+      editorVideoData[i].previewCleared = true;
+      editorVideoData[i].previewPath = '';
+      item.querySelector('.ev-video-preview').value = '';
+      item.querySelector('.ev-preview-label').textContent = '';
+      item.querySelector('.ev-clear-preview').style.display = 'none';
+    });
     item.querySelector('.video-actions button').addEventListener('click', () => {
       if (editorVideoData.length <= 1) return;
       editorVideoData.splice(i, 1);
@@ -2191,7 +2230,7 @@ function onEditorVideoDrop(e) {
 }
 
 document.getElementById('editorAddVideoBtn').addEventListener('click', () => {
-  editorVideoData.push({ url: '', caption: '', posterPath: '', posterFile: null, posterPreview: '' });
+  editorVideoData.push({ url: '', caption: '', posterPath: '', posterFile: null, posterPreview: '', previewPath: '', previewFile: null, previewCleared: false });
   renderEditorVideos();
 });
 
@@ -2277,6 +2316,37 @@ document.getElementById('editorSaveBtn').addEventListener('click', async () => {
       }
     }
     p.posters = newPosters;
+
+    // Upload per-video preview clips
+    const newVideoPreviews = [];
+    let videoIdx = 0;
+    for (let i = 0; i < editorVideoData.length; i++) {
+      const v = editorVideoData[i];
+      if (!v.url) continue;
+      if (v.previewFile) {
+        const reader = new FileReader();
+        const previewBase64 = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(v.previewFile);
+        });
+        const ext = v.previewFile.name.endsWith('.webm') ? '.webm' : '.mp4';
+        const previewName = p.videoUrls.length > 1
+          ? `${p.slug}-video-preview-${videoIdx + 1}${ext}`
+          : `${p.slug}-video-preview${ext}`;
+        const uploadResult = stageVideoUpload(previewName, previewBase64);
+        stagedFiles.push(uploadResult.stagedFile);
+        newVideoPreviews.push('../' + uploadResult.stagedFile.path);
+      } else if (v.previewCleared) {
+        newVideoPreviews.push('');
+      } else if (v.previewPath) {
+        newVideoPreviews.push(v.previewPath);
+      } else {
+        newVideoPreviews.push('');
+      }
+      videoIdx++;
+    }
+    p.videoPreviews = newVideoPreviews;
 
     // Upload thumbnail if changed
     if (editorNewThumbFile) {
