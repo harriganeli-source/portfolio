@@ -803,7 +803,7 @@ img.thumb-zoomed {
 }
 
 .doc-layout-poster-hero {
-  grid-template-columns: 2fr 3fr;
+  grid-template-columns: 1fr 2fr;
 }
 
 .doc-trailer-label {
@@ -813,6 +813,18 @@ img.thumb-zoomed {
   letter-spacing: 1.5px;
   color: var(--color-gray-medium);
   margin-bottom: var(--spacing-sm);
+}
+
+.doc-laurels-static {
+  margin-top: var(--spacing-xl);
+  text-align: center;
+  opacity: 0.85;
+}
+
+.doc-laurels-static img {
+  max-width: 100%;
+  height: auto;
+  filter: invert(1) hue-rotate(180deg) brightness(1.5);
 }
 
 .doc-laurels {
