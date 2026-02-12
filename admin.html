@@ -2144,8 +2144,10 @@ function renderEditorVideos() {
       <div class="video-fields">
         <input type="text" value="${esc(v.url)}" placeholder="https://www.youtube.com/embed/VIDEO_ID" class="ev-url">
         <input type="text" value="${esc(v.caption || '')}" placeholder="Caption (for grid layout)" class="ev-caption" style="margin-top:4px;">
-        <input type="file" accept="image/*" class="ev-poster" style="margin-top:4px;" title="Upload poster image (shown before play)">
-        <div style="margin-top:4px; display:flex; align-items:center; gap:6px;">
+        <label style="margin-top:6px; font-size:11px; color:var(--text-dim); display:block;">Poster Image</label>
+        <input type="file" accept="image/*" class="ev-poster" title="Upload poster image (shown before play)">
+        <label style="margin-top:6px; font-size:11px; color:var(--text-dim); display:block;">Preview Video</label>
+        <div style="display:flex; align-items:center; gap:6px;">
           <input type="file" accept=".mp4,.webm" class="ev-video-preview" title="Upload preview video (auto-play loop)">
           <button type="button" class="ev-clear-preview btn" style="font-size:11px; padding:2px 8px;${v.previewPath && !v.previewCleared ? '' : ' display:none;'}" title="Remove preview video">Clear</button>
           <span class="ev-preview-label" style="font-size:11px; color:var(--text-dim);">${previewLabel}</span>
