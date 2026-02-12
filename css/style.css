@@ -333,9 +333,10 @@ main {
   pointer-events: none;
 }
 
-/* Play icon cursor on thumbnails (pointer devices only) */
+/* Play icon cursor on thumbnails and video containers (pointer devices only) */
 @media (hover: hover) and (pointer: fine) {
-  .project-thumb {
+  .project-thumb,
+  .video-container[data-src] {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpolygon points='8,5 20,12 8,19' stroke='white' stroke-width='1.5' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") 12 12, pointer;
   }
 }

@@ -472,10 +472,10 @@ function initBackButton() {
 function initThumbnailScrub() {
   const cards = document.querySelectorAll('.project-card');
 
-  // Trailing dot only on the main work page (index / root)
   const path = window.location.pathname;
   const isHomepage = path === '/' || path.endsWith('/index.html') || path.endsWith('/');
-  const hasPointer = isHomepage && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const isProjectPage = path.includes('/projects/');
+  const hasPointer = (isHomepage || isProjectPage) && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   // ---- Trailing dot cursor (page-wide) ----
   let dot = null;
@@ -504,7 +504,7 @@ function initThumbnailScrub() {
     let iDotHomeX = 0, iDotHomeY = 0;
     let rippleCooldown = false;
 
-    if (iDot) {
+    if (isHomepage && iDot) {
       const dotRect = iDot.getBoundingClientRect();
       const startX = dotRect.left + dotRect.width / 2;
       const startY = dotRect.top + dotRect.height / 2;
@@ -589,7 +589,7 @@ function initThumbnailScrub() {
       }
       document.addEventListener('mousemove', launchOnFirstMove);
     } else {
-      // Fallback: no i-dot found, just create cursor dot normally
+      // Project pages & fallback: create cursor dot immediately (no i-dot animation)
       dot = document.createElement('div');
       dot.className = 'cursor-dot';
       document.body.appendChild(dot);
@@ -736,8 +736,8 @@ function initThumbnailScrub() {
         dot.style.top = dotY + 'px';
       }
 
-      // Check if dot has returned home to the "i"
-      if (cursorReady && iDot && !rippleCooldown && !docking) {
+      // Check if dot has returned home to the "i" (homepage only)
+      if (isHomepage && cursorReady && iDot && !rippleCooldown && !docking) {
         const rect = iDot.getBoundingClientRect();
         const homeX = rect.left + rect.width / 2;
         const homeY = rect.top + rect.height / 2;
@@ -801,6 +801,15 @@ function initThumbnailScrub() {
         onNav = false;
         shrinkDot();
       });
+    });
+  }
+
+  // ---- Expand cursor on video containers (project pages) ----
+  if (isProjectPage && hasPointer) {
+    const videoContainers = document.querySelectorAll('.video-container[data-src]');
+    videoContainers.forEach(container => {
+      container.addEventListener('mouseenter', expandDot);
+      container.addEventListener('mouseleave', shrinkDot);
     });
   }
 
