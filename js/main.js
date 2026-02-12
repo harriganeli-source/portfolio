@@ -513,7 +513,7 @@ function initThumbnailScrub() {
 
       // Create the cursor dot, initially placed at the i-dot position
       dot = document.createElement('div');
-      dot.className = 'cursor-dot';
+      dot.className = 'cursor-dot has-play';
       dot.style.left = startX + 'px';
       dot.style.top = startY + 'px';
       dot.style.opacity = '0';        // hidden until animation
@@ -592,6 +592,7 @@ function initThumbnailScrub() {
       // Project pages & fallback: create cursor dot immediately (no i-dot animation)
       dot = document.createElement('div');
       dot.className = 'cursor-dot';
+      if (isProjectPage) dot.classList.add('has-play');
       document.body.appendChild(dot);
       cursorReady = true;
       rafId = requestAnimationFrame(tick);
@@ -754,6 +755,7 @@ function initThumbnailScrub() {
   function expandDot() {
     if (!dot) return;
     onThumb = true;
+    dot.classList.add('expanded');
     dot.style.width = '60px';
     dot.style.height = '60px';
     dot.style.background = 'rgba(255, 255, 255, 0.15)';
@@ -764,6 +766,7 @@ function initThumbnailScrub() {
   function shrinkDot() {
     if (!dot) return;
     onThumb = false;
+    dot.classList.remove('expanded');
     dot.style.width = '14px';
     dot.style.height = '14px';
     dot.style.background = '#fff';

@@ -437,6 +437,25 @@ main {
   will-change: left, top, width, height;
 }
 
+.cursor-dot.has-play::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 14px;
+  border-color: transparent transparent transparent rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cursor-dot.expanded.has-play::after {
+  opacity: 1;
+}
+
 /* Tighter crop for specific thumbnails */
 img.thumb-zoomed {
   transform: scale(1.4);
