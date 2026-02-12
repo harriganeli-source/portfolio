@@ -789,12 +789,7 @@ img.thumb-zoomed {
   color: var(--color-gray-medium);
 }
 
-.doc-trailer-section {
-  margin-top: var(--spacing-sm);
-  max-width: 640px;
-}
-
-.doc-trailer-section .video-container {
+.doc-main .video-container {
   margin-bottom: 0;
 }
 
