@@ -651,6 +651,13 @@ img.thumb-zoomed {
   margin-left: 3px;
 }
 
+/* Hide static play button on pointer devices (custom cursor has play icon) */
+@media (hover: hover) and (pointer: fine) {
+  .play-btn {
+    display: none;
+  }
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
