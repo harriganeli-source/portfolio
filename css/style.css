@@ -832,10 +832,10 @@ img.thumb-zoomed {
 }
 
 .laurels-track img {
-  height: 70px;
+  height: 90px;
   width: auto;
   margin-right: 0;
-  filter: invert(1) hue-rotate(180deg);
+  filter: invert(1) hue-rotate(180deg) brightness(1.5);
 }
 
 @keyframes marquee-scroll {
