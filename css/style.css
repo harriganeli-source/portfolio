@@ -802,6 +802,19 @@ img.thumb-zoomed {
   color: var(--color-gray-medium);
 }
 
+.doc-layout-poster-hero {
+  grid-template-columns: 2fr 3fr;
+}
+
+.doc-trailer-label {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-gray-medium);
+  margin-bottom: var(--spacing-sm);
+}
+
 .doc-laurels {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-lg);
