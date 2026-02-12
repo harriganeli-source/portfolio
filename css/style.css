@@ -802,10 +802,6 @@ img.thumb-zoomed {
   color: var(--color-gray-medium);
 }
 
-.doc-layout-poster-hero {
-  grid-template-columns: 1fr 1.2fr;
-}
-
 .doc-trailer-label {
   font-size: 13px;
   font-weight: 500;
@@ -815,21 +811,37 @@ img.thumb-zoomed {
   margin-bottom: var(--spacing-sm);
 }
 
-.doc-laurels-static {
+.doc-laurels-grid {
   margin-top: var(--spacing-xl);
-  text-align: center;
-  opacity: 0.85;
-  overflow-x: auto;
-  overflow-y: hidden;
-  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  padding: var(--spacing-lg) 0;
 }
 
-.doc-laurels-static img {
+.doc-laurels-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.doc-laurels-inner img {
   height: 80px;
   width: auto;
-  max-width: none;
-  filter: invert(1) hue-rotate(180deg) brightness(1.5);
+  object-fit: contain;
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.doc-laurels-grid.laurels-visible img {
+  opacity: 0.85;
+  transform: translateY(0);
+}
+
+.doc-laurels-grid.laurels-visible img:hover {
+  opacity: 1;
 }
 
 .doc-laurels {

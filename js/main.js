@@ -1052,6 +1052,24 @@ function initAboutAnimations() {
   }
 }
 
+function initDocLaurelsAnimation() {
+  const laurelsSection = document.querySelector('.doc-laurels-grid');
+  if (!laurelsSection) return;
+  const laurels = Array.from(laurelsSection.querySelectorAll('.doc-laurels-inner img'));
+  laurels.forEach((img, i) => {
+    img.style.transitionDelay = (i * 0.05) + 's';
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        laurelsSection.classList.add('laurels-visible');
+        observer.unobserve(laurelsSection);
+      }
+    });
+  }, { threshold: 0.15 });
+  observer.observe(laurelsSection);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cleanProjectTitles();
   initMobileMenu();
@@ -1065,6 +1083,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPhotoStripScroll();
   initMobileActiveCard();
   initAboutAnimations();
+  initDocLaurelsAnimation();
 });
 
 /**
