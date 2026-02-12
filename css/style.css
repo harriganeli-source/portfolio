@@ -803,7 +803,7 @@ img.thumb-zoomed {
 }
 
 .doc-layout-poster-hero {
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1.2fr;
 }
 
 .doc-trailer-label {
@@ -819,11 +819,16 @@ img.thumb-zoomed {
   margin-top: var(--spacing-xl);
   text-align: center;
   opacity: 0.85;
+  overflow-x: auto;
+  overflow-y: hidden;
+  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
 }
 
 .doc-laurels-static img {
-  max-width: 100%;
-  height: auto;
+  height: 80px;
+  width: auto;
+  max-width: none;
   filter: invert(1) hue-rotate(180deg) brightness(1.5);
 }
 
