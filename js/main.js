@@ -1055,7 +1055,7 @@ function initAboutAnimations() {
 function initDocLaurelsAnimation() {
   const laurelsSection = document.querySelector('.doc-laurels-grid');
   if (!laurelsSection) return;
-  const laurels = Array.from(laurelsSection.querySelectorAll('.doc-laurels-inner img'));
+  const laurels = Array.from(laurelsSection.querySelectorAll('.doc-laurels-featured img, .doc-laurels-selections img'));
   laurels.forEach((img, i) => {
     img.style.transitionDelay = (i * 0.05) + 's';
   });

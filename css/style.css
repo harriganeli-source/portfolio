@@ -757,21 +757,13 @@ img.thumb-zoomed {
 
 .doc-layout {
   display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: var(--spacing-lg);
+  grid-template-columns: 3fr 2fr;
+  gap: var(--spacing-xl);
   align-items: start;
 }
 
 .doc-main {
   min-width: 0;
-}
-
-.doc-main .video-container {
-  margin-bottom: 0;
-}
-
-.doc-main .laurels-marquee {
-  margin-top: var(--spacing-sm);
 }
 
 .doc-sidebar {
@@ -791,18 +783,19 @@ img.thumb-zoomed {
   height: auto;
 }
 
-.doc-info {
-  padding: var(--spacing-md);
-}
-
-.doc-info h2 {
-  margin-bottom: var(--spacing-md);
-}
-
 .doc-description {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   line-height: 1.8;
   color: var(--color-gray-medium);
+}
+
+.doc-trailer-section {
+  margin-top: var(--spacing-lg);
+  max-width: 640px;
+}
+
+.doc-trailer-section .video-container {
+  margin-bottom: 0;
 }
 
 .doc-trailer-label {
@@ -815,20 +808,25 @@ img.thumb-zoomed {
 }
 
 .doc-laurels-grid {
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
   padding: var(--spacing-sm) 0;
 }
 
-.doc-laurels-inner {
+.doc-laurels-featured,
+.doc-laurels-selections {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: var(--spacing-lg);
 }
 
-.doc-laurels-inner img {
-  height: 70px;
+.doc-laurels-featured {
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.doc-laurels-featured img {
+  height: 100px;
   width: auto;
   object-fit: contain;
   filter: invert(1) hue-rotate(180deg);
@@ -838,12 +836,19 @@ img.thumb-zoomed {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.doc-laurels-inner img.laurel-lg {
-  height: 95px;
+.doc-laurels-selections {
+  gap: var(--spacing-md);
 }
 
-.doc-laurels-inner img.laurel-sm {
-  height: 55px;
+.doc-laurels-selections img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .doc-laurels-grid.laurels-visible img {
