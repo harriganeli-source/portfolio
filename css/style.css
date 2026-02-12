@@ -651,7 +651,7 @@ img.thumb-zoomed {
 }
 
 /* Widen container for side-by-side layouts */
-.container-narrow:has(.project-layout),
+.container-narrow:has(.videos-stacked),
 .container-narrow:has(.videos-grid) {
   max-width: 1700px;
 }
