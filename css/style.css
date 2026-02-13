@@ -643,13 +643,8 @@ img.thumb-zoomed {
   cursor: pointer;
   pointer-events: none;
   z-index: 4;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.video-card:hover .play-btn,
-.video-container:hover .play-btn {
   opacity: 0.4;
+  transition: opacity 0.35s ease;
 }
 
 @media (hover: none) {
