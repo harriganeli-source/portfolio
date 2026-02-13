@@ -752,17 +752,26 @@ img.thumb-zoomed {
 /* Video card hover scale — hovered grows, others shrink */
 @media (hover: hover) {
   .video-card {
-    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+                filter 0.45s ease;
   }
 
   .container-narrow:has(.video-card:hover) .video-card {
     transform: scale(0.96);
+    filter: brightness(0.7);
   }
 
-  .container-narrow .video-card:hover {
+  .container-narrow:has(.video-card:hover) .video-card:hover {
     transform: scale(1.04);
+    filter: brightness(1);
     z-index: 2;
   }
+}
+
+/* Clip scale overflow so letterbox bars stay hidden */
+.videos-stacked:has(.video-letterbox),
+.videos-grid:has(.video-letterbox) {
+  overflow: hidden;
 }
 
 /* Project page heading + credit subtitle */
