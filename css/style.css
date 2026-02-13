@@ -723,7 +723,7 @@ img.thumb-zoomed {
 }
 
 /* 3-across row for secondary videos */
-.videos-three-up {
+.videos-grid.videos-three-up {
   grid-template-columns: repeat(3, 1fr);
 }
 
@@ -733,7 +733,7 @@ img.thumb-zoomed {
 }
 
 @media (max-width: 1024px) {
-  .videos-three-up {
+  .videos-grid.videos-three-up {
     grid-template-columns: repeat(2, 1fr);
   }
   .videos-four-up {
@@ -743,7 +743,7 @@ img.thumb-zoomed {
 
 @media (max-width: 767px) {
   .videos-stacked,
-  .videos-three-up,
+  .videos-grid.videos-three-up,
   .videos-four-up {
     grid-template-columns: 1fr;
   }
