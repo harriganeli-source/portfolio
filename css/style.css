@@ -768,10 +768,12 @@ img.thumb-zoomed {
   }
 }
 
-/* Clip scale overflow so letterbox bars stay hidden */
-.videos-stacked:has(.video-letterbox),
-.videos-grid:has(.video-letterbox) {
-  overflow: hidden;
+/* Each grid section is its own stacking context so later rows
+   always paint on top, covering letterbox overflow from hover scale */
+.videos-stacked,
+.videos-grid {
+  position: relative;
+  isolation: isolate;
 }
 
 /* Project page heading + credit subtitle */
