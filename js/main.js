@@ -512,7 +512,7 @@ function initThumbnailScrub() {
 
       // Create the cursor dot, initially placed at the i-dot position
       dot = document.createElement('div');
-      dot.className = 'cursor-dot has-play';
+      dot.className = 'cursor-dot';
       dot.style.left = startX + 'px';
       dot.style.top = startY + 'px';
       dot.style.opacity = '0';        // hidden until animation

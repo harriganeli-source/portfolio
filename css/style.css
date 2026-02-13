@@ -810,7 +810,7 @@ img.thumb-zoomed {
 
 /* Anamorphic videos: caption sits above the letterbox bar */
 .video-container.video-letterbox .video-caption {
-  bottom: 13%;
+  bottom: 10%;
 }
 
 .video-caption strong {
