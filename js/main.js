@@ -1299,7 +1299,7 @@ function initVideoCardHover() {
       applyEffect(card);
     });
     card.addEventListener('mouseleave', () => {
-      hoverTimeout = setTimeout(resetEffect, 150);
+      hoverTimeout = setTimeout(resetEffect, 50);
     });
   });
 }
