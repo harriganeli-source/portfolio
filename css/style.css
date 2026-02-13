@@ -685,8 +685,9 @@ img.thumb-zoomed {
   max-width: 1700px;
 }
 
-.container-narrow:has(.doc-layout) {
-  max-width: 1200px;
+.container-narrow:has(.doc-layout),
+.container-narrow:has(.project-split) {
+  max-width: 1100px;
 }
 
 /* Video + credit layout — stacked vertically, full width */
@@ -784,10 +785,11 @@ img.thumb-zoomed {
   margin-bottom: var(--spacing-sm);
 }
 
-/* Video + intro/description stacked layout */
+/* Editorial stacked layout — intro above video, description below */
 .project-split {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .project-split .video-card {
@@ -798,19 +800,25 @@ img.thumb-zoomed {
   margin-bottom: 0;
 }
 
-.project-intro,
+.project-intro {
+  color: var(--color-gray-dark);
+  font-size: 17px;
+  line-height: 1.75;
+  max-width: 55%;
+  margin-bottom: -28px;
+  position: relative;
+  z-index: 1;
+}
+
 .project-description {
   color: var(--color-gray-medium);
   font-size: 15px;
   line-height: 1.75;
-}
-
-.project-intro {
-  margin-bottom: var(--spacing-lg);
-}
-
-.project-description {
-  margin-top: var(--spacing-lg);
+  max-width: 55%;
+  margin-left: auto;
+  margin-top: -28px;
+  position: relative;
+  z-index: 1;
 }
 
 .project-intro p,
@@ -821,6 +829,21 @@ img.thumb-zoomed {
 .project-intro p:last-child,
 .project-description p:last-child {
   margin-bottom: 0;
+}
+
+@media (max-width: 767px) {
+  .project-intro,
+  .project-description {
+    max-width: 100%;
+    margin-bottom: 0;
+    margin-top: var(--spacing-md);
+  }
+
+  .project-intro {
+    font-size: 15px;
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+  }
 }
 
 /* Video grid layout (2-up with per-video captions) */
