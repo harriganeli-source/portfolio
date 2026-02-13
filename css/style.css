@@ -754,6 +754,8 @@ img.thumb-zoomed {
   .video-card {
     transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
                 filter 0.45s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .container-narrow:has(.video-card:hover) .video-card {
