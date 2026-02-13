@@ -788,7 +788,7 @@ img.thumb-zoomed {
 /* Side-by-side video + text layout */
 .project-split {
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 2fr 1fr;
   gap: var(--spacing-lg);
   align-items: start;
 }
