@@ -345,10 +345,14 @@ function initVideoPoster() {
       if (!src) return;
       mobileVideo.pause();
       mobileVideo.style.opacity = '0';
+      if (mobileActiveContainer) mobileActiveContainer.classList.remove('preview-active');
       container.appendChild(mobileVideo);
       mobileVideo.src = src;
       mobileVideo.load();
-      mobileVideo.onplaying = () => { mobileVideo.style.opacity = '1'; };
+      mobileVideo.onplaying = () => {
+        mobileVideo.style.opacity = '1';
+        container.classList.add('preview-active');
+      };
       mobileVideo.play().catch(() => {});
       mobileActiveContainer = container;
     }
@@ -378,6 +382,7 @@ function initVideoPoster() {
         } else if (mobileVideo) {
           mobileVideo.pause();
           mobileVideo.style.opacity = '0';
+          if (mobileActiveContainer) mobileActiveContainer.classList.remove('preview-active');
           mobileActiveContainer = null;
         }
       }
