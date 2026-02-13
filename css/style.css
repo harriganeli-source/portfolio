@@ -894,14 +894,8 @@ img.thumb-zoomed {
   margin-bottom: 2px;
 }
 
-/* On touch devices, always show captions and reset letterbox offset
-   (posters are full-frame, no black bars) */
+/* On touch devices, reset letterbox offset (posters are full-frame) */
 @media (hover: none) {
-  .video-caption {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
   .video-container.video-letterbox .video-caption {
     bottom: 0;
   }
