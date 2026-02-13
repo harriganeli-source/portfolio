@@ -898,6 +898,7 @@ img.thumb-zoomed {
 @media (hover: none) {
   .video-caption {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
