@@ -778,10 +778,6 @@ img.thumb-zoomed {
   margin-top: var(--spacing-lg);
 }
 
-.video-card {
-  position: relative;
-}
-
 .video-card .video-container {
   margin-bottom: 0;
 }
@@ -803,10 +799,10 @@ img.thumb-zoomed {
   transform: translateY(6px);
   transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   pointer-events: none;
-  border-radius: 0 0 4px 4px;
 }
 
-.video-card:hover .video-caption {
+.video-card:hover .video-caption,
+.video-container:hover .video-caption {
   opacity: 1;
   transform: translateY(0);
 }

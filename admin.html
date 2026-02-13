@@ -1260,12 +1260,12 @@ function generateProjectPage(project, pageData) {
     const makeCard = (url, i) => {
       const poster = pageData.posters && pageData.posters[i] ? pageData.posters[i] : '';
       const previewAttr = previews[i] ? ` data-preview="${previews[i]}"` : '';
-      const caption = captions[i] ? `\n          <p class="video-caption">${captions[i]}</p>` : '';
+      const caption = captions[i] ? `\n              <p class="video-caption">${captions[i]}</p>` : '';
       return `          <div class="video-card">
             <div class="video-container" data-src="${url}"${previewAttr}>
               <img src="${poster}" alt="${titleEsc}" class="video-poster">
-              <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
-            </div>${caption}
+              <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>${caption}
+            </div>
           </div>`;
     };
     if (fourUpAfter > 0 && fourUpAfter < pageData.videoUrls.length) {
@@ -1280,11 +1280,11 @@ function generateProjectPage(project, pageData) {
     const url = pageData.videoUrls[0] || '';
     const poster = pageData.posters && pageData.posters[0] ? pageData.posters[0] : '';
     const previewAttr = previews[0] ? ` data-preview="${previews[0]}"` : '';
-    const caption = pageData.videoCaptions && pageData.videoCaptions[0] ? `\n        <p class="video-caption">${pageData.videoCaptions[0]}</p>` : '';
+    const caption = pageData.videoCaptions && pageData.videoCaptions[0] ? `\n          <p class="video-caption">${pageData.videoCaptions[0]}</p>` : '';
     videoHtml = `        <div class="video-container" data-src="${url}"${previewAttr}>
           <img src="${poster}" alt="${titleEsc}" class="video-poster">
-          <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
-        </div>${caption}`;
+          <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>${caption}
+        </div>`;
   }
   const credit = pageData.credit || project.role.replace(/&/g, '&amp;') + '.';
   let mainContent;
@@ -1298,8 +1298,8 @@ function generateProjectPage(project, pageData) {
           <div class="video-container" data-src="${url}"${previewAttr}>
             <img src="${poster}" alt="${titleEsc}" class="video-poster">
             <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
+            <p class="video-caption">${caption}</p>
           </div>
-          <p class="video-caption">${caption}</p>
         </div>`;
     }).join('\n');
     mainContent = `      <p class="project-role-label">${roleEsc}.</p>
