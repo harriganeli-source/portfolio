@@ -807,7 +807,7 @@ img.thumb-zoomed {
   font-size: 15px;
   font-weight: 300;
   line-height: 1.7;
-  max-width: 50%;
+  max-width: 65%;
   margin-bottom: var(--spacing-md);
 }
 
