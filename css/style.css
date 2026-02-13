@@ -333,10 +333,9 @@ main {
   pointer-events: none;
 }
 
-/* Play icon cursor on thumbnails and video containers (pointer devices only) */
+/* Play icon cursor on homepage thumbnails (pointer devices only) */
 @media (hover: hover) and (pointer: fine) {
-  .project-thumb,
-  .video-container[data-src] {
+  .project-thumb {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpolygon points='8,5 20,12 8,19' stroke='white' stroke-width='1.5' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") 12 12, pointer;
   }
 }
@@ -625,10 +624,10 @@ img.thumb-zoomed {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 72px;
-  height: 72px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 2px solid rgba(255, 255, 255, 0.9);
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -637,25 +636,20 @@ img.thumb-zoomed {
   transition: background-color var(--transition-fast), transform var(--transition-fast);
   pointer-events: none;
   z-index: 2;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .video-container:hover .play-btn {
-  background: rgba(0, 0, 0, 0.8);
-  transform: translate(-50%, -50%) scale(1.08);
+  background: rgba(0, 0, 0, 0.6);
+  transform: translate(-50%, -50%) scale(1.05);
 }
 
 .play-btn svg {
-  width: 28px;
-  height: 28px;
+  width: 18px;
+  height: 18px;
   fill: #fff;
-  margin-left: 3px;
-}
-
-/* Hide static play button on pointer devices (custom cursor has play icon) */
-@media (hover: hover) and (pointer: fine) {
-  .play-btn {
-    display: none;
-  }
+  margin-left: 2px;
 }
 
 .back-link {
@@ -770,20 +764,45 @@ img.thumb-zoomed {
   gap: var(--spacing-lg);
 }
 
+.video-card {
+  position: relative;
+}
+
 .video-card .video-container {
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: 0;
 }
 
 .video-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 16px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: rgba(255, 255, 255, 0.95);
   font-size: var(--font-size-small);
-  color: var(--color-gray-medium);
-  line-height: 1.6;
-  padding: 4px 0;
+  line-height: 1.4;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.video-card:hover .video-caption {
+  opacity: 1;
 }
 
 .video-caption strong {
-  color: var(--color-gray-dark);
+  color: #fff;
   font-weight: var(--font-weight-medium);
+}
+
+/* On touch devices, always show captions */
+@media (hover: none) {
+  .video-caption {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 767px) {

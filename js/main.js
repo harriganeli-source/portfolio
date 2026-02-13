@@ -474,8 +474,7 @@ function initThumbnailScrub() {
 
   const path = window.location.pathname;
   const isHomepage = path === '/' || path.endsWith('/index.html') || path.endsWith('/');
-  const isProjectPage = path.includes('/projects/');
-  const hasPointer = (isHomepage || isProjectPage) && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const hasPointer = isHomepage && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   // ---- Trailing dot cursor (page-wide) ----
   let dot = null;
@@ -504,7 +503,7 @@ function initThumbnailScrub() {
     let iDotHomeX = 0, iDotHomeY = 0;
     let rippleCooldown = false;
 
-    if (isHomepage && iDot) {
+    if (iDot) {
       const dotRect = iDot.getBoundingClientRect();
       const startX = dotRect.left + dotRect.width / 2;
       const startY = dotRect.top + dotRect.height / 2;
@@ -588,14 +587,6 @@ function initThumbnailScrub() {
         requestAnimationFrame(liftAnim);
       }
       document.addEventListener('mousemove', launchOnFirstMove);
-    } else {
-      // Project pages & fallback: create cursor dot immediately (no i-dot animation)
-      dot = document.createElement('div');
-      dot.className = 'cursor-dot';
-      if (isProjectPage) dot.classList.add('has-play');
-      document.body.appendChild(dot);
-      cursorReady = true;
-      rafId = requestAnimationFrame(tick);
     }
 
     // ---- Easter egg: dot clicks back into the "i", ripple fires ----
@@ -804,15 +795,6 @@ function initThumbnailScrub() {
         onNav = false;
         shrinkDot();
       });
-    });
-  }
-
-  // ---- Expand cursor on video containers (project pages) ----
-  if (isProjectPage && hasPointer) {
-    const videoContainers = document.querySelectorAll('.video-container[data-src]');
-    videoContainers.forEach(container => {
-      container.addEventListener('mouseenter', expandDot);
-      container.addEventListener('mouseleave', shrinkDot);
     });
   }
 
