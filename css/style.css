@@ -808,6 +808,11 @@ img.thumb-zoomed {
   transform: translateY(0);
 }
 
+/* Anamorphic videos: caption sits above the letterbox bar */
+.video-container.video-letterbox .video-caption {
+  bottom: 13%;
+}
+
 .video-caption strong {
   display: block;
   color: #fff;
