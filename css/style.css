@@ -777,25 +777,33 @@ img.thumb-zoomed {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 24px 16px 12px;
+  padding: 24px 16px 14px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-  color: rgba(255, 255, 255, 0.95);
-  font-size: var(--font-size-small);
-  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
   z-index: 3;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   pointer-events: none;
   border-radius: 0 0 4px 4px;
 }
 
 .video-card:hover .video-caption {
   opacity: 1;
+  transform: translateY(0);
 }
 
 .video-caption strong {
+  display: block;
   color: #fff;
-  font-weight: var(--font-weight-medium);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
 }
 
 /* On touch devices, always show captions */
