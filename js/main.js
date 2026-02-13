@@ -1278,8 +1278,8 @@ function initVideoCardHover() {
         card.style.zIndex = '2';
       } else {
         const t = maxDist > 0 ? dists[i] / maxDist : 0;
-        // Closest: 0.96, farthest: 0.88
-        const s = 0.96 - t * 0.08;
+        // Closest: 0.96, farthest: 0.91
+        const s = 0.96 - t * 0.05;
         card.style.transform = 'scale(' + s.toFixed(4) + ')';
         card.style.zIndex = '';
       }
