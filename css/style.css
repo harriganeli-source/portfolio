@@ -804,8 +804,9 @@ img.thumb-zoomed {
 
 .project-intro {
   color: var(--color-gray-dark);
-  font-size: 17px;
-  line-height: 1.75;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.7;
   max-width: 65%;
   margin-bottom: -28px;
   position: relative;
@@ -814,8 +815,8 @@ img.thumb-zoomed {
 
 .project-description {
   color: var(--color-gray-medium);
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 14px;
+  line-height: 1.8;
   max-width: 65%;
   margin-left: auto;
   margin-top: -28px;
