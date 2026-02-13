@@ -587,6 +587,17 @@ img.thumb-zoomed {
   background: #000;
 }
 
+/* When inside a video-card, move border-radius to the card
+   to prevent compositing seams during scale transforms */
+.video-card {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.video-card .video-container {
+  border-radius: 0;
+}
+
 .video-container iframe {
   position: absolute;
   top: 0;
