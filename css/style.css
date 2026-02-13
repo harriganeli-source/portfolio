@@ -803,11 +803,11 @@ img.thumb-zoomed {
 }
 
 .project-intro {
-  color: #ddd;
+  color: #e8e8e8;
   font-size: 15px;
   font-weight: 300;
   line-height: 1.7;
-  max-width: 60%;
+  max-width: 70%;
   margin-bottom: var(--spacing-lg);
 }
 
@@ -815,7 +815,7 @@ img.thumb-zoomed {
   color: var(--color-gray-medium);
   font-size: 14px;
   line-height: 1.8;
-  max-width: 60%;
+  max-width: 70%;
   margin-left: auto;
   margin-top: var(--spacing-lg);
 }
