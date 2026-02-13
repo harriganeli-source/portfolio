@@ -753,7 +753,7 @@ img.thumb-zoomed {
 .project-heading {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: 4px;
   line-height: 1.3;
 }
 
