@@ -1260,51 +1260,46 @@ function initVideoCardHover() {
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }
 
-  function applyScales(hoveredCard) {
+  function applyEffect(hoveredCard) {
     const hc = getCenter(hoveredCard);
-    let maxDist = 0;
+    const pushStrength = 15; // max pixels to push away
 
-    const dists = cards.map(card => {
-      if (card === hoveredCard) return 0;
-      const c = getCenter(card);
-      const d = Math.hypot(c.x - hc.x, c.y - hc.y);
-      if (d > maxDist) maxDist = d;
-      return d;
-    });
-
-    cards.forEach((card, i) => {
-      const inner = card.querySelector('.video-container');
+    cards.forEach(card => {
       if (card === hoveredCard) {
         card.style.transform = 'scale(1.07)';
         card.style.zIndex = '2';
-        if (inner) inner.style.transform = '';
       } else {
-        const t = maxDist > 0 ? dists[i] / maxDist : 0;
-        // Inset frame: closest 0.96, farthest 0.88
-        const s = 0.96 - t * 0.08;
-        card.style.transform = '';
+        const cc = getCenter(card);
+        const dx = cc.x - hc.x;
+        const dy = cc.y - hc.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist === 0) return;
+        // Normalize direction
+        const nx = dx / dist;
+        const ny = dy / dist;
+        // Push amount — all non-hovered cards get the same push distance
+        const tx = nx * pushStrength;
+        const ty = ny * pushStrength;
+        card.style.transform = 'translate(' + tx.toFixed(1) + 'px, ' + ty.toFixed(1) + 'px)';
         card.style.zIndex = '';
-        if (inner) inner.style.transform = 'scale(' + s.toFixed(4) + ')';
       }
     });
   }
 
-  function resetScales() {
+  function resetEffect() {
     cards.forEach(card => {
       card.style.transform = '';
       card.style.zIndex = '';
-      const inner = card.querySelector('.video-container');
-      if (inner) inner.style.transform = '';
     });
   }
 
   cards.forEach(card => {
     card.addEventListener('mouseenter', () => {
       clearTimeout(hoverTimeout);
-      applyScales(card);
+      applyEffect(card);
     });
     card.addEventListener('mouseleave', () => {
-      hoverTimeout = setTimeout(resetScales, 150);
+      hoverTimeout = setTimeout(resetEffect, 150);
     });
   });
 }
