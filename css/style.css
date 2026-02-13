@@ -750,42 +750,22 @@ img.thumb-zoomed {
 }
 
 /* Video card hover scale — hovered grows, others shrink */
-.video-card {
-  border-radius: 1px;
-}
-
 @media (hover: hover) {
   .video-card {
-    will-change: transform;
-    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .video-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    opacity: 0;
-    transition: opacity 0.45s ease;
-    pointer-events: none;
-    z-index: 1;
+    will-change: transform, opacity;
+    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+                opacity 0.45s ease;
   }
 
   .container-narrow:has(.video-card:hover) .video-card {
-    transform: scale(0.96) translate3d(0, 0, 0);
-  }
-
-  .container-narrow:has(.video-card:hover) .video-card::after {
-    opacity: 1;
+    transform: scale(0.96);
+    opacity: 0.5;
   }
 
   .container-narrow:has(.video-card:hover) .video-card:hover {
-    transform: scale(1.04) translate3d(0, 0, 0);
+    transform: scale(1.04);
+    opacity: 1;
     z-index: 2;
-  }
-
-  .container-narrow:has(.video-card:hover) .video-card:hover::after {
-    opacity: 0;
   }
 }
 
