@@ -777,6 +777,22 @@ img.thumb-zoomed {
   margin-bottom: var(--spacing-sm);
 }
 
+.project-description {
+  max-width: 720px;
+  margin-top: var(--spacing-lg);
+  color: var(--color-gray-medium);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.project-description p {
+  margin-bottom: 1em;
+}
+
+.project-description p:last-child {
+  margin-bottom: 0;
+}
+
 /* Video grid layout (2-up with per-video captions) */
 .project-role-label {
   font-size: var(--font-size-small);
