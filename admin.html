@@ -1224,9 +1224,13 @@ function parseProjectPage(html) {
     const posterImgMatch = html.match(/<div class="doc-poster">\s*<img src="([^"]+)"/);
     if (posterImgMatch) data.docPoster = posterImgMatch[1];
   }
-  if (!data.description && html.includes('project-description')) {
+  if (!data.description && (html.includes('project-intro') || html.includes('project-description'))) {
+    let parts = [];
+    const introMatch = html.match(/<div class="project-intro">([\s\S]*?)<\/div>/);
+    if (introMatch) parts.push(introMatch[1].trim());
     const descMatch = html.match(/<div class="project-description">([\s\S]*?)<\/div>/);
-    if (descMatch) data.description = descMatch[1].trim();
+    if (descMatch) parts.push(descMatch[1].trim());
+    if (parts.length) data.description = parts.join('\n');
   }
   return data;
 }
@@ -1331,15 +1335,15 @@ ${videoHtml}
         </div>
       </div>`;
   } else if (pageData.description) {
+    const allParagraphs = [...pageData.description.matchAll(/<p[\s>][\s\S]*?<\/p>/g)].map(m => m[0]);
+    const introP = allParagraphs[0] || '';
+    const restPs = allParagraphs.slice(1);
+    const introHtml = introP ? `        <div class="project-intro">\n          ${introP}\n        </div>\n` : '';
+    const descHtml = restPs.length ? `\n        <div class="project-description">\n          ${restPs.join('\n          ')}\n        </div>` : '';
     mainContent = `      <div class="project-split">
-        <div class="project-split-video">
-          <div class="video-card">
+${introHtml}        <div class="video-card">
 ${videoHtml}
-          </div>
-        </div>
-        <div class="project-description">
-          ${pageData.description}
-        </div>
+        </div>${descHtml}
       </div>`;
   } else {
     mainContent = `      <div class="project-layout">

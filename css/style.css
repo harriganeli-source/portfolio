@@ -685,8 +685,7 @@ img.thumb-zoomed {
   max-width: 1700px;
 }
 
-.container-narrow:has(.doc-layout),
-.container-narrow:has(.project-split) {
+.container-narrow:has(.doc-layout) {
   max-width: 1200px;
 }
 
@@ -785,36 +784,43 @@ img.thumb-zoomed {
   margin-bottom: var(--spacing-sm);
 }
 
-/* Side-by-side video + text layout */
+/* Video + intro/description stacked layout */
 .project-split {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--spacing-lg);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-split .video-card {
+  margin-bottom: 0;
 }
 
 .project-split .video-container {
   margin-bottom: 0;
 }
 
+.project-intro,
 .project-description {
   color: var(--color-gray-medium);
   font-size: 15px;
   line-height: 1.75;
 }
 
+.project-intro {
+  margin-bottom: var(--spacing-lg);
+}
+
+.project-description {
+  margin-top: var(--spacing-lg);
+}
+
+.project-intro p,
 .project-description p {
   margin-bottom: 1em;
 }
 
+.project-intro p:last-child,
 .project-description p:last-child {
   margin-bottom: 0;
-}
-
-@media (max-width: 767px) {
-  .project-split {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Video grid layout (2-up with per-video captions) */
