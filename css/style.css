@@ -820,9 +820,14 @@ img.thumb-zoomed {
   margin-top: var(--spacing-md);
 }
 
-.project-intro p,
+.project-intro p {
+  margin-bottom: 1em;
+  color: #f0f0f0;
+}
+
 .project-description p {
   margin-bottom: 1em;
+  color: #999;
 }
 
 .project-intro p:last-child,
