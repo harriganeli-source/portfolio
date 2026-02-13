@@ -796,6 +796,8 @@ img.thumb-zoomed {
   margin-bottom: 0;
   width: 80%;
   align-self: center;
+  position: relative;
+  z-index: 0;
 }
 
 .project-split .video-container {
@@ -803,8 +805,8 @@ img.thumb-zoomed {
 }
 
 .project-intro {
-  color: var(--color-gray-dark);
-  font-size: 18px;
+  color: #ddd;
+  font-size: 15px;
   font-weight: 300;
   line-height: 1.7;
   max-width: 65%;
