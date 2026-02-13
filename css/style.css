@@ -587,15 +587,9 @@ img.thumb-zoomed {
   background: #000;
 }
 
-/* When inside a video-card, move border-radius to the card
-   to prevent compositing seams during scale transforms */
+/* video-card is a wrapper for hover scale effect */
 .video-card {
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.video-card .video-container {
-  border-radius: 0;
+  position: relative;
 }
 
 .video-container iframe {
@@ -764,19 +758,15 @@ img.thumb-zoomed {
 /* Video card hover scale — hovered grows, others shrink */
 @media (hover: hover) {
   .video-card {
-    will-change: transform, opacity;
-    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
-                opacity 0.45s ease;
+    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .container-narrow:has(.video-card:hover) .video-card {
     transform: scale(0.96);
-    opacity: 0.5;
   }
 
   .container-narrow:has(.video-card:hover) .video-card:hover {
     transform: scale(1.04);
-    opacity: 1;
     z-index: 2;
   }
 }
