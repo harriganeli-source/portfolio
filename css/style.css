@@ -794,6 +794,8 @@ img.thumb-zoomed {
 
 .project-split .video-card {
   margin-bottom: 0;
+  max-width: 80%;
+  align-self: center;
 }
 
 .project-split .video-container {
@@ -804,7 +806,7 @@ img.thumb-zoomed {
   color: var(--color-gray-dark);
   font-size: 17px;
   line-height: 1.75;
-  max-width: 55%;
+  max-width: 65%;
   margin-bottom: -28px;
   position: relative;
   z-index: 1;
@@ -814,7 +816,7 @@ img.thumb-zoomed {
   color: var(--color-gray-medium);
   font-size: 15px;
   line-height: 1.75;
-  max-width: 55%;
+  max-width: 65%;
   margin-left: auto;
   margin-top: -28px;
   position: relative;
