@@ -822,12 +822,12 @@ img.thumb-zoomed {
 
 .project-intro p {
   margin-bottom: 1em;
-  color: #f0f0f0;
+  color: #ddd;
 }
 
 .project-description p {
   margin-bottom: 1em;
-  color: #999;
+  color: #aaa;
 }
 
 .project-intro p:last-child,
