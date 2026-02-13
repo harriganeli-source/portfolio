@@ -590,6 +590,7 @@ img.thumb-zoomed {
 /* video-card is a wrapper for hover scale effect */
 .video-card {
   position: relative;
+  background: #000;
 }
 
 .video-card .video-container {
@@ -763,6 +764,10 @@ img.thumb-zoomed {
    CSS handles the transition */
 @media (hover: hover) {
   .video-card {
+    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .video-card .video-container {
     transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   }
 }

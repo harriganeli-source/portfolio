@@ -1273,15 +1273,18 @@ function initVideoCardHover() {
     });
 
     cards.forEach((card, i) => {
+      const inner = card.querySelector('.video-container');
       if (card === hoveredCard) {
         card.style.transform = 'scale(1.07)';
         card.style.zIndex = '2';
+        if (inner) inner.style.transform = '';
       } else {
         const t = maxDist > 0 ? dists[i] / maxDist : 0;
-        // Closest: 0.96, farthest: 0.91
-        const s = 0.96 - t * 0.05;
-        card.style.transform = 'scale(' + s.toFixed(4) + ')';
+        // Inset frame: closest 0.96, farthest 0.88
+        const s = 0.96 - t * 0.08;
+        card.style.transform = '';
         card.style.zIndex = '';
+        if (inner) inner.style.transform = 'scale(' + s.toFixed(4) + ')';
       }
     });
   }
@@ -1290,6 +1293,8 @@ function initVideoCardHover() {
     cards.forEach(card => {
       card.style.transform = '';
       card.style.zIndex = '';
+      const inner = card.querySelector('.video-container');
+      if (inner) inner.style.transform = '';
     });
   }
 
