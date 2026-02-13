@@ -749,14 +749,14 @@ img.thumb-zoomed {
   }
 }
 
-/* Video card hover scale — scale inner content, card is stable clip frame */
+/* Video card hover scale — hovered grows, others shrink */
 .video-card {
-  background: #000;
-  overflow: hidden;
+  border-radius: 1px;
 }
 
 @media (hover: hover) {
-  .video-card .video-container {
+  .video-card {
+    will-change: transform;
     transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
@@ -771,16 +771,17 @@ img.thumb-zoomed {
     z-index: 1;
   }
 
-  .container-narrow:has(.video-card:hover) .video-card .video-container {
-    transform: scale(0.94);
+  .container-narrow:has(.video-card:hover) .video-card {
+    transform: scale(0.96) translate3d(0, 0, 0);
   }
 
   .container-narrow:has(.video-card:hover) .video-card::after {
     opacity: 1;
   }
 
-  .container-narrow:has(.video-card:hover) .video-card:hover .video-container {
-    transform: scale(1);
+  .container-narrow:has(.video-card:hover) .video-card:hover {
+    transform: scale(1.04) translate3d(0, 0, 0);
+    z-index: 2;
   }
 
   .container-narrow:has(.video-card:hover) .video-card:hover::after {
