@@ -1241,6 +1241,69 @@ function initDocLaurelsAnimation() {
   observer.observe(laurelsSection);
 }
 
+/**
+ * Proximity-based hover scale for video cards.
+ * Hovered card grows; others shrink proportionally to distance.
+ */
+function initVideoCardHover() {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  const container = document.querySelector('.container-narrow');
+  if (!container) return;
+  const cards = Array.from(container.querySelectorAll('.video-card'));
+  if (cards.length < 2) return;
+
+  let hoverTimeout;
+
+  function getCenter(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  function applyScales(hoveredCard) {
+    const hc = getCenter(hoveredCard);
+    let maxDist = 0;
+
+    const dists = cards.map(card => {
+      if (card === hoveredCard) return 0;
+      const c = getCenter(card);
+      const d = Math.hypot(c.x - hc.x, c.y - hc.y);
+      if (d > maxDist) maxDist = d;
+      return d;
+    });
+
+    cards.forEach((card, i) => {
+      if (card === hoveredCard) {
+        card.style.transform = 'scale(1.07)';
+        card.style.zIndex = '2';
+      } else {
+        const t = maxDist > 0 ? dists[i] / maxDist : 0;
+        // Closest: 0.96, farthest: 0.88
+        const s = 0.96 - t * 0.08;
+        card.style.transform = 'scale(' + s.toFixed(4) + ')';
+        card.style.zIndex = '';
+      }
+    });
+  }
+
+  function resetScales() {
+    cards.forEach(card => {
+      card.style.transform = '';
+      card.style.zIndex = '';
+    });
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimeout);
+      applyScales(card);
+    });
+    card.addEventListener('mouseleave', () => {
+      hoverTimeout = setTimeout(resetScales, 150);
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   cleanProjectTitles();
   initMobileMenu();
@@ -1255,6 +1318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileActiveCard();
   initAboutAnimations();
   initDocLaurelsAnimation();
+  initVideoCardHover();
 });
 
 /**

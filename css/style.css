@@ -759,19 +759,11 @@ img.thumb-zoomed {
   }
 }
 
-/* Video card hover scale — hovered grows, others shrink */
+/* Video card hover scale — JS applies individual transforms,
+   CSS handles the transition */
 @media (hover: hover) {
   .video-card {
     transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .container-narrow:has(.video-card:hover) .video-card {
-    transform: scale(0.93);
-  }
-
-  .container-narrow:has(.video-card:hover) .video-card:hover {
-    transform: scale(1.07);
-    z-index: 2;
   }
 }
 
