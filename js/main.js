@@ -1251,7 +1251,7 @@ function initVideoCardHover() {
   const container = document.querySelector('.container-narrow');
   if (!container) return;
   const cards = Array.from(container.querySelectorAll('.video-card'));
-  if (cards.length < 2) return;
+  if (cards.length < 1) return;
 
   let hoverTimeout;
 
