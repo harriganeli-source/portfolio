@@ -722,12 +722,20 @@ img.thumb-zoomed {
   margin-bottom: 0;
 }
 
+/* 3-across row for secondary videos */
+.videos-three-up {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 /* 4-across row for secondary videos */
 .videos-four-up {
   grid-template-columns: repeat(4, 1fr);
 }
 
 @media (max-width: 1024px) {
+  .videos-three-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .videos-four-up {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -735,6 +743,7 @@ img.thumb-zoomed {
 
 @media (max-width: 767px) {
   .videos-stacked,
+  .videos-three-up,
   .videos-four-up {
     grid-template-columns: 1fr;
   }
@@ -763,6 +772,10 @@ img.thumb-zoomed {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-lg);
+}
+
+.videos-grid + .videos-grid {
+  margin-top: var(--spacing-lg);
 }
 
 .video-card {
