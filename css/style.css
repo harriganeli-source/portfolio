@@ -794,7 +794,7 @@ img.thumb-zoomed {
 
 .project-split .video-card {
   margin-bottom: 0;
-  width: 80%;
+  width: 75%;
   align-self: center;
 }
 
@@ -808,7 +808,7 @@ img.thumb-zoomed {
   font-weight: 300;
   line-height: 1.7;
   max-width: 70%;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .project-description {
@@ -817,7 +817,7 @@ img.thumb-zoomed {
   line-height: 1.8;
   max-width: 70%;
   margin-left: auto;
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-md);
 }
 
 .project-intro p,
