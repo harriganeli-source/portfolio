@@ -803,7 +803,7 @@ img.thumb-zoomed {
 }
 
 .project-intro {
-  color: #e8e8e8;
+  color: #f0f0f0;
   font-size: 15px;
   font-weight: 300;
   line-height: 1.7;
@@ -812,7 +812,7 @@ img.thumb-zoomed {
 }
 
 .project-description {
-  color: var(--color-gray-medium);
+  color: #999;
   font-size: 14px;
   line-height: 1.8;
   max-width: 50%;
