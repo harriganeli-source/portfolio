@@ -632,9 +632,9 @@ img.thumb-zoomed {
 
 .play-btn {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 6px);
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -100%);
   width: 48px;
   height: 48px;
   background: rgba(0, 0, 0, 0.35);
@@ -850,11 +850,11 @@ img.thumb-zoomed {
 
 .video-caption {
   position: absolute;
-  top: 50%;
+  top: calc(50% + 6px);
   left: 50%;
   right: auto;
   bottom: auto;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0);
   margin: 0;
   padding: 0 20px;
   background: none;
