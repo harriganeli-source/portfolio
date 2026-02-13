@@ -794,7 +794,7 @@ img.thumb-zoomed {
 
 .project-split .video-card {
   margin-bottom: 0;
-  max-width: 80%;
+  width: 80%;
   align-self: center;
 }
 
