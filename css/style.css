@@ -631,29 +631,7 @@ img.thumb-zoomed {
 }
 
 .play-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 48px;
-  height: 48px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
-  pointer-events: none;
-  z-index: 2;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.video-container:hover .play-btn {
-  background: rgba(0, 0, 0, 0.6);
-  transform: translate(-50%, -50%) scale(1.05);
+  display: none;
 }
 
 .play-btn svg {
@@ -843,21 +821,23 @@ img.thumb-zoomed {
 
 .video-caption {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
   margin: 0;
-  padding: 24px 16px 14px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-  color: rgba(255, 255, 255, 0.65);
+  padding: 0 20px;
+  background: none;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 11px;
-  line-height: 1.5;
+  line-height: 1.4;
   text-transform: uppercase;
   letter-spacing: 0.15em;
+  text-align: center;
   z-index: 3;
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: opacity 0.35s ease;
   pointer-events: none;
 }
 
@@ -865,7 +845,6 @@ img.thumb-zoomed {
 .video-container:hover .video-caption,
 .video-container.preview-active .video-caption {
   opacity: 1;
-  transform: translateY(0);
 }
 
 /* Tighten vertical spacing between sections with letterbox videos */
@@ -881,10 +860,7 @@ img.thumb-zoomed {
   margin-top: calc(var(--spacing-lg) - 3.5%);
 }
 
-/* Anamorphic videos: caption sits above the letterbox bar */
-.video-container.video-letterbox .video-caption {
-  bottom: 10%;
-}
+/* Anamorphic videos: caption stays centered (no bottom offset needed) */
 
 .video-caption strong {
   display: block;
@@ -892,41 +868,18 @@ img.thumb-zoomed {
   font-size: 13px;
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.1em;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
-/* On touch devices: captions centered, show only during preview;
-   hide play button (caption replaces it as the visual cue) */
+/* On touch devices: captions only show during preview playback */
 @media (hover: none) {
-  .play-btn {
-    display: none;
-  }
-
-  .video-caption {
-    top: 50%;
-    bottom: auto;
-    left: 50%;
-    right: auto;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background: none;
-    padding: 0 20px;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
   .video-card:hover .video-caption,
   .video-container:hover .video-caption {
     opacity: 0;
-    transform: translate(-50%, -50%);
   }
 
   .video-container.preview-active .video-caption {
     opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-
-  .video-container.video-letterbox .video-caption {
-    bottom: auto;
   }
 }
 
