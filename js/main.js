@@ -438,16 +438,6 @@ function initVideoPoster() {
 
     previewContainers.forEach(container => {
       previewObserver.observe(container);
-
-      // On hover: hide preview to reveal static poster underneath
-      container.addEventListener('mouseenter', () => {
-        const video = container.querySelector('.video-preview');
-        if (video) video.style.opacity = '0';
-      });
-      container.addEventListener('mouseleave', () => {
-        const video = container.querySelector('.video-preview');
-        if (video && !video.paused) video.style.opacity = '1';
-      });
     });
   }
 }
