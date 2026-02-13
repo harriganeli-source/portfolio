@@ -815,7 +815,7 @@ img.thumb-zoomed {
   color: #999;
   font-size: 14px;
   line-height: 1.8;
-  max-width: 50%;
+  max-width: 65%;
   margin-left: auto;
   margin-top: var(--spacing-md);
 }
