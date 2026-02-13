@@ -659,10 +659,10 @@ img.thumb-zoomed {
 }
 
 .play-btn svg {
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   fill: #fff;
-  margin-left: 3px;
+  margin-left: 4px;
 }
 
 .back-link {
