@@ -766,11 +766,11 @@ img.thumb-zoomed {
   }
 
   .container-narrow:has(.video-card:hover) .video-card {
-    transform: scale(0.96);
+    transform: scale(0.93);
   }
 
   .container-narrow:has(.video-card:hover) .video-card:hover {
-    transform: scale(1.04);
+    transform: scale(1.07);
     z-index: 2;
   }
 }
