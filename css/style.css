@@ -632,29 +632,24 @@ img.thumb-zoomed {
 
 .play-btn {
   position: absolute;
-  top: calc(50% - 6px);
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -100%);
-  width: 48px;
-  height: 48px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   pointer-events: none;
-  z-index: 2;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  z-index: 4;
   opacity: 0;
   transition: opacity 0.35s ease;
 }
 
 .video-card:hover .play-btn,
 .video-container:hover .play-btn {
-  opacity: 1;
+  opacity: 0.4;
 }
 
 @media (hover: none) {
@@ -664,10 +659,10 @@ img.thumb-zoomed {
 }
 
 .play-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   fill: #fff;
-  margin-left: 2px;
+  margin-left: 3px;
 }
 
 .back-link {
@@ -850,11 +845,11 @@ img.thumb-zoomed {
 
 .video-caption {
   position: absolute;
-  top: calc(50% + 6px);
+  top: 50%;
   left: 50%;
   right: auto;
   bottom: auto;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%);
   margin: 0;
   padding: 0 20px;
   background: none;
