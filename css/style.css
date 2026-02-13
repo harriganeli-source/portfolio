@@ -880,22 +880,38 @@ img.thumb-zoomed {
   margin-bottom: 2px;
 }
 
-/* On touch devices: captions only show when preview is playing,
-   not on tap-hover; reset letterbox offset (posters are full-frame) */
+/* On touch devices: captions centered, show only during preview;
+   hide play button (caption replaces it as the visual cue) */
 @media (hover: none) {
+  .play-btn {
+    display: none;
+  }
+
+  .video-caption {
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: none;
+    padding: 0 20px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
   .video-card:hover .video-caption,
   .video-container:hover .video-caption {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translate(-50%, -50%);
   }
 
   .video-container.preview-active .video-caption {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, -50%);
   }
 
   .video-container.video-letterbox .video-caption {
-    bottom: 0;
+    bottom: auto;
   }
 }
 
