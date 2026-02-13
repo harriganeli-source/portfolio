@@ -750,6 +750,10 @@ img.thumb-zoomed {
 }
 
 /* Video card hover scale — hovered grows, others shrink */
+.video-card {
+  background: #000;
+}
+
 @media (hover: hover) {
   .video-card {
     transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
