@@ -851,6 +851,24 @@ img.thumb-zoomed {
   }
 }
 
+/* Grid description — text block above videos-grid */
+.grid-description {
+  color: #ddd;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 65%;
+  margin-bottom: var(--spacing-lg);
+}
+
+.grid-description p {
+  margin-bottom: 1em;
+}
+
+.grid-description p:last-child {
+  margin-bottom: 0;
+}
+
 /* Video grid layout (2-up with per-video captions) */
 .project-role-label {
   font-size: var(--font-size-small);

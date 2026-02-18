@@ -255,7 +255,13 @@ function normalizeVideoUrl(src) {
     return 'https://www.youtube.com/embed/' + videoId + startParam;
   }
 
-  // Already embed or non-YouTube — return as-is
+  // vimeo.com/VIDEO_ID (sharing link) → embed format
+  const vimeoMatch = src.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch && !src.includes('player.vimeo.com')) {
+    return 'https://player.vimeo.com/video/' + vimeoMatch[1];
+  }
+
+  // Already embed or unrecognized — return as-is
   return src;
 }
 

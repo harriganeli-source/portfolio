@@ -1224,6 +1224,10 @@ function parseProjectPage(html) {
     const posterImgMatch = html.match(/<div class="doc-poster">\s*<img src="([^"]+)"/);
     if (posterImgMatch) data.docPoster = posterImgMatch[1];
   }
+  if (data.pageType === 'grid' && html.includes('grid-description')) {
+    const gridDescMatch = html.match(/<div class="grid-description">([\s\S]*?)<\/div>\s*<div class="videos-grid"/);
+    if (gridDescMatch) data.description = gridDescMatch[1].trim();
+  }
   if (!data.description && (html.includes('project-intro') || html.includes('project-description'))) {
     let parts = [];
     const introMatch = html.match(/<div class="project-intro">([\s\S]*?)<\/div>/);
@@ -1310,8 +1314,9 @@ function generateProjectPage(project, pageData) {
           </div>
         </div>`;
     }).join('\n');
-    mainContent = `      <p class="project-role-label">${roleEsc}.</p>
-      <div class="videos-grid">
+    const gridDesc = pageData.description ? `      <div class="grid-description">\n${pageData.description}\n      </div>\n` : '';
+    const roleLabel = !gridDesc ? `      <p class="project-role-label">${roleEsc}.</p>\n` : '';
+    mainContent = `${roleLabel}${gridDesc}      <div class="videos-grid">
 ${cards}
       </div>`;
   } else if (pageData.pageType === 'documentary') {
