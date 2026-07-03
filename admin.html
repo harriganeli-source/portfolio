@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — editwitheli.com</title>
+  <title>Admin — eliharrigan.com</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/favicon.png">
@@ -1358,12 +1358,26 @@ ${videoHtml}
       </div>`;
   }
   const studioSuffix = project.studio ? ` \u2014 ${project.studio}` : '';
+  const ogTitle = `${project.title}${studioSuffix} \u2014 Eli Harrigan`.replace(/&/g, '&amp;');
+  const ogDesc = `${(project.role || '').replace(/\.$/, '')}${project.studio ? ` \u2014 ${project.studio}` : ''}.`.replace(/&/g, '&amp;');
+  const ogUrl = `https://www.eliharrigan.com/projects/${project.slug}.html`;
+  const ogImage = project.thumbnail && project.thumbnail.startsWith('http')
+    ? project.thumbnail
+    : `https://www.eliharrigan.com/${project.thumbnail || 'images/og-image.jpg'}`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${project.title}${studioSuffix} \u2014 Eli Harrigan</title>
+  <meta property="og:title" content="${ogTitle}">
+  <meta property="og:description" content="${ogDesc}">
+  <meta property="og:image" content="${ogImage}">
+  <meta property="og:url" content="${ogUrl}">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="${ogImage}">
+  <link rel="canonical" href="${ogUrl}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1472,11 +1486,12 @@ function generateAboutPage(data) {
   <meta name="description" content="About Eli Harrigan \u2014 Multimedia producer, director, editor, and photographer.">
   <meta property="og:title" content="Eli Harrigan \u2014 About">
   <meta property="og:description" content="Multimedia producer, director, editor, and photographer.">
-  <meta property="og:image" content="https://editwitheli.com/images/og-image.jpg">
-  <meta property="og:url" content="https://editwitheli.com/about">
+  <meta property="og:image" content="https://www.eliharrigan.com/images/og-image.jpg">
+  <meta property="og:url" content="https://www.eliharrigan.com/about.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://editwitheli.com/images/og-image.jpg">
+  <meta name="twitter:image" content="https://www.eliharrigan.com/images/og-image.jpg">
+  <link rel="canonical" href="https://www.eliharrigan.com/about.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
