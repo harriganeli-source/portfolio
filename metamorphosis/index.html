@@ -101,8 +101,8 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 
 
 /* ── VIDEO BAND ── */
-.video-band { position: relative; height: 52vh; min-height: 340px; overflow: hidden; background: var(--deep2); }
-.video-band iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-36%); width: 100vw; height: 56.25vw; min-height: 52vh; min-width: calc(52vh * 1.7778); border: 0; pointer-events: none; }
+.video-band { position: relative; height: 42vh; min-height: 280px; overflow: hidden; background: var(--deep2); }
+.video-band iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-47%); width: 100vw; height: 56.25vw; min-height: 58vh; min-width: calc(58vh * 1.7778); border: 0; pointer-events: none; }
 .video-band::after { content:''; position: absolute; inset: 0; background: rgba(26,40,48,0.18); pointer-events: none; }
 
 /* ── INVESTMENT ── */
@@ -154,6 +154,7 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
     .hero-label { font-size: .62rem; letter-spacing: .1em; overflow-wrap: anywhere; }
     .section-title, .body-text, .invest-price, .space-tagline { overflow-wrap: break-word; }
 }
+body.flat .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
 body.og-mode .hero { min-height: 100vh; }
 body.og-mode .hero-inner { padding-left: 2rem; }
@@ -280,6 +281,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 
 <script>
 if (location.search.includes('og')) document.body.classList.add('og-mode');
+if (location.search.includes('flat')) document.body.classList.add('flat');
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
