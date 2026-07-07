@@ -153,7 +153,6 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
     .hero h1 { font-size: clamp(1.6rem, 6.9vw, 2.3rem); white-space: normal; }
     .hero-label { font-size: .62rem; letter-spacing: .1em; overflow-wrap: anywhere; }
     .section-title, .body-text, .invest-price, .space-tagline { overflow-wrap: break-word; }
-    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
 body.og-mode .hero { min-height: 100vh; }
@@ -284,7 +283,7 @@ if (location.search.includes('og')) document.body.classList.add('og-mode');
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-}), { threshold: 0.12 });
+}), { threshold: 0, rootMargin: '0px 0px -6% 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 // Spine: dots per section + progress fill
