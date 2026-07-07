@@ -55,7 +55,7 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
 .section-wrap { padding-top: 6rem; padding-bottom: 6rem; }
 .section-wrap + .section-wrap { border-top: 1px solid var(--line); }
-.reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease, color .6s ease, background-color .6s ease, border-color .6s ease; }
 .reveal.visible { opacity: 1; transform: none; }
 .d1 { transition-delay: .08s; } .d2 { transition-delay: .18s; } .d3 { transition-delay: .28s; } .d4 { transition-delay: .38s; }
 
@@ -129,8 +129,8 @@ footer { background: #1c150f; color: rgba(243,234,217,0.38); font-size: .78rem; 
 .theme-btn { font-family: var(--sans); font-size: .85rem; font-weight: 600; letter-spacing: .04em; color: var(--cream); background: transparent; border: 1.5px solid var(--amber); border-radius: 999px; padding: .7rem 1.4rem; cursor: pointer; transition: background-color .3s, color .3s, border-color .3s; }
 .theme-btn:hover { background: var(--amber); color: #251c14; }
 
-body, section, footer, .band-light, .price-card, .callout, .theme-demo, .spine-dot { transition: background-color .6s ease, color .6s ease, border-color .6s ease; }
-.section-title, .body-text, .hero h1, .hero-sub, .price-num, .price-desc, .contact-block, .contact-name, .callout p, .section-label, .spine-label, .logo-kicker, .theme-demo p { transition: color .6s ease; }
+:where(body, section, footer, .band-light, .price-card, .callout, .theme-demo, .spine-dot) { transition: background-color .6s ease, color .6s ease, border-color .6s ease; }
+:where(.section-title, .body-text, .hero h1, .hero-sub, .price-num, .price-desc, .contact-block, .contact-name, .callout p, .section-label, .spine-label, .logo-kicker, .theme-demo p) { transition: color .6s ease; }
 
 /* ── THEME B: morning practice ── */
 body.theme-b { --bg: #f7f3ea; --bg2: #ffffff; --line: rgba(47,58,49,0.13); --cream: #2f3a31; --body: #5d685e; --amber: #6f8b74; --amber-soft: rgba(111,139,116,0.45); --card-light: #e7eee4; --ink: #2f3a31; --mid: #55605a; }
@@ -190,7 +190,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 <!-- ── THE PROBLEM ── -->
 <section id="s-problem" data-section>
     <div class="content section-wrap">
-        <p class="section-label reveal">The problem</p>
+        <p class="section-label reveal">The moment</p>
         <h2 class="section-title reveal d1">Someone gives out your name.</h2>
         <p class="body-text reveal d2">Someone gives out your name at a dinner, or after a class, or in a group text. Later that night, a person you have never met is sitting in bed with their phone, typing it into a search bar. Whatever comes up has to do the work you would normally do in person: put them at ease, sound like someone who knows what they are doing, give them a reason to reach out instead of closing the tab.</p>
         <p class="body-text reveal d3">A template can cover the basics, your offerings, your hours, a way to get in touch. What it rarely manages is to feel like you, and in work like yours, that feeling is usually what makes a stranger reach out.</p>
@@ -208,7 +208,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <p class="body-text reveal d2">The work starts with your story and your philosophy, written in your voice, and it runs through every design choice after that, because the colors, the typography, and the pace of a page say as much about a practice as the words do. A meditation teacher&rsquo;s site should breathe. A chiropractic office&rsquo;s site should feel steady and clear. A training school&rsquo;s site should feel like the room students are hoping to walk into. When the design fits the people, visitors trust what they are reading, and trust is what fills a schedule.</p>
         <p class="body-text reveal d3">The practical machinery is in there too, shaped to whatever the site&rsquo;s real job is. For a practice building its caseload, that means clear offerings, online booking tied to your calendar, and payment built in, so a new client can go from finding you to booked without anyone touching the phone. For a school or program, it means presenting the training properly and carrying people through to application or enrollment. For anyone building an audience, it means a proper home for your writing, your podcast, or your speaking, along with an email list you own rather than rent from an algorithm. Most practices want some of each, and we design around whichever matters most right now, leaving room for the site to grow as you do.</p>
         <div class="theme-demo reveal d4">
-            <p>Every color on this page was pulled from a photograph of me, because this site&rsquo;s job is to feel like me. <strong>Yours would start from what is yours.</strong> Press the button and watch the same page become someone else&rsquo;s.</p>
+            <p>This page is built to feel like me. <strong>Yours would start from what is yours.</strong> Press the button and watch the same page become someone else&rsquo;s.</p>
             <button class="theme-btn" id="themeBtn" type="button">Show me someone else&rsquo;s palette</button>
         </div>
     </div>
@@ -223,7 +223,6 @@ body.og-mode .hero-inner { padding-left: 2rem; }
             <div>
                 <p class="body-text">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, <a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a>, with the scheduling, the payments, and the email list all doing their jobs every day. I know what it is to be the whole business: the practitioner, the schedule, and the person answering the inquiries.</p>
                 <p class="body-text">The other half of my working life is commercial production. I spent fifteen years editing, directing, and producing for global brands, the kind of work where a viewer gives you ten seconds and every one of those seconds is fought over. Practices like yours almost never get that level of craft, because the businesses that can afford it are not the businesses doing this work. I am the overlap.</p>
-                <p class="body-text">You can see that work at <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a> and judge for yourself.</p>
             </div>
             <div class="headshot"><img src="../images/headshot.webp" alt="Eli Harrigan"></div>
         </div>
@@ -322,7 +321,7 @@ const obs = new IntersectionObserver(es => es.forEach(e => {
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 const sections = [...document.querySelectorAll('[data-section]')];
-const labels = { 's-problem': 'The Problem', 's-build': 'What I Build', 's-why': 'Why Me', 's-own': 'What You Own', 's-cost': 'What It Costs', 's-start': 'Getting Started' };
+const labels = { 's-problem': 'The Moment', 's-build': 'What I Build', 's-why': 'Why Me', 's-own': 'What You Own', 's-cost': 'What It Costs', 's-start': 'Getting Started' };
 const spine = document.getElementById('spine');
 function buildDots() {
     spine.querySelectorAll('.spine-item').forEach(n => n.remove());
