@@ -84,6 +84,12 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 .pull-quote { padding: 2.2rem 0 .4rem; max-width: 640px; }
 .pull-quote p { font-family: var(--display); font-variation-settings: "opsz" 80; font-weight: 500; font-size: clamp(1.3rem, 2.4vw, 1.7rem); line-height: 1.4; color: var(--deep); }
 
+
+/* ── VIDEO BAND ── */
+.video-band { position: relative; height: 52vh; min-height: 340px; overflow: hidden; background: var(--deep2); }
+.video-band iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100vw; height: 56.25vw; min-height: 52vh; min-width: calc(52vh * 1.7778); border: 0; pointer-events: none; }
+.video-band::after { content:''; position: absolute; inset: 0; background: rgba(26,40,48,0.18); pointer-events: none; }
+
 /* ── INVESTMENT ── */
 .invest-grid { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin-top: 2.4rem; max-width: 680px; }
 .invest-card { border: 1px solid var(--cream2); border-radius: 10px; padding: 1.9rem 2rem; background: var(--white); }
@@ -158,6 +164,12 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
         </div>
         <p class="body-text reveal">The design carries a quieter cost. This is a program about embodiment, presence, and aliveness, and the site that represents it opens on a stock illustration, with seven thin pages carrying a four-year decision. Prospective students feel that mismatch, even if they never articulate it, and they feel it during the moment described above, when feeling is what they are deciding with. There is also no way to act at the end of that moment: the site offers a contact form where an application should be.</p>
     </div>
+</section>
+
+
+<!-- ── VIDEO ── -->
+<section class="video-band">
+    <iframe id="yt-band" src="https://www.youtube.com/embed/5btfMF0SfaI?autoplay=1&mute=1&loop=1&playlist=5btfMF0SfaI&rel=0&controls=0&playsinline=1&enablejsapi=1&iv_load_policy=3&modestbranding=1" allow="autoplay; fullscreen"></iframe>
 </section>
 
 <!-- ── THE REBUILD ── -->
@@ -250,6 +262,19 @@ function updateSpine() {
     sections.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * 0.5) active = s; });
     spine.querySelectorAll('.spine-item').forEach(n => n.classList.toggle('active', n.dataset.for === active.id));
 }
+
+// Nudge YouTube to play once the band nears the viewport
+const yt = document.getElementById('yt-band');
+if (yt) {
+    const ytObs = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) {
+            setTimeout(() => yt.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'), 600);
+            ytObs.unobserve(yt);
+        }
+    }), { threshold: 0.25 });
+    ytObs.observe(yt);
+}
+
 addEventListener('load', () => { buildDots(); updateSpine(); });
 addEventListener('resize', buildDots);
 addEventListener('scroll', updateSpine, { passive: true });
