@@ -14,7 +14,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.eliharrigan.com/websites/og.png">
-<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Marcellus&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -122,6 +122,36 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 footer { background: #1c150f; color: rgba(243,234,217,0.38); font-size: .78rem; }
 .foot-inner { max-width: 800px; margin: 0 auto; padding: 1.6rem 2rem 1.6rem 90px; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 
+/* ── THEME DEMO ── */
+.theme-demo { margin-top: 2.6rem; max-width: 640px; border: 1px dashed rgba(208,138,62,0.45); border-radius: 10px; padding: 1.6rem 1.8rem; }
+.theme-demo p { font-size: .97rem; color: var(--body); line-height: 1.8; margin-bottom: 1.1rem; }
+.theme-demo p strong { color: var(--cream); font-weight: 600; }
+.theme-btn { font-family: var(--sans); font-size: .85rem; font-weight: 600; letter-spacing: .04em; color: var(--cream); background: transparent; border: 1.5px solid var(--amber); border-radius: 999px; padding: .7rem 1.4rem; cursor: pointer; transition: background-color .3s, color .3s, border-color .3s; }
+.theme-btn:hover { background: var(--amber); color: #251c14; }
+
+body, section, footer, .band-light, .price-card, .callout, .theme-demo, .spine-dot { transition: background-color .6s ease, color .6s ease, border-color .6s ease; }
+.section-title, .body-text, .hero h1, .hero-sub, .price-num, .price-desc, .contact-block, .contact-name, .callout p, .section-label, .spine-label, .logo-kicker, .theme-demo p { transition: color .6s ease; }
+
+/* ── THEME B: morning practice ── */
+body.theme-b { --bg: #f7f3ea; --bg2: #ffffff; --line: rgba(47,58,49,0.13); --cream: #2f3a31; --body: #5d685e; --amber: #6f8b74; --amber-soft: rgba(111,139,116,0.45); --card-light: #e7eee4; --ink: #2f3a31; --mid: #55605a; }
+body.theme-b h1, body.theme-b h2, body.theme-b h3, body.theme-b .price-num, body.theme-b .contact-name, body.theme-b .callout p { font-family: 'Marcellus', Georgia, serif; letter-spacing: .01em; }
+body.theme-b .hero::before { background: radial-gradient(ellipse at 74% 18%, rgba(111,139,116,0.14) 0%, transparent 55%); }
+body.theme-b .band-light::before { background: radial-gradient(ellipse at 30% 60%, rgba(111,139,116,0.1) 0%, transparent 58%); }
+body.theme-b .band-light .section-label { color: #56755c; }
+body.theme-b .price-card.primary .price-kicker { color: #56755c; }
+body.theme-b .theme-demo { border-color: rgba(111,139,116,0.5); }
+body.theme-b .theme-btn:hover { background: var(--amber); color: #f7f3ea; }
+body.theme-b .spine-track { background: rgba(111,139,116,0.3); }
+body.theme-b .spine-dot { background: var(--bg); border-color: rgba(111,139,116,0.55); }
+body.theme-b .spine-label { color: rgba(47,58,49,0.5); }
+body.theme-b .logo-kicker { color: rgba(47,58,49,0.45); }
+body.theme-b .logo-strip img { filter: brightness(0); opacity: .5; }
+body.theme-b .logo-strip img.svg-logo { filter: brightness(0); opacity: .5; }
+body.theme-b .headshot::after { box-shadow: inset 0 0 0 1px rgba(47,58,49,0.15); }
+body.theme-b .hero-scroll { color: rgba(47,58,49,0.4); }
+body.theme-b .contact-block { border-top-color: rgba(47,58,49,0.15); }
+body.theme-b footer { background: #2f3a31; color: rgba(247,243,234,0.55); }
+
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
 body.og-mode .hero { min-height: 100vh; }
 body.og-mode .hero-inner { padding-left: 2rem; }
@@ -177,6 +207,10 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <h2 class="section-title reveal d1">Sites that feel like the people behind the practice.</h2>
         <p class="body-text reveal d2">The work starts with your story and your philosophy, written in your voice, and it runs through every design choice after that, because the colors, the typography, and the pace of a page say as much about a practice as the words do. A meditation teacher&rsquo;s site should breathe. A chiropractic office&rsquo;s site should feel steady and clear. A training school&rsquo;s site should feel like the room students are hoping to walk into. When the design fits the people, visitors trust what they are reading, and trust is what fills a schedule.</p>
         <p class="body-text reveal d3">The practical machinery is in there too, shaped to whatever the site&rsquo;s real job is. For a practice building its caseload, that means clear offerings, online booking tied to your calendar, and payment built in, so a new client can go from finding you to booked without anyone touching the phone. For a school or program, it means presenting the training properly and carrying people through to application or enrollment. For anyone building an audience, it means a proper home for your writing, your podcast, or your speaking, along with an email list you own rather than rent from an algorithm. Most practices want some of each, and we design around whichever matters most right now, leaving room for the site to grow as you do.</p>
+        <div class="theme-demo reveal d4">
+            <p>Every color on this page was pulled from a photograph of me, because this site&rsquo;s job is to feel like me. <strong>Yours would start from what is yours.</strong> Press the button and watch the same page become someone else&rsquo;s.</p>
+            <button class="theme-btn" id="themeBtn" type="button">Show me someone else&rsquo;s palette</button>
+        </div>
     </div>
 </section>
 
@@ -276,6 +310,11 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 
 <script>
 if (location.search.includes('og')) document.body.classList.add('og-mode');
+const themeBtn = document.getElementById('themeBtn');
+themeBtn.addEventListener('click', () => {
+    const b = document.body.classList.toggle('theme-b');
+    themeBtn.textContent = b ? 'Bring back Eli\u2019s palette' : 'Show me someone else\u2019s palette';
+});
 if (location.search.includes('flat')) document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
