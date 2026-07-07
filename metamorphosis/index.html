@@ -8,6 +8,11 @@
 <meta property="og:title" content="Metamorphosis Core Energetics Institute: A Website Proposal">
 <meta property="og:description" content="A proposal for rebuilding metamorphosistraining.ca. Prepared by Eli Harrigan.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://www.eliharrigan.com/metamorphosis/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.eliharrigan.com/metamorphosis/og.png">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..640;1,9..144,340..640&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,6 +51,9 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 .spine-label { font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(92,85,77,0.55); white-space: nowrap; transition: color .2s; }
 .spine-item:hover .spine-dot { transform: scale(1.4); border-color: var(--ember); }
 .spine-item.active .spine-dot { background: var(--ember); border-color: var(--ember); }
+.spine-item.on-dark .spine-label { color: rgba(246,241,234,0.7); }
+.spine-item.on-dark .spine-dot { background: transparent; border-color: rgba(226,164,136,0.6); }
+.spine-item.on-dark.active .spine-dot { background: var(--ember); border-color: var(--ember); }
 
 /* ── LAYOUT / REVEAL ── */
 .content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
@@ -87,7 +95,7 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 
 /* ── VIDEO BAND ── */
 .video-band { position: relative; height: 52vh; min-height: 340px; overflow: hidden; background: var(--deep2); }
-.video-band iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100vw; height: 56.25vw; min-height: 52vh; min-width: calc(52vh * 1.7778); border: 0; pointer-events: none; }
+.video-band iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-36%); width: 100vw; height: 56.25vw; min-height: 52vh; min-width: calc(52vh * 1.7778); border: 0; pointer-events: none; }
 .video-band::after { content:''; position: absolute; inset: 0; background: rgba(26,40,48,0.18); pointer-events: none; }
 
 /* ── INVESTMENT ── */
@@ -99,6 +107,16 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 .invest-card.primary .invest-price { color: var(--cream); }
 .invest-desc { font-size: .93rem; line-height: 1.75; color: var(--mid); }
 .invest-card.primary .invest-desc { color: rgba(246,241,234,0.72); }
+
+
+/* ── THE SPACE ── */
+.space-band { background: var(--deep); position: relative; overflow: hidden; }
+.space-band::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 35% 55%, rgba(201,111,74,0.12) 0%, transparent 58%); pointer-events: none; }
+.space-inner { max-width: 800px; margin: 0 auto; padding: 6.5rem 2rem 6.5rem 90px; position: relative; }
+.space-inner h2 { font-size: clamp(2rem, 3.8vw, 3rem); font-weight: 500; color: var(--cream); margin-bottom: 1.6rem; }
+.space-inner .body-text { color: rgba(246,241,234,0.6); }
+.space-tagline { font-family: var(--display); font-variation-settings: "opsz" 90; font-size: clamp(1.5rem, 2.8vw, 2.1rem); color: var(--ember-light); margin-top: 2.2rem; }
+@media (max-width: 900px) { .space-inner { padding-left: 1.5rem; padding-right: 1.5rem; } }
 
 /* ── CLOSING ── */
 .closing { background: var(--cream); position: relative; overflow: hidden; }
@@ -121,6 +139,9 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
     body { font-size: 18px; }
     .section-wrap { padding: 4.5rem 0; }
 }
+body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
+body.og-mode .hero { min-height: 100vh; }
+body.og-mode .hero-inner { padding-left: 2rem; }
 </style>
 </head>
 <body>
@@ -193,8 +214,8 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
         <div class="invest-grid">
             <div class="invest-card primary reveal d1">
                 <p class="invest-kicker">The full rebuild</p>
-                <p class="invest-price">$6,500&ndash;$8,500 USD <span style="font-size:.95rem; font-weight:400; opacity:.7;">(roughly $9,000&ndash;$11,500 CAD)</span></p>
-                <p class="invest-desc">Everything described above, with the final number set after we scope the details together. For context, an agency would price this same work at two to four times that, and template work would cost less while reproducing the exact problem the site has now.</p>
+                <p class="invest-price">$7,500 USD <span style="font-size:.95rem; font-weight:400; opacity:.7;">(roughly $10,200 CAD)</span></p>
+                <p class="invest-desc">Everything described above, with the final number moving somewhat in either direction once we scope the details together. For context, an agency would price this same work at two to four times that, and template work would cost less while reproducing the exact problem the site has now.</p>
             </div>
             <div class="invest-card reveal d2">
                 <p class="invest-kicker">A softer entry</p>
@@ -207,6 +228,16 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
                 <p class="invest-desc">Ongoing needs are light for a program on an annual rhythm: new dates, cohorts, and workshops. A small annual retainer covers those updates along with hosting, the domain, and keeping the foundation healthy, sized to how much tends to change in a year.</p>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- ── THE SPACE ── -->
+<section class="space-band" id="s-space" data-section>
+    <div class="space-inner">
+        <h2 class="reveal">Design is environmental.</h2>
+        <p class="body-text reveal d1">This program teaches, better than almost anyone, that people feel a space before they think about it &mdash; that the body decides first. A website is read the same way. Prospective students will feel this site in the first few seconds, long before they weigh a single argument on it.</p>
+        <p class="body-text reveal d2">How the site feels is a preview of how the work feels.</p>
+        <p class="space-tagline reveal d3">The website is that space.</p>
     </div>
 </section>
 
@@ -232,6 +263,7 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
 </footer>
 
 <script>
+if (location.search.includes('og')) document.body.classList.add('og-mode');
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
@@ -240,7 +272,7 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 // Spine: dots per section + progress fill
 const sections = [...document.querySelectorAll('[data-section]')];
-const labels = { 's-job': 'The Job', 's-today': 'The Site Today', 's-rebuild': 'The Rebuild', 's-investment': 'Investment', 's-start': 'Getting Started' };
+const labels = { 's-job': 'The Job', 's-today': 'The Site Today', 's-rebuild': 'The Rebuild', 's-investment': 'Investment', 's-space': 'The Space', 's-start': 'Getting Started' };
 const spine = document.getElementById('spine');
 function buildDots() {
     spine.querySelectorAll('.spine-item').forEach(n => n.remove());
@@ -260,7 +292,13 @@ function updateSpine() {
     document.getElementById('spineFill').style.height = (max > 0 ? (scrollY / max * 100) : 0) + '%';
     let active = sections[0];
     sections.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * 0.5) active = s; });
-    spine.querySelectorAll('.spine-item').forEach(n => n.classList.toggle('active', n.dataset.for === active.id));
+    const darkRects = [document.querySelector('.hero'), document.querySelector('.video-band'), document.querySelector('.space-band'), document.querySelector('footer')]
+        .filter(Boolean).map(el => el.getBoundingClientRect());
+    spine.querySelectorAll('.spine-item').forEach(n => {
+        n.classList.toggle('active', n.dataset.for === active.id);
+        const y = n.getBoundingClientRect().top;
+        n.classList.toggle('on-dark', darkRects.some(r => y >= r.top && y <= r.bottom));
+    });
 }
 
 // Nudge YouTube to play once the band nears the viewport
