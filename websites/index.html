@@ -50,7 +50,7 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 
 /* ── LAYOUT / REVEAL ── */
 .content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
-.section-wrap { padding: 6rem 0; }
+.section-wrap { padding-top: 6rem; padding-bottom: 6rem; }
 .section-wrap + .section-wrap { border-top: 1px solid var(--paper2); }
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.visible { opacity: 1; transform: none; }
@@ -115,7 +115,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     .content, .hero-inner, .own-inner, .foot-inner { padding-left: 1.5rem; padding-right: 1.5rem; }
     .hero-scroll { left: 1.5rem; }
     body { font-size: 17px; }
-    .section-wrap { padding: 4.5rem 0; }
+    .section-wrap { padding-top: 4.5rem; padding-bottom: 4.5rem; }
     .hero h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
     .section-title, .body-text, .price-num { overflow-wrap: break-word; }
 }
