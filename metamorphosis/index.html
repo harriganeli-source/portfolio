@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metamorphosis Core Energetics Institute: A Website Proposal</title>
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Metamorphosis Core Energetics Institute: A Website Proposal">
+<meta property="og:description" content="A proposal for rebuilding metamorphosistraining.ca. Prepared by Eli Harrigan.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..640;1,9..144,340..640&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --deep:        #22333e;
+    --deep2:       #1a2830;
+    --ember:       #c96f4a;
+    --ember-light: #e2a488;
+    --cream:       #f6f1ea;
+    --cream2:      #ece4d8;
+    --ink:         #26211c;
+    --mid:         #5c554d;
+    --white:       #fffdf9;
+    --sans: 'DM Sans', -apple-system, sans-serif;
+    --display: 'Fraunces', Georgia, serif;
+}
+
+html { overflow-x: hidden; scroll-behavior: smooth; }
+body {
+    font-family: var(--sans);
+    font-size: 20px;
+    background: var(--white);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
+
+/* ── SPINE ── */
+.spine { position: fixed; left: 32px; top: 0; bottom: 0; width: 1px; z-index: 50; pointer-events: none; }
+.spine-track { position: absolute; inset: 0 auto 0 0; width: 1px; background: rgba(201,111,74,0.16); }
+.spine-fill { position: absolute; top: 0; left: 0; width: 1px; height: 0%; background: var(--ember); }
+.spine-item { position: absolute; left: -4px; display: flex; align-items: center; gap: 10px; transform: translateY(-50%); pointer-events: auto; cursor: pointer; }
+.spine-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgba(201,111,74,0.4); background: var(--white); flex-shrink: 0; transition: all .3s; }
+.spine-label { font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(92,85,77,0.55); white-space: nowrap; transition: color .2s; }
+.spine-item:hover .spine-dot { transform: scale(1.4); border-color: var(--ember); }
+.spine-item.active .spine-dot { background: var(--ember); border-color: var(--ember); }
+
+/* ── LAYOUT / REVEAL ── */
+.content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
+.section-wrap { padding: 6.5rem 0; }
+.section-wrap + .section-wrap { border-top: 1px solid var(--cream2); }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.d1 { transition-delay: .08s; } .d2 { transition-delay: .18s; } .d3 { transition-delay: .28s; } .d4 { transition-delay: .38s; }
+
+.section-label { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ember); margin-bottom: .9rem; opacity: .85; }
+.section-title { font-size: clamp(1.7rem, 3.2vw, 2.5rem); font-weight: 560; color: var(--deep); line-height: 1.16; letter-spacing: -.01em; margin-bottom: 1.8rem; max-width: 640px; }
+.body-text { font-size: 1rem; color: var(--mid); line-height: 1.85; max-width: 640px; }
+.body-text + .body-text { margin-top: 1rem; }
+.body-text strong { color: var(--ink); font-weight: 600; }
+
+/* ── HERO ── */
+.hero { min-height: 92vh; background: var(--deep); display: flex; align-items: center; position: relative; overflow: hidden; }
+.hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 68% 38%, rgba(201,111,74,0.14) 0%, transparent 55%); }
+.hero-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
+.hero-label { font-size: .75rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ember-light); margin-bottom: 2.4rem; }
+.hero h1 { font-size: clamp(2.4rem, 4.8vw, 3.9rem); font-weight: 480; color: var(--cream); line-height: 1.1; letter-spacing: -.01em; margin-bottom: 1.6rem; }
+.hero h1 em { font-style: normal; font-family: var(--sans); font-weight: 400; font-size: clamp(1.05rem, 2vw, 1.45rem); letter-spacing: .02em; color: var(--ember-light); display: block; margin-top: 1.1rem; line-height: 1.4; }
+.hero-sub { font-size: .84rem; color: rgba(246,241,234,0.55); font-weight: 300; letter-spacing: .05em; }
+.hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(246,241,234,0.35); animation: breathe 2.6s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { opacity: .3; } 50% { opacity: .9; } }
+
+
+
+/* ── CALLOUT ── */
+.callout { border-left: 3px solid var(--ember); background: var(--cream); padding: 1.6rem 1.8rem; margin: 2.2rem 0 0; max-width: 640px; border-radius: 0 6px 6px 0; }
+.callout p { font-family: var(--display); font-variation-settings: "opsz" 40; font-size: 1.12rem; line-height: 1.65; color: var(--deep); }
+.callout p + p { margin-top: .8rem; }
+.callout strong { color: var(--ember); font-weight: 600; }
+
+/* ── PULL QUOTE ── */
+.pull-quote { padding: 2.2rem 0 .4rem; max-width: 640px; }
+.pull-quote p { font-family: var(--display); font-variation-settings: "opsz" 80; font-weight: 500; font-size: clamp(1.3rem, 2.4vw, 1.7rem); line-height: 1.4; color: var(--deep); }
+
+/* ── INVESTMENT ── */
+.invest-grid { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin-top: 2.4rem; max-width: 680px; }
+.invest-card { border: 1px solid var(--cream2); border-radius: 10px; padding: 1.9rem 2rem; background: var(--white); }
+.invest-card.primary { background: var(--deep); border-color: var(--deep); }
+.invest-kicker { font-size: .72rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: var(--ember); margin-bottom: .6rem; }
+.invest-price { font-family: var(--display); font-variation-settings: "opsz" 60; font-size: 1.7rem; font-weight: 560; color: var(--deep); margin-bottom: .7rem; }
+.invest-card.primary .invest-price { color: var(--cream); }
+.invest-desc { font-size: .93rem; line-height: 1.75; color: var(--mid); }
+.invest-card.primary .invest-desc { color: rgba(246,241,234,0.72); }
+
+/* ── CLOSING ── */
+.closing { background: var(--cream); position: relative; overflow: hidden; }
+.closing::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 60%, rgba(201,111,74,0.09) 0%, transparent 60%); pointer-events: none; }
+.closing-inner { max-width: 800px; margin: 0 auto; padding: 6.5rem 2rem 6rem 90px; position: relative; }
+.closing h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); font-weight: 520; color: var(--deep); line-height: 1.15; margin-bottom: 1.6rem; }
+.closing .body-text { margin-bottom: 2.6rem; }
+.contact-block { border-top: 1px solid var(--cream2); padding-top: 2rem; font-size: .95rem; color: var(--mid); line-height: 2; }
+.contact-block a { color: var(--deep); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(201,111,74,0.35); text-underline-offset: 3px; transition: text-decoration-color .15s; }
+.contact-block a:hover { text-decoration-color: var(--ember); }
+.contact-name { font-family: var(--display); font-size: 1.25rem; color: var(--deep); font-weight: 560; margin-bottom: .3rem; }
+
+footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78rem; }
+.foot-inner { max-width: 800px; margin: 0 auto; padding: 1.6rem 2rem 1.6rem 90px; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+@media (max-width: 900px) {
+    .spine { display: none; }
+    .content, .hero-inner, .closing-inner, .foot-inner { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .hero-scroll { left: 1.5rem; }
+    body { font-size: 18px; }
+    .section-wrap { padding: 4.5rem 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="spine" id="spine">
+    <div class="spine-track"></div>
+    <div class="spine-fill" id="spineFill"></div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+        <div class="hero-inner">
+        <p class="hero-label">A proposal for rebuilding <a href="https://www.metamorphosistraining.ca" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(226,164,136,0.4);">metamorphosistraining.ca</a></p>
+        <h1>Metamorphosis<br>Core Energetics Institute<br><em>A website worthy of the work.</em></h1>
+        <p class="hero-sub">Prepared by Eli Harrigan &nbsp;&middot;&nbsp; July 2026</p>
+    </div>
+    <div class="hero-scroll">Scroll &darr;</div>
+</section>
+
+<!-- ── THE JOB ── -->
+<section id="s-job" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">The job</p>
+        <h2 class="section-title reveal d1">What the website actually has to do.</h2>
+        <p class="body-text reveal d2">Nobody finds a four-year practitioner training by accident. Students arrive through the community: a practitioner they trust, a workshop that moved them, a name passed along at the right moment. Which means the website has one job, and it happens late in the process. A referred prospect, already half-decided, sits down to do their due diligence. They read the program pages, they study the faculty, and they spend a long time on the fees page, because they are about to commit four years and $48,000 to this institute.</p>
+        <p class="body-text reveal d3">The site&rsquo;s job is to hold them through that moment. It does not need to generate interest. It needs to be worthy of the trust the community has already built, at the exact moment someone is testing that trust against a major decision.</p>
+        <div class="callout reveal d4">
+            <p>At this tuition, the math is simple. <strong>A single student reassured at that moment pays for this entire project several times over</strong>, and a single student quietly lost there costs far more than any website ever will.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── THE SITE TODAY ── -->
+<section id="s-today" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">The site today</p>
+        <h2 class="section-title reveal d1">What is holding the current site back.</h2>
+        <p class="body-text reveal d2">The deepest issue is the foundation. The site runs on Mailchimp&rsquo;s landing page builder, a side feature of an email marketing tool rather than a website platform. That choice made sense for getting something up quickly, and it has served its purpose, but it imposes ceilings that cannot be fixed in place. The platform provides no meta descriptions anywhere on the site, no real control over page titles, no structured data, and no way to tune performance. These are the signals search engines read, so someone searching for Core Energetics training or somatic practitioner certification will not find this program.</p>
+        <div class="pull-quote reveal d3">
+            <p>The site is reachable only by people who already have the exact address &mdash; which narrows the funnel to word of mouth alone and leaves search traffic, the second way serious students look for training, entirely on the table.</p>
+        </div>
+        <p class="body-text reveal">The design carries a quieter cost. This is a program about embodiment, presence, and aliveness, and the site that represents it opens on a stock illustration, with seven thin pages carrying a four-year decision. Prospective students feel that mismatch, even if they never articulate it, and they feel it during the moment described above, when feeling is what they are deciding with. There is also no way to act at the end of that moment: the site offers a contact form where an application should be.</p>
+    </div>
+</section>
+
+<!-- ── THE REBUILD ── -->
+<section id="s-rebuild" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">The rebuild</p>
+        <h2 class="section-title reveal d1">What I propose to build.</h2>
+        <p class="body-text reveal d2">A custom site of roughly seven pages: home, program and curriculum, faculty, dates and fees, workshops, testimonials, and a proper application and inquiry flow to replace the bare contact form. The design gets built around the work itself, with art direction guidance for photography of the training, the faculty, and the space at Earthdance, so that real imagery replaces stock illustration and the site begins to feel like the room the training happens in.</p>
+        <p class="body-text reveal d3">Underneath the design, the site gets the full technical foundation the current platform cannot provide: correct titles and meta descriptions on every page, structured data describing the institute, the program, and its location, a sitemap, and fast static hosting. The existing copy mostly carries over with editorial polish, so this is a redesign and a re-foundation rather than a rewrite of the institute&rsquo;s voice.</p>
+        <div class="callout reveal d4">
+            <p>The site moves onto hosting the institute owns. What I build is plain files, with no subscription platform underneath, so <strong>nobody can raise the rent on your own website</strong> or hold your content inside their editor. If you ever wanted to move it to another host or another developer, the whole site transfers over, no strings.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── INVESTMENT ── -->
+<section id="s-investment" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">Investment</p>
+        <h2 class="section-title reveal d1">Priced to the moment it protects.</h2>
+        <div class="invest-grid">
+            <div class="invest-card primary reveal d1">
+                <p class="invest-kicker">The full rebuild</p>
+                <p class="invest-price">$6,500&ndash;$8,500 USD <span style="font-size:.95rem; font-weight:400; opacity:.7;">(roughly $9,000&ndash;$11,500 CAD)</span></p>
+                <p class="invest-desc">Everything described above, with the final number set after we scope the details together. For context, an agency would price this same work at two to four times that, and template work would cost less while reproducing the exact problem the site has now.</p>
+            </div>
+            <div class="invest-card reveal d2">
+                <p class="invest-kicker">A softer entry</p>
+                <p class="invest-price">$4,500&ndash;$5,500 USD</p>
+                <p class="invest-desc">A phased path: the three pages that carry the enrollment decision &mdash; home, program, and dates and fees with the application flow &mdash; with the remaining pages as a second phase.</p>
+            </div>
+            <div class="invest-card reveal d3">
+                <p class="invest-kicker">After launch</p>
+                <p class="invest-price">$600&ndash;$1,200 / year</p>
+                <p class="invest-desc">Ongoing needs are light for a program on an annual rhythm: new dates, cohorts, and workshops. A small annual retainer covers those updates along with hosting, the domain, and keeping the foundation healthy, sized to how much tends to change in a year.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── CLOSING ── -->
+<section class="closing" id="s-start" data-section>
+    <div class="closing-inner">
+        <p class="section-label reveal">Getting started</p>
+        <h2 class="reveal d1">One conversation is enough.</h2>
+        <p class="body-text reveal d2">One conversation is enough to scope this precisely, and from there I build something real for you to react to rather than a mockup, because it is much easier to know whether a site feels like the institute when you are actually looking at it.</p>
+        <div class="contact-block reveal d3">
+                        <p class="contact-name">Eli Harrigan</p>
+            <p><a href="tel:5857470851">585.747.0851</a> &nbsp;&middot;&nbsp; <a href="mailto:harrigan.eli@gmail.com">harrigan.eli@gmail.com</a></p>
+            <p><a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a> &nbsp;&middot;&nbsp; <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a></p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="foot-inner">
+        <span>Prepared for the Metamorphosis Core Energetics Institute</span>
+        <span>Confidential &middot; 2026</span>
+    </div>
+</footer>
+
+<script>
+// Reveal on scroll
+const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+}), { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Spine: dots per section + progress fill
+const sections = [...document.querySelectorAll('[data-section]')];
+const labels = { 's-job': 'The Job', 's-today': 'The Site Today', 's-rebuild': 'The Rebuild', 's-investment': 'Investment', 's-start': 'Getting Started' };
+const spine = document.getElementById('spine');
+function buildDots() {
+    spine.querySelectorAll('.spine-item').forEach(n => n.remove());
+    const docH = document.documentElement.scrollHeight;
+    sections.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'spine-item';
+        item.style.top = ((s.offsetTop + 120) / docH * 100) + '%';
+        item.innerHTML = '<span class="spine-dot"></span><span class="spine-label">' + (labels[s.id] || '') + '</span>';
+        item.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }));
+        item.dataset.for = s.id;
+        spine.appendChild(item);
+    });
+}
+function updateSpine() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    document.getElementById('spineFill').style.height = (max > 0 ? (scrollY / max * 100) : 0) + '%';
+    let active = sections[0];
+    sections.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * 0.5) active = s; });
+    spine.querySelectorAll('.spine-item').forEach(n => n.classList.toggle('active', n.dataset.for === active.id));
+}
+addEventListener('load', () => { buildDots(); updateSpine(); });
+addEventListener('resize', buildDots);
+addEventListener('scroll', updateSpine, { passive: true });
+</script>
+</body>
+</html>
