@@ -1310,6 +1310,7 @@ function initVideoCardHover() {
   });
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
   cleanProjectTitles();
   initMobileMenu();

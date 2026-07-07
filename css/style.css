@@ -283,6 +283,7 @@ main {
    6. HOMEPAGE - EDITORIAL GRID
    ============================================ */
 
+
 .grid-projects {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
