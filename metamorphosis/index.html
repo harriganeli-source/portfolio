@@ -215,7 +215,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 
 <!-- ── VIDEO ── -->
 <section class="video-band">
-    <iframe id="yt-band" src="https://www.youtube.com/embed/5btfMF0SfaI?autoplay=1&mute=1&loop=1&playlist=5btfMF0SfaI&rel=0&controls=0&playsinline=1&enablejsapi=1&iv_load_policy=3&modestbranding=1" allow="autoplay; fullscreen"></iframe>
+    <iframe id="yt-band" src="https://www.youtube.com/embed/5btfMF0SfaI?mute=1&loop=1&playlist=5btfMF0SfaI&rel=0&controls=0&playsinline=1&enablejsapi=1&iv_load_policy=3&modestbranding=1" allow="autoplay; fullscreen"></iframe>
 </section>
 
 <!-- ── THE REBUILD ── -->
@@ -319,19 +319,19 @@ function updateSpine() {
     });
 }
 
-// Nudge YouTube to play once the band nears the viewport
+// Play the band video while visible; pause when it leaves view
 const yt = document.getElementById('yt-band');
 if (yt) {
+    const post = cmd => yt.contentWindow.postMessage(JSON.stringify({ event: 'command', func: cmd, args: '' }), '*');
+    const play = () => { post('playVideo'); setTimeout(() => post('playVideo'), 900); setTimeout(() => post('playVideo'), 2200); };
     const ytObs = new IntersectionObserver(es => es.forEach(e => {
-        if (e.isIntersecting) {
-            setTimeout(() => yt.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'), 600);
-            ytObs.unobserve(yt);
-        }
-    }), { threshold: 0.25 });
+        if (e.isIntersecting) play(); else post('pauseVideo');
+    }), { threshold: 0.15 });
     ytObs.observe(yt);
-    const kick = () => { yt.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); removeEventListener('touchstart', kick); removeEventListener('scroll', kick); };
-    addEventListener('touchstart', kick, { once: true, passive: true });
-    addEventListener('scroll', kick, { once: true, passive: true });
+    addEventListener('touchstart', () => {
+        const r = yt.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < innerHeight) play();
+    }, { passive: true });
 }
 
 addEventListener('load', () => { buildDots(); updateSpine(); });
