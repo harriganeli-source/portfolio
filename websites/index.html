@@ -47,6 +47,9 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .spine-label { font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(243,234,217,0.4); white-space: nowrap; }
 .spine-item:hover .spine-dot { transform: scale(1.4); border-color: var(--amber); }
 .spine-item.active .spine-dot { background: var(--amber); border-color: var(--amber); }
+.spine-item.on-light .spine-label { color: rgba(42,33,26,0.55); }
+.spine-item.on-light .spine-dot { background: var(--card-light); border-color: rgba(168,95,30,0.55); }
+.spine-item.on-light.active .spine-dot { background: #a85f1e; border-color: #a85f1e; }
 
 /* ── LAYOUT / REVEAL ── */
 .content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
@@ -78,7 +81,7 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .callout strong { color: var(--amber); font-weight: 400; }
 
 /* ── WHY ME / HEADSHOT / LOGOS ── */
-.why-grid { display: grid; grid-template-columns: minmax(0,1fr) 230px; gap: 2.8rem; align-items: start; }
+.why-grid { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 2.8rem; align-items: start; }
 .headshot img { width: 100%; display: block; border-radius: 12px; }
 .headshot { position: relative; }
 .headshot::after { content:''; position: absolute; inset: 0; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(243,234,217,0.12); pointer-events: none; }
@@ -88,11 +91,15 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .logo-strip img:hover { opacity: 1; }
 .logo-strip img.svg-logo { filter: brightness(0) invert(1); }
 
-/* ── GREEN BAND (What you own) ── */
-.own-band { background: var(--green); position: relative; overflow: hidden; }
-.own-band::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(208,138,62,0.1) 0%, transparent 58%); pointer-events: none; }
+/* ── LIGHT BANDS ── */
+.band-light { background: var(--card-light); position: relative; overflow: hidden; }
+.band-light::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(208,138,62,0.12) 0%, transparent 58%); pointer-events: none; }
 .own-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; position: relative; }
-.own-inner .body-text { color: rgba(243,234,217,0.68); }
+.band-light .section-label { color: #a85f1e; }
+.band-light .section-title { color: var(--ink); }
+.band-light .body-text { color: var(--mid); }
+.band-light .body-text a { color: var(--ink); text-decoration-color: rgba(168,95,30,0.45); }
+.band-light .body-text a:hover { text-decoration-color: #a85f1e; }
 
 /* ── PRICING ── */
 .price-grid { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin-top: 2.4rem; max-width: 680px; }
@@ -107,10 +114,10 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .price-card.primary .price-kicker { color: #b06a26; }
 
 /* ── CLOSING ── */
-.contact-block { border-top: 1px solid var(--line); margin-top: 2.6rem; padding-top: 2rem; font-size: .95rem; color: var(--body); line-height: 2; }
-.contact-name { font-family: var(--display); font-size: 1.25rem; color: var(--cream); margin-bottom: .3rem; }
-.contact-block a { color: var(--cream); font-weight: 600; text-decoration: underline; text-decoration-color: var(--amber-soft); text-underline-offset: 3px; }
-.contact-block a:hover { text-decoration-color: var(--amber); }
+.contact-block { border-top: 1px solid rgba(42,33,26,0.15); margin-top: 2.6rem; padding-top: 2rem; font-size: .95rem; color: var(--mid); line-height: 2; }
+.contact-name { font-family: var(--display); font-size: 1.25rem; color: var(--ink); margin-bottom: .3rem; }
+.contact-block a { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: rgba(168,95,30,0.45); text-underline-offset: 3px; }
+.contact-block a:hover { text-decoration-color: #a85f1e; }
 
 footer { background: #1c150f; color: rgba(243,234,217,0.38); font-size: .78rem; }
 .foot-inner { max-width: 800px; margin: 0 auto; padding: 1.6rem 2rem 1.6rem 90px; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
@@ -180,7 +187,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <h2 class="section-title reveal d1">I know this territory from the inside.</h2>
         <div class="why-grid reveal d2">
             <div>
-                <p class="body-text">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, with the scheduling, the payments, and the email list all doing their jobs every day. I know what it is to be the whole business: the practitioner, the schedule, and the person answering the inquiries.</p>
+                <p class="body-text">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, <a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a>, with the scheduling, the payments, and the email list all doing their jobs every day. I know what it is to be the whole business: the practitioner, the schedule, and the person answering the inquiries.</p>
                 <p class="body-text">The other half of my working life is commercial production. I spent fifteen years editing, directing, and producing for global brands, the kind of work where a viewer gives you ten seconds and every one of those seconds is fought over. Practices like yours almost never get that level of craft, because the businesses that can afford it are not the businesses doing this work. I am the overlap.</p>
                 <p class="body-text">You can see that work at <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a> and judge for yourself.</p>
             </div>
@@ -209,7 +216,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 </section>
 
 <!-- ── WHAT YOU OWN ── -->
-<section class="own-band" id="s-own" data-section>
+<section class="own-band band-light" id="s-own" data-section>
     <div class="own-inner">
         <p class="section-label reveal">What you own</p>
         <h2 class="section-title reveal d1">Everything about the site belongs to you.</h2>
@@ -247,7 +254,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 </section>
 
 <!-- ── GETTING STARTED ── -->
-<section class="closing" id="s-start" data-section>
+<section class="closing band-light" id="s-start" data-section>
     <div class="content section-wrap">
         <p class="section-label reveal">Getting started</p>
         <h2 class="section-title reveal d1">One conversation, then something real.</h2>
@@ -296,8 +303,11 @@ function updateSpine() {
     document.getElementById('spineFill').style.height = (max > 0 ? (scrollY / max * 100) : 0) + '%';
     let active = sections[0];
     sections.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * 0.5) active = s; });
+    const lightRects = [...document.querySelectorAll('.band-light')].map(el => el.getBoundingClientRect());
     spine.querySelectorAll('.spine-item').forEach(n => {
         n.classList.toggle('active', n.dataset.for === active.id);
+        const y = n.getBoundingClientRect().top;
+        n.classList.toggle('on-light', lightRects.some(r => y >= r.top && y <= r.bottom));
     });
 }
 addEventListener('load', () => { buildDots(); updateSpine(); });
