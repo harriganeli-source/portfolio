@@ -146,10 +146,14 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
 
 @media (max-width: 900px) {
     .spine { display: none; }
-    .content, .hero-inner, .closing-inner, .foot-inner { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .content, .hero-inner, .space-inner, .foot-inner { padding-left: 1.5rem; padding-right: 1.5rem; }
     .hero-scroll { left: 1.5rem; }
-    body { font-size: 18px; }
+    body { font-size: 17px; }
     .section-wrap { padding: 4.5rem 0; }
+    .hero h1 { font-size: clamp(1.6rem, 6.9vw, 2.3rem); white-space: normal; }
+    .hero-label { font-size: .62rem; letter-spacing: .1em; overflow-wrap: anywhere; }
+    .section-title, .body-text, .invest-price, .space-tagline { overflow-wrap: break-word; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
 body.og-mode .hero { min-height: 100vh; }
@@ -200,9 +204,9 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     <div class="content section-wrap">
         <p class="section-label reveal">The site today</p>
         <h2 class="section-title reveal d1">What is holding the current site back.</h2>
-        <p class="body-text reveal d2">The deepest issue is the foundation. The site runs on Mailchimp&rsquo;s landing page builder, a side feature of an email marketing tool rather than a website platform. That choice made sense for getting something up quickly, and it has served its purpose, but it imposes ceilings that cannot be fixed in place. The platform provides no meta descriptions anywhere on the site, no real control over page titles, no structured data, and no way to tune performance. These are the signals search engines read, so someone searching for Core Energetics training or somatic practitioner certification will not find this program.</p>
+        <p class="body-text reveal d2">The deepest issue is the foundation. The site runs on Mailchimp&rsquo;s landing page builder, a side feature of an email marketing tool rather than a website platform. That choice made sense for getting something up quickly, and it has served its purpose, but it imposes ceilings that cannot be fixed in place. The platform provides no meta descriptions anywhere on the site, no real control over page titles, no structured data, and no way to tune performance. These are the signals search engines read, and they matter here in a specific way: a referral rarely arrives as a web address. It arrives as a name. Someone hears about Core Energetics at a workshop, or hears about this program from a practitioner they trust, and later that night they type what they remember into a search bar. Right now, that search comes up empty.</p>
         <div class="pull-quote reveal d3">
-            <p>The site is reachable only by people who already have the exact address &mdash; which narrows the funnel to word of mouth alone and leaves search traffic, the second way serious students look for training, entirely on the table.</p>
+            <p>The site is reachable only by people who already have the exact address &mdash; and word of mouth almost never travels as an exact address.</p>
         </div>
         <p class="body-text reveal">The design carries a quieter cost. This is a program about embodiment, presence, and aliveness, and the site that represents it opens on a stock illustration, with seven thin pages carrying a four-year decision. Prospective students feel that mismatch, even if they never articulate it, and they feel it during the moment described above, when feeling is what they are deciding with. There is also no way to act at the end of that moment: the site offers a contact form where an application should be.</p>
     </div>
@@ -324,6 +328,9 @@ if (yt) {
         }
     }), { threshold: 0.25 });
     ytObs.observe(yt);
+    const kick = () => { yt.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*'); removeEventListener('touchstart', kick); removeEventListener('scroll', kick); };
+    addEventListener('touchstart', kick, { once: true, passive: true });
+    addEventListener('scroll', kick, { once: true, passive: true });
 }
 
 addEventListener('load', () => { buildDots(); updateSpine(); });

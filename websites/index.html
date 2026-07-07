@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Site Meets People Before You Do — Eli Harrigan</title>
+<meta name="description" content="Websites for practices built on trust — where clients choose you for who you are and how you work. Design, development, copywriting, and everything you own.">
+<meta property="og:title" content="Your Site Meets People Before You Do">
+<meta property="og:description" content="Websites for practices built on trust, where clients choose you for who you are and how you work.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.eliharrigan.com/websites/">
+<meta property="og:image" content="https://www.eliharrigan.com/websites/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.eliharrigan.com/websites/og.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..640;1,9..144,340..640&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --paper:  #faf6ef;
+    --paper2: #f1ebe0;
+    --ink:    #26211c;
+    --mid:    #5c554d;
+    --ember:  #b95f3c;
+    --ember-soft: #e8c9b8;
+    --deep:   #2b2622;
+    --white:  #fffdf9;
+    --sans: 'DM Sans', -apple-system, sans-serif;
+    --display: 'Fraunces', Georgia, serif;
+}
+
+html { overflow-x: hidden; scroll-behavior: smooth; }
+body { font-family: var(--sans); font-size: 20px; background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
+
+/* ── SPINE ── */
+.spine { position: fixed; left: 32px; top: 0; bottom: 0; width: 1px; z-index: 50; pointer-events: none; }
+.spine-track { position: absolute; inset: 0 auto 0 0; width: 1px; background: rgba(185,95,60,0.16); }
+.spine-fill { position: absolute; top: 0; left: 0; width: 1px; height: 0%; background: var(--ember); }
+.spine-item { position: absolute; left: -4px; display: flex; align-items: center; gap: 10px; transform: translateY(-50%); pointer-events: auto; cursor: pointer; }
+.spine-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgba(185,95,60,0.4); background: var(--paper); flex-shrink: 0; transition: all .3s; }
+.spine-label { font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(92,85,77,0.55); white-space: nowrap; }
+.spine-item:hover .spine-dot { transform: scale(1.4); border-color: var(--ember); }
+.spine-item.active .spine-dot { background: var(--ember); border-color: var(--ember); }
+.spine-item.on-dark .spine-label { color: rgba(250,246,239,0.65); }
+.spine-item.on-dark .spine-dot { background: transparent; border-color: rgba(232,201,184,0.6); }
+.spine-item.on-dark.active .spine-dot { background: var(--ember); border-color: var(--ember); }
+
+/* ── LAYOUT / REVEAL ── */
+.content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
+.section-wrap { padding: 6rem 0; }
+.section-wrap + .section-wrap { border-top: 1px solid var(--paper2); }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.d1 { transition-delay: .08s; } .d2 { transition-delay: .18s; } .d3 { transition-delay: .28s; } .d4 { transition-delay: .38s; }
+
+.section-label { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ember); margin-bottom: .9rem; }
+.section-title { font-size: clamp(1.7rem, 3.2vw, 2.5rem); font-weight: 560; color: var(--ink); line-height: 1.16; letter-spacing: -.01em; margin-bottom: 1.8rem; max-width: 640px; }
+.body-text { font-size: 1rem; color: var(--mid); line-height: 1.85; max-width: 640px; }
+.body-text + .body-text { margin-top: 1rem; }
+.body-text a { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--ember-soft); text-underline-offset: 3px; }
+.body-text a:hover { text-decoration-color: var(--ember); }
+
+/* ── HERO ── */
+.hero { min-height: 88vh; display: flex; align-items: center; position: relative; overflow: hidden; }
+.hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 72% 30%, rgba(185,95,60,0.08) 0%, transparent 55%); }
+.hero-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
+.hero h1 { font-size: clamp(2.5rem, 5.2vw, 4.2rem); font-weight: 520; color: var(--ink); line-height: 1.08; letter-spacing: -.01em; margin-bottom: 1.7rem; }
+.hero-sub { font-size: 1.1rem; color: var(--mid); max-width: 32rem; line-height: 1.7; }
+.hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(92,85,77,0.4); animation: breathe 2.6s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { opacity: .35; } 50% { opacity: .9; } }
+
+/* ── CALLOUT ── */
+.callout { border-left: 3px solid var(--ember); background: var(--white); padding: 1.6rem 1.8rem; margin: 2.2rem 0 0; max-width: 640px; border-radius: 0 6px 6px 0; box-shadow: 0 1px 0 var(--paper2); }
+.callout p { font-family: var(--display); font-variation-settings: "opsz" 40; font-size: 1.12rem; line-height: 1.65; color: var(--ink); }
+.callout strong { color: var(--ember); font-weight: 600; }
+
+/* ── DARK BAND (What you own) ── */
+.own-band { background: var(--deep); position: relative; overflow: hidden; }
+.own-band::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(185,95,60,0.12) 0%, transparent 58%); pointer-events: none; }
+.own-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; position: relative; }
+.own-inner .section-label { color: var(--ember-soft); }
+.own-inner .section-title { color: var(--paper); }
+.own-inner .body-text { color: rgba(250,246,239,0.62); }
+
+/* ── PRICING ── */
+.price-grid { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin-top: 2.4rem; max-width: 680px; }
+@media (min-width: 760px) { .price-grid.two { grid-template-columns: 1fr 1fr; } }
+.price-card { border: 1px solid var(--paper2); border-radius: 10px; padding: 1.9rem 2rem; background: var(--white); }
+.price-card.primary { background: var(--deep); border-color: var(--deep); }
+.price-kicker { font-size: .72rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: var(--ember); margin-bottom: .6rem; }
+.price-num { font-family: var(--display); font-variation-settings: "opsz" 60; font-size: 1.6rem; font-weight: 560; color: var(--ink); margin-bottom: .7rem; }
+.price-card.primary .price-num { color: var(--paper); }
+.price-desc { font-size: .93rem; line-height: 1.75; color: var(--mid); }
+.price-card.primary .price-desc { color: rgba(250,246,239,0.7); }
+
+/* ── CLOSING ── */
+.closing { background: var(--paper); }
+.contact-block { border-top: 1px solid var(--paper2); margin-top: 2.6rem; padding-top: 2rem; font-size: .95rem; color: var(--mid); line-height: 2; }
+.contact-name { font-family: var(--display); font-size: 1.25rem; color: var(--ink); font-weight: 560; margin-bottom: .3rem; }
+.contact-block a { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--ember-soft); text-underline-offset: 3px; }
+.contact-block a:hover { text-decoration-color: var(--ember); }
+
+footer { background: var(--deep); color: rgba(250,246,239,0.4); font-size: .78rem; }
+.foot-inner { max-width: 800px; margin: 0 auto; padding: 1.6rem 2rem 1.6rem 90px; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
+body.og-mode .hero { min-height: 100vh; }
+body.og-mode .hero-inner { padding-left: 2rem; }
+
+@media (max-width: 900px) {
+    .spine { display: none; }
+    .content, .hero-inner, .own-inner, .foot-inner { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .hero-scroll { left: 1.5rem; }
+    body { font-size: 17px; }
+    .section-wrap { padding: 4.5rem 0; }
+    .hero h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+    .section-title, .body-text, .price-num { overflow-wrap: break-word; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="spine" id="spine">
+    <div class="spine-track"></div>
+    <div class="spine-fill" id="spineFill"></div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+    <div class="hero-inner">
+        <h1>Your site meets people<br>before you do.</h1>
+        <p class="hero-sub">For practices built on trust, where clients choose you for who you are and how you work.</p>
+    </div>
+    <div class="hero-scroll">Scroll &darr;</div>
+</section>
+
+<!-- ── THE PROBLEM ── -->
+<section id="s-problem" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">The problem</p>
+        <h2 class="section-title reveal d1">Someone gives out your name.</h2>
+        <p class="body-text reveal d2">Someone gives out your name at a dinner, or after a class, or in a group text. Later that night, a person you have never met is sitting in bed with their phone, typing it into a search bar. Whatever comes up has to do the work you would normally do in person: put them at ease, sound like someone who knows what they are doing, give them a reason to reach out instead of closing the tab.</p>
+        <p class="body-text reveal d3">A template can cover the basics, your offerings, your hours, a way to get in touch. What it rarely manages is to feel like you, and in work like yours, that feeling is usually what makes a stranger reach out.</p>
+        <div class="callout reveal d4">
+            <p>This plays out the same way whether you practice alone or run a busy office, because <strong>the site meets people before you do.</strong></p>
+        </div>
+    </div>
+</section>
+
+<!-- ── WHAT I BUILD ── -->
+<section id="s-build" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">What I build</p>
+        <h2 class="section-title reveal d1">Sites that feel like the people behind the practice.</h2>
+        <p class="body-text reveal d2">The work starts with your story and your philosophy, written in your voice, and it runs through every design choice after that, because the colors, the typography, and the pace of a page say as much about a practice as the words do. A meditation teacher&rsquo;s site should breathe. A chiropractic office&rsquo;s site should feel steady and clear. A training school&rsquo;s site should feel like the room students are hoping to walk into. When the design fits the people, visitors trust what they are reading, and trust is what fills a schedule.</p>
+        <p class="body-text reveal d3">The practical machinery is in there too, shaped to whatever the site&rsquo;s real job is. For a practice building its caseload, that means clear offerings, online booking tied to your calendar, and payment built in, so a new client can go from finding you to booked without anyone touching the phone. For a school or program, it means presenting the training properly and carrying people through to application or enrollment. For anyone building an audience, it means a proper home for your writing, your podcast, or your speaking, along with an email list you own rather than rent from an algorithm. Most practices want some of each, and we design around whichever matters most right now, leaving room for the site to grow as you do.</p>
+    </div>
+</section>
+
+<!-- ── WHY ME ── -->
+<section id="s-why" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">Why me</p>
+        <h2 class="section-title reveal d1">I know this territory from the inside.</h2>
+        <p class="body-text reveal d2">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, with the scheduling, the payments, and the email list all doing their jobs every day. Before any of that, I spent fifteen years as a commercial editor, which taught me how much of a story has to land in the first ten seconds.</p>
+        <p class="body-text reveal d3">You can visit my practice at <a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a> and my production work at <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a>, and judge for yourself whether they feel like a person.</p>
+    </div>
+</section>
+
+<!-- ── WHAT YOU OWN ── -->
+<section class="own-band" id="s-own" data-section>
+    <div class="own-inner">
+        <p class="section-label reveal">What you own</p>
+        <h2 class="section-title reveal d1">Everything about the site belongs to you.</h2>
+        <p class="body-text reveal d2">It is built as plain files with no subscription platform underneath, so nobody can raise the rent on your own website or keep your content locked inside their editor. If I got hit by a bus tomorrow, you could hand the folder to any developer and carry on.</p>
+        <p class="body-text reveal d3">Your first year of hosting, domain, and infrastructure comes included in the build. Tools like booking, payments, and email marketing run under your own accounts, usually somewhere between free and thirty dollars a month, and I help you choose the right ones and wire them in.</p>
+    </div>
+</section>
+
+<!-- ── WHAT IT COSTS ── -->
+<section id="s-cost" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">What it costs</p>
+        <h2 class="section-title reveal d1">An exact number after one conversation.</h2>
+        <div class="price-grid">
+            <div class="price-card primary reveal d1">
+                <p class="price-kicker">The build</p>
+                <p class="price-num">Single-page sites from $2,000 &nbsp;&middot;&nbsp; most multi-page sites $3,500&ndash;$4,500</p>
+                <p class="price-desc">Depending on what yours needs to do. Every build includes the design, the development, your content moved in, copywriting we do together, tool setup, and that first year of infrastructure. I will give you an exact number after one conversation.</p>
+            </div>
+        </div>
+        <div class="price-grid two">
+            <div class="price-card reveal d2">
+                <p class="price-kicker">Pay as you go</p>
+                <p class="price-num">$100/hour + $200/year</p>
+                <p class="price-desc">$100 an hour when you need a change, plus $200 a year covering hosting, your domain, and upkeep.</p>
+            </div>
+            <div class="price-card reveal d3">
+                <p class="price-kicker">On call</p>
+                <p class="price-num">$125/month</p>
+                <p class="price-desc">Everything folded into one number: hosting, domain, an hour of update time each month, and a guaranteed response within 48 hours whenever something comes up.</p>
+            </div>
+        </div>
+        <p class="body-text reveal d4" style="margin-top:1.6rem;">Once the site is live, you pick whichever arrangement suits you, and you can switch at any renewal.</p>
+    </div>
+</section>
+
+<!-- ── GETTING STARTED ── -->
+<section class="closing" id="s-start" data-section>
+    <div class="content section-wrap">
+        <p class="section-label reveal">Getting started</p>
+        <h2 class="section-title reveal d1">One conversation, then something real.</h2>
+        <p class="body-text reveal d2">We begin with one conversation about your practice and how people find you now. Then I build something real for you to react to, because it is much easier to know what feels right when you are actually looking at it.</p>
+        <div class="contact-block reveal d3">
+            <p class="contact-name">Eli Harrigan</p>
+            <p><a href="tel:5857470851">585.747.0851</a> &nbsp;&middot;&nbsp; <a href="mailto:harrigan.eli@gmail.com">harrigan.eli@gmail.com</a></p>
+            <p><a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a> &nbsp;&middot;&nbsp; <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a></p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="foot-inner">
+        <span>Eli Harrigan &middot; Websites for practices built on trust</span>
+        <span>2026</span>
+    </div>
+</footer>
+
+<script>
+if (location.search.includes('og')) document.body.classList.add('og-mode');
+const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+}), { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+const sections = [...document.querySelectorAll('[data-section]')];
+const labels = { 's-problem': 'The Problem', 's-build': 'What I Build', 's-why': 'Why Me', 's-own': 'What You Own', 's-cost': 'What It Costs', 's-start': 'Getting Started' };
+const spine = document.getElementById('spine');
+function buildDots() {
+    spine.querySelectorAll('.spine-item').forEach(n => n.remove());
+    const docH = document.documentElement.scrollHeight;
+    sections.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'spine-item';
+        item.style.top = ((s.offsetTop + 120) / docH * 100) + '%';
+        item.innerHTML = '<span class="spine-dot"></span><span class="spine-label">' + (labels[s.id] || '') + '</span>';
+        item.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth' }));
+        item.dataset.for = s.id;
+        spine.appendChild(item);
+    });
+}
+function updateSpine() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    document.getElementById('spineFill').style.height = (max > 0 ? (scrollY / max * 100) : 0) + '%';
+    let active = sections[0];
+    sections.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * 0.5) active = s; });
+    const darkRects = [document.querySelector('.own-band'), document.querySelector('footer')].filter(Boolean).map(el => el.getBoundingClientRect());
+    spine.querySelectorAll('.spine-item').forEach(n => {
+        n.classList.toggle('active', n.dataset.for === active.id);
+        const y = n.getBoundingClientRect().top;
+        n.classList.toggle('on-dark', darkRects.some(r => y >= r.top && y <= r.bottom));
+    });
+}
+addEventListener('load', () => { buildDots(); updateSpine(); });
+addEventListener('resize', buildDots);
+addEventListener('scroll', updateSpine, { passive: true });
+</script>
+</body>
+</html>
