@@ -14,96 +14,105 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.eliharrigan.com/websites/og.png">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..640;1,9..144,340..640&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --paper:  #faf6ef;
-    --paper2: #f1ebe0;
-    --ink:    #26211c;
+    --bg:     #251c14;
+    --bg2:    #2f251b;
+    --line:   rgba(243,234,217,0.09);
+    --cream:  #f3ead9;
+    --body:   #c6b8a4;
+    --amber:  #d08a3e;
+    --amber-soft: rgba(208,138,62,0.4);
+    --green:  #2a3626;
+    --card-light: #f4ecdd;
+    --ink:    #2a211a;
     --mid:    #5c554d;
-    --ember:  #b95f3c;
-    --ember-soft: #e8c9b8;
-    --deep:   #2b2622;
-    --white:  #fffdf9;
     --sans: 'DM Sans', -apple-system, sans-serif;
-    --display: 'Fraunces', Georgia, serif;
+    --display: 'Young Serif', Georgia, serif;
 }
 
 html { overflow-x: hidden; scroll-behavior: smooth; }
-body { font-family: var(--sans); font-size: 20px; background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
+body { font-family: var(--sans); font-size: 20px; background: var(--bg); color: var(--cream); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 
 /* ── SPINE ── */
 .spine { position: fixed; left: 32px; top: 0; bottom: 0; width: 1px; z-index: 50; pointer-events: none; }
-.spine-track { position: absolute; inset: 0 auto 0 0; width: 1px; background: rgba(185,95,60,0.16); }
-.spine-fill { position: absolute; top: 0; left: 0; width: 1px; height: 0%; background: var(--ember); }
+.spine-track { position: absolute; inset: 0 auto 0 0; width: 1px; background: rgba(208,138,62,0.18); }
+.spine-fill { position: absolute; top: 0; left: 0; width: 1px; height: 0%; background: var(--amber); }
 .spine-item { position: absolute; left: -4px; display: flex; align-items: center; gap: 10px; transform: translateY(-50%); pointer-events: auto; cursor: pointer; }
-.spine-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgba(185,95,60,0.4); background: var(--paper); flex-shrink: 0; transition: all .3s; }
-.spine-label { font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(92,85,77,0.55); white-space: nowrap; }
-.spine-item:hover .spine-dot { transform: scale(1.4); border-color: var(--ember); }
-.spine-item.active .spine-dot { background: var(--ember); border-color: var(--ember); }
-.spine-item.on-dark .spine-label { color: rgba(250,246,239,0.65); }
-.spine-item.on-dark .spine-dot { background: transparent; border-color: rgba(232,201,184,0.6); }
-.spine-item.on-dark.active .spine-dot { background: var(--ember); border-color: var(--ember); }
+.spine-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgba(208,138,62,0.45); background: var(--bg); flex-shrink: 0; transition: all .3s; }
+.spine-label { font-size: .64rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(243,234,217,0.4); white-space: nowrap; }
+.spine-item:hover .spine-dot { transform: scale(1.4); border-color: var(--amber); }
+.spine-item.active .spine-dot { background: var(--amber); border-color: var(--amber); }
 
 /* ── LAYOUT / REVEAL ── */
 .content { max-width: 800px; margin: 0 auto; padding: 0 2rem 0 90px; }
 .section-wrap { padding-top: 6rem; padding-bottom: 6rem; }
-.section-wrap + .section-wrap { border-top: 1px solid var(--paper2); }
+.section-wrap + .section-wrap { border-top: 1px solid var(--line); }
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.visible { opacity: 1; transform: none; }
 .d1 { transition-delay: .08s; } .d2 { transition-delay: .18s; } .d3 { transition-delay: .28s; } .d4 { transition-delay: .38s; }
 
-.section-label { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ember); margin-bottom: .9rem; }
-.section-title { font-size: clamp(1.7rem, 3.2vw, 2.5rem); font-weight: 560; color: var(--ink); line-height: 1.16; letter-spacing: -.01em; margin-bottom: 1.8rem; max-width: 640px; }
-.body-text { font-size: 1rem; color: var(--mid); line-height: 1.85; max-width: 640px; }
+.section-label { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin-bottom: .9rem; }
+.section-title { font-size: clamp(1.55rem, 3vw, 2.2rem); color: var(--cream); line-height: 1.22; letter-spacing: 0; margin-bottom: 1.8rem; max-width: 640px; }
+.body-text { font-size: 1rem; color: var(--body); line-height: 1.85; max-width: 640px; }
 .body-text + .body-text { margin-top: 1rem; }
-.body-text a { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--ember-soft); text-underline-offset: 3px; }
-.body-text a:hover { text-decoration-color: var(--ember); }
+.body-text a { color: var(--cream); font-weight: 600; text-decoration: underline; text-decoration-color: var(--amber-soft); text-underline-offset: 3px; }
+.body-text a:hover { text-decoration-color: var(--amber); }
 
 /* ── HERO ── */
 .hero { min-height: 88vh; display: flex; align-items: center; position: relative; overflow: hidden; }
-.hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 72% 30%, rgba(185,95,60,0.08) 0%, transparent 55%); }
+.hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 74% 18%, rgba(208,138,62,0.14) 0%, transparent 55%); }
 .hero-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
-.hero h1 { font-size: clamp(2.5rem, 5.2vw, 4.2rem); font-weight: 520; color: var(--ink); line-height: 1.08; letter-spacing: -.01em; margin-bottom: 1.7rem; }
-.hero-sub { font-size: 1.1rem; color: var(--mid); max-width: 32rem; line-height: 1.7; }
-.hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(92,85,77,0.4); animation: breathe 2.6s ease-in-out infinite; }
+.hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.6rem); color: var(--cream); line-height: 1.14; margin-bottom: 1.7rem; }
+.hero-sub { font-size: 1.1rem; color: var(--body); max-width: 32rem; line-height: 1.7; }
+.hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(243,234,217,0.35); animation: breathe 2.6s ease-in-out infinite; }
 @keyframes breathe { 0%,100% { opacity: .35; } 50% { opacity: .9; } }
 
 /* ── CALLOUT ── */
-.callout { border-left: 3px solid var(--ember); background: var(--white); padding: 1.6rem 1.8rem; margin: 2.2rem 0 0; max-width: 640px; border-radius: 0 6px 6px 0; box-shadow: 0 1px 0 var(--paper2); }
-.callout p { font-family: var(--display); font-variation-settings: "opsz" 40; font-size: 1.12rem; line-height: 1.65; color: var(--ink); }
-.callout strong { color: var(--ember); font-weight: 600; }
+.callout { border-left: 3px solid var(--amber); background: var(--bg2); padding: 1.6rem 1.8rem; margin: 2.2rem 0 0; max-width: 640px; border-radius: 0 6px 6px 0; }
+.callout p { font-family: var(--display); font-size: 1.08rem; line-height: 1.65; color: var(--cream); }
+.callout strong { color: var(--amber); font-weight: 400; }
 
-/* ── DARK BAND (What you own) ── */
-.own-band { background: var(--deep); position: relative; overflow: hidden; }
-.own-band::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(185,95,60,0.12) 0%, transparent 58%); pointer-events: none; }
+/* ── WHY ME / HEADSHOT / LOGOS ── */
+.why-grid { display: grid; grid-template-columns: minmax(0,1fr) 230px; gap: 2.8rem; align-items: start; }
+.headshot img { width: 100%; display: block; border-radius: 12px; }
+.headshot { position: relative; }
+.headshot::after { content:''; position: absolute; inset: 0; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(243,234,217,0.12); pointer-events: none; }
+.logo-kicker { font-size: .72rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: rgba(243,234,217,0.4); margin: 2.6rem 0 1.4rem; }
+.logo-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 1.7rem 2.3rem; max-width: 660px; }
+.logo-strip img { opacity: .72; transition: opacity .3s; }
+.logo-strip img:hover { opacity: 1; }
+.logo-strip img.svg-logo { filter: brightness(0) invert(1); }
+
+/* ── GREEN BAND (What you own) ── */
+.own-band { background: var(--green); position: relative; overflow: hidden; }
+.own-band::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, rgba(208,138,62,0.1) 0%, transparent 58%); pointer-events: none; }
 .own-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; position: relative; }
-.own-inner .section-label { color: var(--ember-soft); }
-.own-inner .section-title { color: var(--paper); }
-.own-inner .body-text { color: rgba(250,246,239,0.62); }
+.own-inner .body-text { color: rgba(243,234,217,0.68); }
 
 /* ── PRICING ── */
 .price-grid { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin-top: 2.4rem; max-width: 680px; }
 @media (min-width: 760px) { .price-grid.two { grid-template-columns: 1fr 1fr; } }
-.price-card { border: 1px solid var(--paper2); border-radius: 10px; padding: 1.9rem 2rem; background: var(--white); }
-.price-card.primary { background: var(--deep); border-color: var(--deep); }
-.price-kicker { font-size: .72rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: var(--ember); margin-bottom: .6rem; }
-.price-num { font-family: var(--display); font-variation-settings: "opsz" 60; font-size: 1.6rem; font-weight: 560; color: var(--ink); margin-bottom: .7rem; }
-.price-card.primary .price-num { color: var(--paper); }
-.price-desc { font-size: .93rem; line-height: 1.75; color: var(--mid); }
-.price-card.primary .price-desc { color: rgba(250,246,239,0.7); }
+.price-card { border: 1px solid var(--line); border-radius: 10px; padding: 1.9rem 2rem; background: var(--bg2); }
+.price-card.primary { background: var(--card-light); border-color: var(--card-light); }
+.price-kicker { font-size: .72rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: var(--amber); margin-bottom: .6rem; }
+.price-num { font-family: var(--display); font-size: 1.45rem; color: var(--cream); margin-bottom: .7rem; }
+.price-card.primary .price-num { color: var(--ink); }
+.price-desc { font-size: .93rem; line-height: 1.75; color: var(--body); }
+.price-card.primary .price-desc { color: var(--mid); }
+.price-card.primary .price-kicker { color: #b06a26; }
 
 /* ── CLOSING ── */
-.closing { background: var(--paper); }
-.contact-block { border-top: 1px solid var(--paper2); margin-top: 2.6rem; padding-top: 2rem; font-size: .95rem; color: var(--mid); line-height: 2; }
-.contact-name { font-family: var(--display); font-size: 1.25rem; color: var(--ink); font-weight: 560; margin-bottom: .3rem; }
-.contact-block a { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--ember-soft); text-underline-offset: 3px; }
-.contact-block a:hover { text-decoration-color: var(--ember); }
+.contact-block { border-top: 1px solid var(--line); margin-top: 2.6rem; padding-top: 2rem; font-size: .95rem; color: var(--body); line-height: 2; }
+.contact-name { font-family: var(--display); font-size: 1.25rem; color: var(--cream); margin-bottom: .3rem; }
+.contact-block a { color: var(--cream); font-weight: 600; text-decoration: underline; text-decoration-color: var(--amber-soft); text-underline-offset: 3px; }
+.contact-block a:hover { text-decoration-color: var(--amber); }
 
-footer { background: var(--deep); color: rgba(250,246,239,0.4); font-size: .78rem; }
+footer { background: #1c150f; color: rgba(243,234,217,0.38); font-size: .78rem; }
 .foot-inner { max-width: 800px; margin: 0 auto; padding: 1.6rem 2rem 1.6rem 90px; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
@@ -116,8 +125,12 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     .hero-scroll { left: 1.5rem; }
     body { font-size: 17px; }
     .section-wrap { padding-top: 4.5rem; padding-bottom: 4.5rem; }
-    .hero h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+    .hero h1 { font-size: clamp(1.8rem, 7.4vw, 2.5rem); }
     .section-title, .body-text, .price-num { overflow-wrap: break-word; }
+    .why-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .headshot { max-width: 220px; order: -1; }
+    .logo-strip { gap: 1.4rem 1.8rem; }
+    .logo-strip img { transform: scale(.9); transform-origin: left center; }
 }
 </style>
 </head>
@@ -165,8 +178,33 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     <div class="content section-wrap">
         <p class="section-label reveal">Why me</p>
         <h2 class="section-title reveal d1">I know this territory from the inside.</h2>
-        <p class="body-text reveal d2">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, with the scheduling, the payments, and the email list all doing their jobs every day. Before any of that, I spent fifteen years as a commercial editor, which taught me how much of a story has to land in the first ten seconds.</p>
-        <p class="body-text reveal d3">You can visit my practice at <a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a> and my production work at <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a>, and judge for yourself whether they feel like a person.</p>
+        <div class="why-grid reveal d2">
+            <div>
+                <p class="body-text">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, with the scheduling, the payments, and the email list all doing their jobs every day. I know what it is to be the whole business: the practitioner, the schedule, and the person answering the inquiries.</p>
+                <p class="body-text">The other half of my working life is commercial production. I spent fifteen years editing, directing, and producing for global brands, the kind of work where a viewer gives you ten seconds and every one of those seconds is fought over. Practices like yours almost never get that level of craft, because the businesses that can afford it are not the businesses doing this work. I am the overlap.</p>
+                <p class="body-text">You can see that work at <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a> and judge for yourself.</p>
+            </div>
+            <div class="headshot"><img src="../images/headshot.webp" alt="Eli Harrigan"></div>
+        </div>
+        <p class="logo-kicker reveal d3">Fifteen years of work for</p>
+        <div class="logo-strip reveal d3">
+            <img src="../images/logos/facebook-7.svg" alt="Facebook" class="svg-logo" style="height:24px" loading="lazy">
+            <img src="../images/logos/ea-wordmark-network-nav-coral.svg" alt="Electronic Arts" class="svg-logo" style="height:22px" loading="lazy">
+            <img src="../images/logos/supercell-white.webp" alt="Supercell" style="height:38px" loading="lazy">
+            <img src="../images/logos/bcg-white.webp" alt="BCG" style="height:22px" loading="lazy">
+            <img src="../images/logos/ted-white.webp" alt="TED" style="height:29px" loading="lazy">
+            <img src="../images/logos/remy-martin-white.webp" alt="Remy Martin" style="height:21px" loading="lazy">
+            <img src="../images/logos/t-mobile-white.webp" alt="T-Mobile" style="height:23px" loading="lazy">
+            <img src="../images/logos/zagat-white.webp" alt="Zagat" style="height:23px" loading="lazy">
+            <img src="../images/logos/kleenex-white.webp" alt="Kleenex" style="height:34px" loading="lazy">
+            <img src="../images/logos/kelloggs-white.webp" alt="Kellogg's" style="height:29px" loading="lazy">
+            <img src="../images/logos/wonderful-pistachios-white.webp" alt="Wonderful Pistachios" style="height:27px" loading="lazy">
+            <img src="../images/logos/patron-white.webp" alt="Patron" style="height:36px" loading="lazy">
+            <img src="../images/logos/bobbi-brown-white.webp" alt="Bobbi Brown" style="height:17px" loading="lazy">
+            <img src="../images/logos/aldi-white.webp" alt="Aldi" style="height:36px" loading="lazy">
+            <img src="../images/logos/wegmans-white.webp" alt="Wegmans" style="height:36px" loading="lazy">
+            <img src="../images/logos/fieldtrip-white.webp" alt="Field Trip" style="height:27px" loading="lazy">
+        </div>
     </div>
 </section>
 
@@ -217,7 +255,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <div class="contact-block reveal d3">
             <p class="contact-name">Eli Harrigan</p>
             <p><a href="tel:5857470851">585.747.0851</a> &nbsp;&middot;&nbsp; <a href="mailto:harrigan.eli@gmail.com">harrigan.eli@gmail.com</a></p>
-            <p><a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a> &nbsp;&middot;&nbsp; <a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a></p>
+            <p><a href="https://eliharrigan.com" target="_blank" rel="noopener">eliharrigan.com</a></p>
         </div>
     </div>
 </section>
@@ -231,6 +269,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 
 <script>
 if (location.search.includes('og')) document.body.classList.add('og-mode');
+if (location.search.includes('flat')) document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
 }), { threshold: 0, rootMargin: '0px 0px -6% 0px' });
@@ -257,11 +296,8 @@ function updateSpine() {
     document.getElementById('spineFill').style.height = (max > 0 ? (scrollY / max * 100) : 0) + '%';
     let active = sections[0];
     sections.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * 0.5) active = s; });
-    const darkRects = [document.querySelector('.own-band'), document.querySelector('footer')].filter(Boolean).map(el => el.getBoundingClientRect());
     spine.querySelectorAll('.spine-item').forEach(n => {
         n.classList.toggle('active', n.dataset.for === active.id);
-        const y = n.getBoundingClientRect().top;
-        n.classList.toggle('on-dark', darkRects.some(r => y >= r.top && y <= r.bottom));
     });
 }
 addEventListener('load', () => { buildDots(); updateSpine(); });
