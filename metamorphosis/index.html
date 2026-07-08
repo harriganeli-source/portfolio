@@ -14,7 +14,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.eliharrigan.com/metamorphosis/og.png">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..640;1,9..144,340..640&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..640;1,9..144,340..640&family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -71,11 +71,23 @@ h1,h2,h3 { font-family: var(--display); font-variation-settings: "opsz" 100; }
 .body-text strong { color: var(--ink); font-weight: 600; }
 
 /* ── HERO ── */
-.hero { min-height: 92vh; background: var(--deep); display: flex; align-items: center; position: relative; overflow: hidden; }
+.hero-stage { height: 200vh; position: relative; }
+body.flat .hero-stage, body.og-mode .hero-stage { height: auto; }
+.hero { height: 100vh; height: 100svh; background: var(--deep); display: flex; align-items: center; position: sticky; top: 0; overflow: hidden; }
 .hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 68% 38%, rgba(201,111,74,0.14) 0%, transparent 55%); }
 .hero-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
 .hero-label { font-size: .75rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ember-light); margin-bottom: 2.4rem; }
 .hero h1 { font-size: clamp(2.4rem, 4.8vw, 3.9rem); font-weight: 480; color: var(--cream); line-height: 1.1; letter-spacing: -.01em; margin-bottom: 1.6rem; }
+.hero h1 .h1-mark { display: block; font-family: 'DM Serif Display', serif; font-size: clamp(2.9rem, 6.6vw, 5.1rem); font-weight: 400; line-height: 1.06; letter-spacing: .005em; font-variation-settings: normal; }
+.hero h1 .h1-inst { display: block; font-family: 'DM Serif Display', serif; font-variation-settings: normal; font-size: clamp(1.5rem, 3vw, 2.15rem); font-weight: 400; color: rgba(246,241,234,0.88); margin-top: .8rem; line-height: 1.25; letter-spacing: .01em; }
+.h1-mark { position: relative; }
+.h1-mark .mark-sizer { visibility: hidden; }
+.h1-mark .mark-measure { position: absolute; left: 0; top: 0; visibility: hidden; white-space: nowrap; }
+.h1-mark .mark-letter { position: absolute; top: 0; white-space: nowrap; }
+.h1-mark .mark-ghost-type, .h1-mark .mg { font-family: var(--sans); font-weight: 300; font-size: .62em; letter-spacing: .085em; }
+.h1-mark .mg, .h1-mark .ms { display: inline-block; transform-origin: 0 78%; }
+.h1-mark.resting { animation: markbreathe 2.6s ease-in-out infinite; }
+@keyframes markbreathe { 0%,100% { opacity: .78; } 50% { opacity: 1; } }
 .hero h1 em { font-style: normal; font-family: var(--sans); font-weight: 400; font-size: clamp(1.05rem, 2vw, 1.45rem); letter-spacing: .02em; color: var(--ember-light); display: block; margin-top: 1.1rem; line-height: 1.4; }
 .hero-sub { font-size: .84rem; color: rgba(246,241,234,0.55); font-weight: 300; letter-spacing: .05em; }
 .hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(246,241,234,0.35); animation: breathe 2.6s ease-in-out infinite; }
@@ -153,6 +165,8 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
     body { font-size: 17px; }
     .section-wrap { padding-top: 4.5rem; padding-bottom: 4.5rem; }
     .hero h1 { font-size: clamp(1.6rem, 6.9vw, 2.3rem); white-space: normal; }
+    .hero h1 .h1-mark { font-size: clamp(2.2rem, 10.5vw, 2.9rem); }
+    .hero h1 .h1-inst { font-size: clamp(1.25rem, 5.8vw, 1.6rem); }
     .hero-label { font-size: .62rem; letter-spacing: .1em; overflow-wrap: anywhere; }
     .section-title, .body-text, .invest-price, .space-tagline { overflow-wrap: break-word; }
     .video-band { height: 56.25vw; min-height: 0; }
@@ -172,6 +186,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 </div>
 
 <!-- ── HERO ── -->
+<div class="hero-stage" id="heroStage">
 <section class="hero" id="hero">
         <svg class="butterfly-hero" viewBox="0 0 516.1 359.59" fill="currentColor" aria-hidden="true">
       <path d="M268.64,158.72c4.72-4.61,8.07-11.36,11.49-17l11.34-18.47c14.57-23.42,30.97-45.95,50.49-65.61,3.89-3.92,8.92-7.16,13.17-10.7,9.49-7.91,19.41-15.27,29.95-21.73C410.94,8.49,437.78,0,468.85.12c11.02.04,44.47-.41,47.17,16.38.54,3.38-1.87,17.84-3.71,20.42-4.79,6.72-7.43,5.55-9.89,14.78-.89,4.08-1.98,5.7-5.47,8.31l-.15.17c-1.51,1.66-3.68,3.43-4.98,5-4.09,4.92-5.82,11.22-5.43,17.55.13,2.07.18,6.24-.58,8.01-3.13,7.28-6.93,6.59-6.36,15.8.82,13.08,5.66,17.31-2.9,29.21,0,2.13.25,19.68-.33,20.76-.01-1.39-.03-2.79-.05-4.18-.35.46,0,3.96-.83,5.21-1.05,2.07-3.36,4.56-4.93,6.38-1.9,3.15-2.48,5.71-4.02,8.8-4.59,10.73-24.84,13.12-34.83,11.76-1.56-.21-3.49-.32-5.06-.33,9.97,7.07,23.39,10.32,25.72,23.8.38,2.22.54,7.2,1.1,8.89,2.44,7.33,5.73,6.17,4.24,14.52-1.06,3.68-1.96,5.63-3.76,9.03-3.23,8.38.45,11.96-1.23,19.91-.69,3.24-5.39,7.93-6.48,12.25-1.47,5.79.45,13.14-2.18,18.31-2.83,5.57-7.12,6.23-9.68,13.18-2.34,6.35-.39,13-1.86,18.28-2.9,10.41-13.25,4.64-20.22,13.57-3,3.84-5.84,11.79-8.85,13.48-3.89,2.19-13.85-.07-18.26,1.52-3.89,1.41-6.32,6.09-9.61,8.18-1.53.97-5.23.11-6.93-.36-7.68-2.11-12.56-7.4-18.94-11.51-2.52-1.62-7.04-2.4-9.81-4.82-2.69-2.35-4.52-5.94-7.08-8.13-4.88-4.18-10.28-5.49-15.18-10.03-5.67-5.24-8.73-10.32-13.14-16.33-4.92-6.12-9.45-13.77-14.26-19.82-7.68-9.69-14.31-16.87-17.85-29.08-.82-2.83-4.13-9.52-5.68-12.36,0,10.27-1.17,20.84-3.07,30.96-.51,2.7-2.55,13.91-7.34,11.14-.61-.35-1.35-2-1.67-2.7-4.1-9.08-3.87-19.41-5.06-29.13-.4-3.32-.85-6.52-1.33-9.8-2.65,7.15-6.72,18.28-10.31,24.82-2.29,4.16-9.14,12.22-12.46,16.71-3.81,5.15-7.57,10.34-11.26,15.57-3.87,5.47-10.37,14.73-15.2,19.17-2.44,2.22-5.12,4.17-7.99,5.8-2.19,1.26-5.75,3.17-7.63,4.73-2.68,2.21-4.49,6.43-7.44,8.55-2.84,2.04-6.88,3.21-9.76,5.06-6.9,4.43-12.39,10.07-20.82,11.66-1.5.28-3.45.75-4.84,0-3.82-2.06-5.17-7.17-9.77-8.41-5.36-1.45-10.88.07-16.34-.43-4.63-.43-5.94-6.89-8.02-10.43-1.58-2.68-2.04-3.34-4.15-5.63-5.27-5.7-13.99-2.56-17.55-9.35-3.68-7,.24-15.27-3.81-22.7-2.11-3.86-5.05-5.62-7.49-8.85-4.82-6.37-1.62-14.31-3.7-21.31-1.32-4.45-5.51-7.81-6.71-12.04-1.06-3.74,1.26-12.68.46-16.11-1.27-5.43-5.62-8.74-5.44-15.61.14-5.06,3.21-6.92,4.48-11.51.7-2.53.98-6.22,1.39-8.93,2.09-13.95,15.5-16.55,25.25-23.55-12.4-.18-30.71,2.2-39.33-10.94-1.64-2.5-2.5-6.33-4.22-8.89-1.04-1.54-2.58-2.97-3.72-4.46-2.99-5.03-.18-14.42-1.5-20.32-1.28-5.73-5.35-9.89-5.92-15.23-.43-3.95,1.2-10.2,1.6-14.09.68-6.57.98-10.16-3.45-15.23-.71-.81-2.29-3.29-2.61-4.37-1.66-5.64.54-10.86-1.42-16.72-2.03-6.06-4.53-9.26-9.48-13.2-1.58-1.26-3.29-2.93-4.49-4.61-2.1-2.93-1.13-6.78-2.59-9.7-1.42-2.84-5.55-5.4-7.4-8.02C.44,32.87-.46,22.1.2,15.29c.28-2.93,2.24-5.74,4.64-7.28C22.31-3.19,55.57-.21,75.04,2.53c18.75,2.63,38.25,11.98,53.84,21.81,3.49,2.2,8.64,5.1,11.84,7.44,4.19,3.07,8.6,6.55,12.76,9.74,6.62,5.08,14.09,10.4,20.04,16.18,12.69,12.31,24.46,27.27,34.87,41.5,9.16,12.52,16.93,26.77,25.34,39.84,3.24,5.03,6.3,10.3,9.69,15.23.83,1.21,2.34,3.23,3.84,3.47l.53-.42c.66-1.78.39-3.81.74-5.66.61-3.19,2.37-4.58,1.45-7.81.64.42,1.16.65,1.85.99l.33-.17c-.06-.7-.09-1.33-.11-2.04.65,1.28.83,1.64,1.2,3.05,2.51-.46,7.29-.45,8.78-.89l.49-.73c1.29.25,1.59.11,2.8-.23-.65,2.04.82,4.36,1.45,6.51.85,2.85,1.33,5.42,1.85,8.35Z"/>
@@ -184,11 +199,12 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     </svg>
     <div class="hero-inner">
         <p class="hero-label">A proposal for rebuilding <a href="https://www.metamorphosistraining.ca" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(226,164,136,0.4);">metamorphosistraining.ca</a></p>
-        <h1>Metamorphosis<br>Core Energetics Institute<br><em>A website worthy of the work.</em></h1>
+        <h1><span class="h1-mark">Metamorphosis</span><span class="h1-inst">Core Energetics Institute</span><em>A website worthy of the work.</em></h1>
         <p class="hero-sub">Prepared by Eli Harrigan &nbsp;&middot;&nbsp; July 2026</p>
     </div>
     <div class="hero-scroll">Scroll &darr;</div>
 </section>
+</div>
 
 <!-- ── THE JOB ── -->
 <section id="s-job" data-section>
@@ -198,7 +214,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <p class="body-text reveal d2">Nobody finds a four-year practitioner training by accident. Students arrive through the community: a practitioner they trust, a workshop that moved them, a name passed along at the right moment. Which means the website has one job, and it happens late in the process. A referred prospect, already half-decided, sits down to do their due diligence. They read the program pages, they study the faculty, and they spend a long time on the fees page, because they are about to commit four years and $48,000 to this institute.</p>
         <p class="body-text reveal d3">The site&rsquo;s job is to hold them through that moment. It does not need to generate interest. It needs to be worthy of the trust the community has already built, at the exact moment someone is testing that trust against a major decision.</p>
         <div class="callout reveal d4">
-            <p>At this tuition, the math is simple. <strong>A single student reassured at that moment pays for this entire project several times over</strong>, and a single student quietly lost there costs far more than any website ever will.</p>
+            <p>At this tuition, the math is simple. <strong>A single student reassured at that moment pays for this entire project several times over</strong>, and a single student lost there costs far more than any website ever will.</p>
         </div>
     </div>
 </section>
@@ -293,6 +309,75 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 <script>
 if (location.search.includes('og')) document.body.classList.add('og-mode');
 if (location.search.includes('flat')) document.body.classList.add('flat');
+// Wordmark: hero pins for one viewport of scroll while the word blossoms letter by
+// letter from a thin sans skeleton into the soft Fraunces cut, then the page releases.
+// Scrub is reversible while pinned so scrolling back up never hits a dead zone.
+const mark = document.querySelector('.h1-mark');
+const still = document.body.classList.contains('flat') || document.body.classList.contains('og-mode') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (mark && !still) {
+    const stage = document.getElementById('heroStage');
+    const butterfly = document.querySelector('.butterfly-hero');
+    const word = mark.textContent.trim();
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    let letters = [];
+    function build() {
+        mark.innerHTML = '<span class="mark-sizer" aria-hidden="true">' + word + '</span>';
+        const measure = cls => {
+            const m = document.createElement('span');
+            m.className = 'mark-measure' + (cls ? ' ' + cls : '');
+            mark.appendChild(m);
+            const widthOf = t => { m.textContent = t; return m.getBoundingClientRect().width; };
+            const xs = [...word].map((ch, i) => {
+                const w = widthOf(ch);
+                return [widthOf(word.slice(0, i + 1)) - w, w];
+            });
+            m.remove();
+            return xs;
+        };
+        const sans = measure('mark-ghost-type');
+        const serif = measure('');
+        letters = [...word].map((ch, i) => {
+            const c = document.createElement('span');
+            c.className = 'mark-letter';
+            c.setAttribute('aria-hidden', 'true');
+            c.innerHTML = '<span class="mg">' + ch + '</span><span class="ms" style="margin-left:-' + sans[i][1] + 'px">' + ch + '</span>';
+            mark.appendChild(c);
+            return { el: c, g: c.firstChild, s: c.lastChild, xa: sans[i][0], xb: serif[i][0] };
+        });
+        mark.setAttribute('aria-label', word);
+    }
+    function paint(p) {
+        const n = letters.length, span = 0.55, step = (1 - span) / (n - 1);
+        letters.forEach((l, i) => {
+            const q = Math.min(1, Math.max(0, (p - i * step) / span));
+            const e = ease(q);
+            l.el.style.left = (l.xa + (l.xb - l.xa) * e).toFixed(1) + 'px';
+            l.g.style.opacity = Math.max(0, 1 - q * 1.4).toFixed(3);
+            l.g.style.transform = 'scale(' + (1 + 0.5 * e).toFixed(3) + ')';
+            l.s.style.opacity = Math.min(1, q * 1.2).toFixed(3);
+            l.s.style.transform = 'scale(' + (0.68 + 0.32 * e).toFixed(3) + ')';
+        });
+        if (butterfly) butterfly.style.opacity = (0.015 + 0.075 * ease(p)).toFixed(3);
+    }
+    build();
+    paint(0);
+    if (document.fonts) document.fonts.ready.then(() => { build(); painted = -1; });
+    addEventListener('resize', () => { build(); painted = -1; });
+    let shown = 0, painted = -1;
+    requestAnimationFrame(function frame() {
+        const range = stage.offsetHeight - innerHeight;
+        const target = range > 0 ? Math.min(1, Math.max(0, scrollY / range)) : 1;
+        shown += (target - shown) * 0.18;
+        if (Math.abs(target - shown) < 0.001) shown = target;
+        if (shown !== painted) {
+            mark.classList.toggle('resting', shown < 0.01);
+            paint(shown);
+            painted = shown;
+        }
+        requestAnimationFrame(frame);
+    });
+}
+
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
