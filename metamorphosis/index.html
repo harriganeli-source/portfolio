@@ -170,7 +170,7 @@ footer { background: var(--deep2); color: rgba(246,241,234,0.45); font-size: .78
     .hero-label { font-size: .62rem; letter-spacing: .1em; overflow-wrap: anywhere; }
     .section-title, .body-text, .invest-price, .space-tagline { overflow-wrap: break-word; }
     .video-band { height: 56.25vw; min-height: 0; }
-    .video-band iframe { top: 0; left: 0; transform: none; width: 100%; height: 100%; min-width: 0; min-height: 0; }
+    .video-band iframe { top: 50%; left: 50%; transform: translate(-50%,-50%); width: 150vw; height: 84.375vw; min-width: 0; min-height: 0; }
 }
 body.flat .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
@@ -266,7 +266,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
                 <p class="invest-desc">Everything described above, with the final number moving somewhat in either direction once we scope the details together.</p>
             </div>
             <div class="invest-card reveal d2">
-                <p class="invest-kicker">If real photography is needed</p>
+                <p class="invest-kicker">If new photography is desired</p>
                 <p class="invest-price">$1,500 + travel</p>
                 <p class="invest-desc">A shoot day at Earthdance during a training module or workshop: the work, the faculty, and the space. Those photographs become the imagery of the new site, in place of stock illustration. Optional.</p>
             </div>
@@ -418,8 +418,9 @@ function updateSpine() {
 // Play the band video while visible; pause when it leaves view
 const yt = document.getElementById('yt-band');
 if (yt) {
-    const post = cmd => yt.contentWindow.postMessage(JSON.stringify({ event: 'command', func: cmd, args: '' }), '*');
-    const play = () => { post('playVideo'); setTimeout(() => post('playVideo'), 900); setTimeout(() => post('playVideo'), 2200); };
+    const post = (cmd, args) => yt.contentWindow.postMessage(JSON.stringify({ event: 'command', func: cmd, args: args || '' }), '*');
+    const hideCC = () => { post('unloadModule', ['captions']); post('unloadModule', ['cc']); };
+    const play = () => { post('playVideo'); hideCC(); setTimeout(() => { post('playVideo'); hideCC(); }, 900); setTimeout(() => { post('playVideo'); hideCC(); }, 2200); };
     const ytObs = new IntersectionObserver(es => es.forEach(e => {
         if (e.isIntersecting) play(); else post('pauseVideo');
     }), { threshold: 0.15 });
