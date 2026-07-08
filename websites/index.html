@@ -71,13 +71,16 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .hero { min-height: 88vh; display: flex; align-items: center; position: relative; overflow: hidden; }
 .hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 74% 18%, rgba(208,138,62,0.14) 0%, transparent 55%); }
 .hero-inner { max-width: 1060px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
-.hero-grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 3rem; align-items: center; }
-.hero-grid .headshot::after { display: none; }
-.hero-grid .headshot img { border-radius: 0;
-    -webkit-mask-image: radial-gradient(68% 68% at 50% 44%, #000 36%, transparent 70%);
-    mask-image: radial-gradient(68% 68% at 50% 44%, #000 36%, transparent 70%); }
-body.theme-c .hero-grid .headshot img { -webkit-mask-image: none; mask-image: none; }
-body.theme-c .hero-grid .headshot::after { display: block; }
+.hero-photo { position: absolute; top: 0; right: 0; bottom: 0; width: min(50vw, 720px); z-index: 0; }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 28%; display: block;
+    -webkit-mask-image: linear-gradient(to left, #000 52%, transparent 99%);
+    mask-image: linear-gradient(to left, #000 52%, transparent 99%); }
+.hero::after { content:''; position: absolute; left: 40%; right: 0; bottom: 0; height: 140px; background: linear-gradient(to top, var(--bg), transparent); z-index: 0; pointer-events: none; }
+.hero-inner { z-index: 1; }
+.hero h1, .hero-sub { max-width: 30rem; }
+body.theme-c .hero-photo img { filter: grayscale(1) contrast(1.1);
+    -webkit-mask-image: linear-gradient(to left, #000 60%, transparent 99%);
+    mask-image: linear-gradient(to left, #000 60%, transparent 99%); }
 .hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.6rem); color: var(--cream); line-height: 1.14; margin-bottom: 1.7rem; }
 .hero-sub { font-size: 1.1rem; color: var(--body); max-width: 32rem; line-height: 1.7; }
 .hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(243,234,217,0.35); animation: breathe 2.6s ease-in-out infinite; }
@@ -200,8 +203,16 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     .section-wrap { padding-top: 4.5rem; padding-bottom: 4.5rem; }
     .hero h1 { font-size: clamp(1.8rem, 7.4vw, 2.5rem); }
     .section-title, .body-text, .price-num { overflow-wrap: break-word; }
-    .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
-    .hero-grid .headshot { max-width: 210px; }
+    .hero { min-height: 0; display: block; }
+    .hero-photo { position: relative; width: 100%; height: 56vw; max-height: 340px; }
+    .hero-photo img { object-position: 50% 22%;
+        -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 99%);
+        mask-image: linear-gradient(to bottom, #000 55%, transparent 99%); }
+    body.theme-c .hero-photo img {
+        -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 99%);
+        mask-image: linear-gradient(to bottom, #000 62%, transparent 99%); }
+    .hero-inner { padding-top: 0; margin-top: -3.2rem; padding-bottom: 4.5rem; }
+    .hero-scroll { display: none; }
     .logo-strip { gap: 1.4rem 1.8rem; }
     .logo-strip img { transform: scale(.9); transform-origin: left center; }
 }
@@ -216,14 +227,10 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 
 <!-- ── HERO ── -->
 <section class="hero" id="hero">
+    <div class="hero-photo"><img src="../images/headshot.webp" alt="Eli Harrigan" width="3837" height="3993"></div>
     <div class="hero-inner">
-        <div class="hero-grid">
-            <div>
-                <h1>Your site meets people<br>before you do.</h1>
-                <p class="hero-sub">For practices built on trust, where clients choose you for who you are and how you work.</p>
-            </div>
-            <div class="headshot"><img src="../images/headshot.webp" alt="Eli Harrigan" width="3837" height="3993"></div>
-        </div>
+        <h1>Your site meets people<br>before you do.</h1>
+        <p class="hero-sub">For practices built on trust, where clients choose you for who you are and how you work.</p>
     </div>
     <div class="hero-scroll">Scroll &darr;</div>
 </section>
