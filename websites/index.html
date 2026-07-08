@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.eliharrigan.com/websites/og.png">
-<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Marcellus&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Marcellus&family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -70,7 +70,8 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 /* ── HERO ── */
 .hero { min-height: 88vh; display: flex; align-items: center; position: relative; overflow: hidden; }
 .hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(ellipse at 74% 18%, rgba(208,138,62,0.14) 0%, transparent 55%); }
-.hero-inner { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
+.hero-inner { max-width: 1060px; margin: 0 auto; padding: 6rem 2rem 6rem 90px; width: 100%; position: relative; }
+.hero-grid { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 3.4rem; align-items: center; }
 .hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.6rem); color: var(--cream); line-height: 1.14; margin-bottom: 1.7rem; }
 .hero-sub { font-size: 1.1rem; color: var(--body); max-width: 32rem; line-height: 1.7; }
 .hero-scroll { position: absolute; bottom: 2.5rem; left: 90px; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(243,234,217,0.35); animation: breathe 2.6s ease-in-out infinite; }
@@ -82,8 +83,8 @@ h1,h2,h3 { font-family: var(--display); font-weight: 400; }
 .callout strong { color: var(--amber); font-weight: 400; }
 
 /* ── WHY ME / HEADSHOT / LOGOS ── */
-.why-grid { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 2.8rem; align-items: start; }
-.headshot img { width: 100%; display: block; border-radius: 12px; }
+.why-grid { max-width: 640px; }
+.headshot img { width: 100%; height: auto; display: block; border-radius: 12px; }
 .headshot { position: relative; }
 .headshot::after { content:''; position: absolute; inset: 0; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(243,234,217,0.12); pointer-events: none; }
 .logo-kicker { font-size: .72rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: rgba(243,234,217,0.4); margin: 2.6rem 0 1.4rem; }
@@ -129,6 +130,7 @@ footer { background: #1c150f; color: rgba(243,234,217,0.38); font-size: .78rem; 
 .theme-demo p strong { color: var(--cream); font-weight: 600; }
 .theme-btn { font-family: var(--sans); font-size: .85rem; font-weight: 600; letter-spacing: .04em; color: var(--cream); background: transparent; border: 1.5px solid var(--amber); border-radius: 999px; padding: .7rem 1.4rem; cursor: pointer; transition: background-color .3s, color .3s, border-color .3s; }
 .theme-btn:hover { background: var(--amber); color: #251c14; }
+.theme-actions { display: flex; gap: .9rem; flex-wrap: wrap; }
 
 :where(body, section, footer, .band-light, .price-card, .callout, .theme-demo, .spine-dot) { transition: background-color .6s ease, color .6s ease, border-color .6s ease; }
 :where(.section-title, .body-text, .hero h1, .hero-sub, .price-num, .price-desc, .contact-block, .contact-name, .callout p, .section-label, .spine-label, .logo-kicker, .theme-demo p) { transition: color .6s ease; }
@@ -153,6 +155,33 @@ body.theme-b .hero-scroll { color: rgba(47,58,49,0.4); }
 body.theme-b .contact-block { border-top-color: rgba(47,58,49,0.15); }
 body.theme-b footer { background: #2f3a31; color: rgba(247,243,234,0.55); }
 
+
+/* ── THEME C: studio poster ── */
+body.theme-c { --bg: #0e0f11; --bg2: #17181b; --line: rgba(240,240,234,0.14); --cream: #f2f2ec; --body: #a9aaa1; --amber: #d8ff3b; --amber-soft: rgba(216,255,59,0.5); --card-light: #d8ff3b; --ink: #101012; --mid: #3a3d33; }
+body.theme-c { font-family: 'Space Grotesk', sans-serif; }
+body.theme-c h1, body.theme-c h2, body.theme-c h3, body.theme-c .price-num, body.theme-c .contact-name, body.theme-c .callout p { font-family: 'Archivo Black', sans-serif; font-weight: 400; letter-spacing: -.01em; text-transform: uppercase; }
+body.theme-c .hero h1 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
+body.theme-c .section-title { font-size: clamp(1.4rem, 2.7vw, 2rem); line-height: 1.18; }
+body.theme-c .callout p { font-size: .98rem; line-height: 1.55; }
+body.theme-c .callout, body.theme-c .price-card, body.theme-c .theme-demo, body.theme-c .theme-btn, body.theme-c .headshot img, body.theme-c .headshot::after { border-radius: 0; }
+body.theme-c .callout { border-left-width: 6px; }
+body.theme-c .theme-demo { border-style: solid; border-width: 2px; border-color: var(--amber); }
+body.theme-c .hero::before { background: radial-gradient(ellipse at 74% 18%, rgba(216,255,59,0.08) 0%, transparent 55%); }
+body.theme-c .band-light::before { background: none; }
+body.theme-c .band-light .section-label { color: #101012; }
+body.theme-c .band-light .body-text a { color: #101012; text-decoration-color: rgba(16,16,18,0.5); }
+body.theme-c .price-card.primary .price-kicker { color: var(--amber); }
+body.theme-c .theme-btn:hover { background: var(--amber); color: #101012; }
+body.theme-c .spine-track { background: rgba(216,255,59,0.25); }
+body.theme-c .spine-dot { background: var(--bg); border-color: rgba(216,255,59,0.6); }
+body.theme-c .spine-label { color: rgba(240,240,234,0.45); }
+body.theme-c .logo-kicker { color: rgba(240,240,234,0.4); }
+body.theme-c .headshot img { filter: grayscale(1) contrast(1.1); }
+body.theme-c .headshot::after { box-shadow: inset 0 0 0 2px var(--amber); }
+body.theme-c .hero-scroll { color: rgba(240,240,234,0.4); }
+body.theme-c .contact-block { border-top-color: rgba(240,240,234,0.16); }
+body.theme-c footer { background: #0a0b0c; color: rgba(240,240,234,0.5); }
+
 body.og-mode .spine, body.og-mode .hero-scroll { display: none !important; }
 body.og-mode .hero { min-height: 100vh; }
 body.og-mode .hero-inner { padding-left: 2rem; }
@@ -165,8 +194,8 @@ body.og-mode .hero-inner { padding-left: 2rem; }
     .section-wrap { padding-top: 4.5rem; padding-bottom: 4.5rem; }
     .hero h1 { font-size: clamp(1.8rem, 7.4vw, 2.5rem); }
     .section-title, .body-text, .price-num { overflow-wrap: break-word; }
-    .why-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .headshot { max-width: 220px; order: -1; }
+    .hero-grid { grid-template-columns: 1fr; gap: 2.2rem; }
+    .hero-grid .headshot { max-width: 210px; }
     .logo-strip { gap: 1.4rem 1.8rem; }
     .logo-strip img { transform: scale(.9); transform-origin: left center; }
 }
@@ -182,8 +211,13 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 <!-- ── HERO ── -->
 <section class="hero" id="hero">
     <div class="hero-inner">
-        <h1>Your site meets people<br>before you do.</h1>
-        <p class="hero-sub">For practices built on trust, where clients choose you for who you are and how you work.</p>
+        <div class="hero-grid">
+            <div>
+                <h1>Your site meets people<br>before you do.</h1>
+                <p class="hero-sub">For practices built on trust, where clients choose you for who you are and how you work.</p>
+            </div>
+            <div class="headshot"><img src="../images/headshot.webp" alt="Eli Harrigan" width="3837" height="3993"></div>
+        </div>
     </div>
     <div class="hero-scroll">Scroll &darr;</div>
 </section>
@@ -210,7 +244,10 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <p class="body-text reveal d3">The practical machinery is in there too, shaped to whatever the site&rsquo;s real job is. For a practice building its caseload, that means clear offerings, online booking tied to your calendar, and payment built in, so a new client can go from finding you to booked without anyone touching the phone. For a school or program, it means presenting the training properly and carrying people through to application or enrollment. For anyone building an audience, it means a proper home for your writing, your podcast, or your speaking, along with an email list you own rather than rent from an algorithm. Most practices want some of each, and we design around whichever matters most right now, leaving room for the site to grow as you do.</p>
         <div class="theme-demo reveal d4">
             <p>This page is built to feel like me. <strong>Yours would start from what is yours.</strong> Press the button and watch the same page become someone else&rsquo;s.</p>
-            <button class="theme-btn" id="themeBtn" type="button">Show me someone else&rsquo;s palette</button>
+            <div class="theme-actions">
+                <button class="theme-btn" id="themeBtn" type="button">Show me someone else&rsquo;s palette</button>
+                <button class="theme-btn" id="themeBtn2" type="button" hidden>Check out another style</button>
+            </div>
         </div>
     </div>
 </section>
@@ -225,7 +262,6 @@ body.og-mode .hero-inner { padding-left: 2rem; }
                 <p class="body-text">I facilitate breathwork and run a men&rsquo;s group alongside my production career, and I built the site that runs my own practice, <a href="https://breathewitheli.com" target="_blank" rel="noopener">breathewitheli.com</a>, with the scheduling, the payments, and the email list all doing their jobs every day. I know what it is to be the whole business: the practitioner, the schedule, and the person answering the inquiries.</p>
                 <p class="body-text">The other half of my working life is commercial production. I spent fifteen years editing, directing, and producing for global brands, the kind of work where a viewer gives you ten seconds and every one of those seconds is fought over. Practices like yours almost never get that level of craft, because the businesses that can afford it are not the businesses doing this work. I am the overlap.</p>
             </div>
-            <div class="headshot"><img src="../images/headshot.webp" alt="Eli Harrigan"></div>
         </div>
         <p class="logo-kicker reveal d3">Fifteen years of work for</p>
         <div class="logo-strip reveal d3">
@@ -311,10 +347,17 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 <script>
 if (location.search.includes('og')) document.body.classList.add('og-mode');
 const themeBtn = document.getElementById('themeBtn');
-themeBtn.addEventListener('click', () => {
-    const b = document.body.classList.toggle('theme-b');
-    themeBtn.textContent = b ? 'Bring back Eli\u2019s palette' : 'Show me someone else\u2019s palette';
-});
+const themeBtn2 = document.getElementById('themeBtn2');
+function setTheme(t) {
+    document.body.classList.toggle('theme-b', t === 'b');
+    document.body.classList.toggle('theme-c', t === 'c');
+    document.body.dataset.theme = t;
+    const off = t !== 'a';
+    themeBtn.textContent = off ? 'Bring back Eli\u2019s palette' : 'Show me someone else\u2019s palette';
+    themeBtn2.hidden = !off;
+}
+themeBtn.addEventListener('click', () => setTheme((document.body.dataset.theme || 'a') === 'a' ? 'b' : 'a'));
+themeBtn2.addEventListener('click', () => setTheme(document.body.dataset.theme === 'b' ? 'c' : 'b'));
 if (location.search.includes('flat')) document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
 const obs = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
