@@ -754,14 +754,20 @@ function initThumbnailScrub() {
     }
   }
 
-  function expandDot() {
+  function expandDot(thumb) {
     if (!dot) return;
     onThumb = true;
     dot.classList.add('expanded');
     dot.style.width = '60px';
     dot.style.height = '60px';
-    dot.style.background = 'rgba(255, 255, 255, 0.15)';
-    dot.style.border = '1.5px solid rgba(255, 255, 255, 0.5)';
+    // Dark ring over light thumbs (data-dot="dark"), white ring otherwise
+    if (thumb && thumb.dataset && thumb.dataset.dot === 'dark') {
+      dot.style.background = 'rgba(0, 0, 0, 0.12)';
+      dot.style.border = '1.5px solid rgba(0, 0, 0, 0.65)';
+    } else {
+      dot.style.background = 'rgba(255, 255, 255, 0.15)';
+      dot.style.border = '1.5px solid rgba(255, 255, 255, 0.5)';
+    }
     dot.style.borderRadius = '50%';
   }
 
@@ -853,7 +859,7 @@ function initThumbnailScrub() {
 
     // Expand dot on ALL thumbnails (pointer devices only)
     if (hasPointer) {
-      thumb.addEventListener('mouseenter', expandDot);
+      thumb.addEventListener('mouseenter', () => expandDot(thumb));
       thumb.addEventListener('mouseleave', shrinkDot);
     }
 
