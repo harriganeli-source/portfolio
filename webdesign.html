@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eli Harrigan — Web Design</title>
-  <meta name="description" content="Web design by Eli Harrigan.">
+  <meta name="description" content="Websites built story-first: discovery, copy, identity, and design by Eli Harrigan.">
   <meta property="og:title" content="Eli Harrigan — Web Design">
-  <meta property="og:description" content="Web design by Eli Harrigan.">
+  <meta property="og:description" content="Websites built story-first: discovery, copy, identity, and design by Eli Harrigan.">
   <meta property="og:image" content="https://www.eliharrigan.com/images/og-image.jpg">
   <meta property="og:url" content="https://www.eliharrigan.com/webdesign.html">
   <meta property="og:type" content="website">
@@ -20,6 +20,71 @@
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <style>
+    .web-intro {
+      max-width: 720px;
+      margin-bottom: var(--spacing-2xl);
+    }
+    .web-intro h1 {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--spacing-sm);
+    }
+    .web-intro p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--color-gray-medium);
+    }
+    .case-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 56px 40px;
+      margin-bottom: 96px;
+    }
+    .case-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+    }
+    .case-thumb {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background-color: #111;
+    }
+    .case-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-normal);
+    }
+    .case-card:hover .case-thumb img {
+      transform: scale(1.04);
+    }
+    .case-text h2 {
+      font-size: 19px;
+      font-weight: var(--font-weight-semibold);
+      margin: 20px 0 8px;
+    }
+    .case-text p {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--color-gray-medium);
+      margin-bottom: 12px;
+    }
+    .case-more {
+      font-size: var(--font-size-small);
+      color: var(--color-gray-dark);
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 2px;
+      transition: border-color var(--transition-fast);
+    }
+    .case-card:hover .case-more {
+      border-color: var(--color-gray-medium);
+    }
+    .more-sites h2 {
+      font-size: var(--font-size-large);
+      font-weight: var(--font-weight-semibold);
+    }
     .web-thumb-placeholder {
       width: 100%;
       padding-top: 56.25%;
@@ -36,6 +101,12 @@
     }
     .project-card:hover .web-thumb-placeholder img {
       transform: scale(1.03);
+    }
+    @media (max-width: 1024px) {
+      .case-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 767px) {
+      .case-grid { grid-template-columns: 1fr; gap: 48px; margin-bottom: 72px; }
     }
   </style>
 </head>
@@ -58,49 +129,86 @@
 
   <main>
     <div class="container">
-      <div class="grid-projects">
 
-        <a href="https://avvino.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
-          <div class="project-thumb web-thumb-placeholder">
-            <img src="images/web/avvino.webp" alt="Avvino" loading="lazy">
-            <div class="project-info">
-              <span class="project-title">Avvino</span>
-              <span class="project-role">Web Design</span>
-            </div>
+      <div class="web-intro">
+        <h1>Web Design</h1>
+        <p>I build websites the way I cut film: find the story first, then let it decide everything else. Each of these started with a conversation about what the person does and why. The words, the colors, the wordmark, and the pace of the page all came out of that conversation.</p>
+      </div>
+
+      <div class="case-grid">
+
+        <a href="web/burke.html" class="case-card">
+          <div class="case-thumb">
+            <img src="images/web/burke-door.webp" alt="James Anthony Burke website" loading="lazy">
+          </div>
+          <div class="case-text">
+            <h2>James Anthony Burke</h2>
+            <p>A musician and writer who calls himself a bard, so his site is a hall. You enter through a door and five flames burn inside.</p>
+            <span class="case-more">Read the case study</span>
           </div>
         </a>
 
-        <a href="https://la-bola.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
-          <div class="project-thumb web-thumb-placeholder">
-            <img src="images/web/la-bola.webp" alt="La Bola" loading="lazy">
-            <div class="project-info">
-              <span class="project-title">La Bola</span>
-              <span class="project-role">Web Design</span>
-            </div>
+        <a href="web/hogan.html" class="case-card">
+          <div class="case-thumb">
+            <img src="images/web/hogan.webp" alt="Hogan CPA Firm website" loading="lazy">
+          </div>
+          <div class="case-text">
+            <h2>Hogan CPA Firm</h2>
+            <p>A CPA is chosen on trust, and the mark of trust is a signature. Sarah's draws itself across the screen and becomes the logo.</p>
+            <span class="case-more">Read the case study</span>
           </div>
         </a>
 
-        <a href="https://roma-tau-three.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
-          <div class="project-thumb web-thumb-placeholder">
-            <img src="images/web/roma.webp" alt="Roma" loading="lazy">
-            <div class="project-info">
-              <span class="project-title">Roma</span>
-              <span class="project-role">Web Design</span>
-            </div>
+        <a href="web/roma.html" class="case-card">
+          <div class="case-thumb">
+            <img src="images/web/roma.webp" alt="Roma website" loading="lazy">
           </div>
-        </a>
-
-        <a href="https://opa-blush.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
-          <div class="project-thumb web-thumb-placeholder">
-            <img src="images/web/opa.webp" alt="OPA Signs & Graphics" loading="lazy">
-            <div class="project-info">
-              <span class="project-title">OPA Signs &amp; Graphics</span>
-              <span class="project-role">Web Design</span>
-            </div>
+          <div class="case-text">
+            <h2>Roma</h2>
+            <p>A counter-style pasta shop in Corn Hill that does not fuss. Four words, the hours, and the whole menu on the page.</p>
+            <span class="case-more">Read the case study</span>
           </div>
         </a>
 
       </div>
+
+      <div class="more-sites">
+        <h2>More sites</h2>
+        <div class="grid-projects">
+
+          <a href="https://avvino.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
+            <div class="project-thumb web-thumb-placeholder">
+              <img src="images/web/avvino.webp" alt="Avvino" loading="lazy">
+              <div class="project-info">
+                <span class="project-title">Avvino</span>
+                <span class="project-role">Web Design</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="https://la-bola.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
+            <div class="project-thumb web-thumb-placeholder">
+              <img src="images/web/la-bola.webp" alt="La Bola" loading="lazy">
+              <div class="project-info">
+                <span class="project-title">La Bola</span>
+                <span class="project-role">Web Design</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="https://opa-blush.vercel.app" target="_blank" rel="noopener" class="project-card grid-item fade-in">
+            <div class="project-thumb web-thumb-placeholder">
+              <img src="images/web/opa.webp" alt="OPA Signs & Graphics" loading="lazy">
+              <div class="project-info">
+                <span class="project-title">OPA Signs &amp; Graphics</span>
+                <span class="project-role">Web Design</span>
+              </div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
     </div>
   </main>
 
