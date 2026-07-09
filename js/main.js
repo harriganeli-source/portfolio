@@ -484,7 +484,7 @@ function initThumbnailScrub() {
   const cards = document.querySelectorAll('.project-card');
 
   const path = window.location.pathname;
-  const isHomepage = path === '/' || path.endsWith('/index.html') || path.endsWith('/');
+  const isHomepage = path === '/' || path.endsWith('/index.html') || path.endsWith('/') || path.endsWith('/webdesign.html');
   const hasPointer = isHomepage && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   // ---- Trailing dot cursor (page-wide) ----
