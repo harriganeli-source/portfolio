@@ -1023,16 +1023,20 @@ function initThumbnailScrub() {
         }
       }, { passive: true });
 
-      // iOS: first touch unlocks video playback
-      document.addEventListener('touchstart', () => {
+      // iOS: touches unlock and retry playback until a preview actually runs
+      function touchKick() {
         if (!touchUnlocked) {
           touchUnlocked = true;
           updateMobileVideo();
-        } else if (mobileVideo && mobileVideo.paused) {
-          // Load-time autoplay was blocked; retry now that we have a gesture
-          mobileVideo.play().catch(() => {});
+          return;
         }
-      }, { once: true, passive: true });
+        if (mobileVideo && mobileVideo.paused) {
+          mobileVideo.play().catch(() => {});
+          return;
+        }
+        document.removeEventListener('touchstart', touchKick);
+      }
+      document.addEventListener('touchstart', touchKick, { passive: true });
 
       // Web design page: start the first card on load, before any scroll.
       // Muted playsinline video may autoplay on iOS without a gesture.
