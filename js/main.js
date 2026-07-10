@@ -1025,10 +1025,21 @@ function initThumbnailScrub() {
 
       // iOS: first touch unlocks video playback
       document.addEventListener('touchstart', () => {
-        if (touchUnlocked) return;
-        touchUnlocked = true;
-        updateMobileVideo();
+        if (!touchUnlocked) {
+          touchUnlocked = true;
+          updateMobileVideo();
+        } else if (mobileVideo && mobileVideo.paused) {
+          // Load-time autoplay was blocked; retry now that we have a gesture
+          mobileVideo.play().catch(() => {});
+        }
       }, { once: true, passive: true });
+
+      // Web design page: start the first card on load, before any scroll.
+      // Muted playsinline video may autoplay on iOS without a gesture.
+      if (/\/webdesign(\.html)?$/.test(window.location.pathname) && previewData.length) {
+        touchUnlocked = true;
+        playMobileVideo(previewData[0]);
+      }
 
     } else {
       // DESKTOP: multiple videos via IntersectionObserver
