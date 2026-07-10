@@ -955,6 +955,10 @@ function initThumbnailScrub() {
         mobileVideo.setAttribute('muted', '');
         mobileVideo.setAttribute('playsinline', '');
         mobileVideo.setAttribute('webkit-playsinline', '');
+        // iOS Safari needs autoplay as an HTML attribute to start
+        // muted inline video without a user gesture
+        mobileVideo.autoplay = true;
+        mobileVideo.setAttribute('autoplay', '');
       }
 
       function playMobileVideo(data) {
@@ -1047,8 +1051,16 @@ function initThumbnailScrub() {
 
     } else {
       // DESKTOP: multiple videos via IntersectionObserver
+      // Web design page: pin the first card — it plays on load and is
+      // never gated by the visibility threshold, so it moves before
+      // anyone scrolls.
+      const pinned = /\/webdesign(\.html)?$/.test(window.location.pathname)
+        ? previewData[0]
+        : null;
+
       // Allow easter egg to resume autoplay after it finishes
       resumeAutoplay = () => {
+        if (pinned) tryPlay(pinned);
         visibleThumbs.forEach(data => tryPlay(data));
       };
 
@@ -1068,8 +1080,11 @@ function initThumbnailScrub() {
       }, { threshold: 0.35 });
 
       previewData.forEach(entry => {
+        if (entry === pinned) return;
         autoPlayObserver.observe(entry.thumb);
       });
+
+      if (pinned) tryPlay(pinned);
     }
   }
 
