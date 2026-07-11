@@ -116,6 +116,7 @@ body.flat .hero-stage, body.og-mode .hero-stage { height: auto; }
 .video-band { position: relative; height: 50vh; min-height: 330px; overflow: hidden; background: var(--deep2); }
 .video-band iframe { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-47%); width: 100vw; height: 56.25vw; min-height: 66vh; min-width: calc(66vh * 1.7778); border: 0; pointer-events: none; }
 .video-band::after { content:''; position: absolute; inset: 0; background: rgba(26,40,48,0.18); pointer-events: none; }
+.video-band .video-link { position: absolute; inset: 0; z-index: 2; }
 
 /* ── INVESTMENT ── */
 .invest-grid { display: grid; grid-template-columns: 1fr; gap: 1.2rem; margin-top: 2.4rem; max-width: 680px; }
@@ -228,7 +229,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <div class="pull-quote reveal d3">
             <p>The site is reachable only by people who already have the exact address, and word of mouth almost never travels as an exact address.</p>
         </div>
-        <p class="body-text reveal">Then there is the design itself. This is a program about embodiment, presence, and aliveness, and its website opens on a stock illustration: seven thin pages for a four-year decision. Prospective students feel that mismatch even if they never name it, and they feel it at exactly the moment they are deciding. When that moment ends, there is also nowhere to act: the site offers a contact form where an application should be.</p>
+        <p class="body-text reveal">Then there is the design itself. This is a program about embodiment, presence, and aliveness, and its website opens on a stock illustration: seven thin pages for a four-year decision. Prospective students feel that mismatch even if they never name it, and they feel it at exactly the moment they are deciding. When that moment ends, there is also nowhere to act: the workshops can be signed up for, but the training itself offers a contact form where an application should be.</p>
     </div>
 </section>
 
@@ -236,6 +237,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
 <!-- ── VIDEO ── -->
 <section class="video-band">
     <iframe id="yt-band" src="https://www.youtube.com/embed/5btfMF0SfaI?mute=1&loop=1&playlist=5btfMF0SfaI&rel=0&controls=0&playsinline=1&enablejsapi=1&iv_load_policy=3&modestbranding=1" allow="autoplay; fullscreen"></iframe>
+    <a class="video-link" href="https://www.youtube.com/watch?v=5btfMF0SfaI" target="_blank" rel="noopener" aria-label="Watch the full video on YouTube"></a>
 </section>
 
 <!-- ── THE REBUILD ── -->
@@ -244,7 +246,7 @@ body.og-mode .hero-inner { padding-left: 2rem; }
         <p class="section-label reveal">The rebuild</p>
         <h2 class="section-title reveal d1">What I propose to build.</h2>
         <p class="body-text reveal d2">The film above is the institute&rsquo;s own. The work is already that alive on camera, and the site around it should match.</p>
-        <p class="body-text reveal d2">A custom site of roughly seven pages: home, program and curriculum, faculty, dates and fees, workshops, testimonials, and a proper application and inquiry flow to replace the bare contact form. The design gets built around the work itself, with art direction guidance for photography of the training, the faculty, and the space at Earthdance, so that real imagery replaces stock illustration and the site begins to feel like the room the training happens in.</p>
+        <p class="body-text reveal d2">A custom site of roughly seven pages: home, program and curriculum, faculty, dates and fees, workshops, testimonials, and a proper application and inquiry flow for the training itself, so applying to the program becomes as direct as signing up for a workshop already is. The design gets built around the work itself, with art direction guidance for photography of the training, the faculty, and the space at Earthdance, so that real imagery replaces stock illustration and the site begins to feel like the room the training happens in.</p>
         <p class="body-text reveal d3">The rebuild also includes a simple typographic wordmark for the institute, carried through the site header, the favicon, and link previews. Today the site has no mark at all: the logo slot in the header sits empty, and the icon in the browser tab belongs to the website builder, not to Metamorphosis.</p>
         <p class="body-text reveal d3">Two pages deserve special mention. The curriculum is the strongest material on the current site, and the page gives it the least help: four years of remarkable content arrives as one long centered list, on a page whose browser tab currently reads &ldquo;Blank.&rdquo; Rebuilt, the curriculum page becomes the journey it describes, four years unfolding on the screen as four stages of one metamorphosis. And since workshops are announced all through the year, the workshops page will be yours to run: add a workshop, its dates, and its signup link yourselves, and the page lays it out properly, no developer involved.</p>
         <p class="body-text reveal d3">Underneath the design, the site gets the full technical foundation the current platform cannot provide: correct titles and meta descriptions on every page, structured data describing the institute, the program, and its location, a sitemap, and fast static hosting. The existing copy mostly carries over with editorial polish, so this is a redesign and a re-foundation rather than a rewrite of the institute&rsquo;s voice.</p>
