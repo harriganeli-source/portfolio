@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /reorder
+Disallow: /metamorphosis
+Disallow: /websites
+
+Sitemap: https://www.eliharrigan.com/sitemap.xml
