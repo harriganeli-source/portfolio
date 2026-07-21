@@ -36,6 +36,24 @@
       height: auto;
       display: block;
     }
+    .case-quote {
+      margin: var(--spacing-xl) 0;
+      padding-left: var(--spacing-md);
+      border-left: 2px solid var(--color-border);
+      max-width: 720px;
+    }
+    .case-quote p {
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--color-gray-dark);
+      font-style: italic;
+      margin-bottom: var(--spacing-sm);
+    }
+    .case-quote cite {
+      font-size: var(--font-size-small);
+      font-style: normal;
+      color: var(--color-gray-medium);
+    }
     .case-visit {
       margin-top: var(--spacing-xl);
       font-size: var(--font-size-small);
@@ -91,6 +109,11 @@
       <div class="case-fig">
         <img src="../images/web/hogan-about.webp" alt="The About Sarah section: her photo beside the line I've run the companies you're running, with a client quote below" width="1600" height="860" loading="lazy">
       </div>
+
+      <blockquote class="case-quote">
+        <p>&ldquo;I literally got goosebumps. I love how you listened to me talk about my practice and articulated it perfectly. The landing page is the perfect balance of current, professional, and cute. You have a gift.&rdquo;</p>
+        <cite>Sarah Hogan, Hogan CPA Firm</cite>
+      </blockquote>
 
     </div>
   </main>
