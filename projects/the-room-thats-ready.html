@@ -59,6 +59,7 @@
     }
     .grid-9 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .build { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .zoomable { cursor: zoom-in; }
 
     /* Lightbox */
@@ -87,6 +88,7 @@
     @media (max-width: 767px) {
       .row-text h2 { font-size: 20px; }
       .pair { grid-template-columns: 1fr; }
+      .build { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -107,7 +109,7 @@
       <h1 class="project-heading">The Room That's Ready</h1>
       <div class="project-credit">
         <p>A film for The Last Preventable Death, the 2026 Scudder Oration on Trauma of the American College of Surgeons.</p>
-        <p>Made for Dr. Michael Rotondo. Directed, produced, and edited by Eli Harrigan.</p>
+        <p>Made for Dr. Michael Rotondo, from his treatment. Directed, produced, and edited by Eli Harrigan.</p>
         <p>3 minutes 30 seconds. No narration. Nothing photographed.</p>
       </div>
 
@@ -151,10 +153,20 @@
             <img src="../images/room/activated.webp" alt="The ambulance wall monitor: predicted vitals beside measured vitals, each marked MATCH, and MASSIVE TRANSFUSION PROTOCOL: ACTIVATED in green." width="1920" height="1080" loading="lazy">
             <figcaption>The truck monitor. The prediction from twenty minutes earlier beside the live numbers, then the order flips from staged to activated.</figcaption>
           </figure>
-          <figure>
-            <img src="../images/room/wall-incoming.webp" alt="A wall display in an empty trauma room reads PATIENT INCOMING with his ID and age." width="1920" height="1080" loading="lazy">
-            <figcaption>The trauma room wakes while he is still in the wreck.</figcaption>
-          </figure>
+          <div class="build">
+            <figure>
+              <img src="../images/room/build-plate.webp" alt="The generated plate: a dispatcher at a desk with two monitors whose screens carry unreadable placeholder text." width="1920" height="1080" loading="lazy">
+              <figcaption>1. The generated plate. The monitors carry placeholder text that means nothing.</figcaption>
+            </figure>
+            <figure>
+              <img src="../images/room/build-ui.webp" alt="The designed interface on its own: AACN and WEARABLE panels with crash mechanics and live vitals in monospace capitals." width="1920" height="1080" loading="lazy">
+              <figcaption>2. The interface, designed and animated separately, in the film's screen language.</figcaption>
+            </figure>
+            <figure>
+              <img src="../images/room/build-final.webp" alt="The finished shot: the same dispatcher and desk, the designed interface now on both monitors, a red pin on the map." width="1920" height="1080" loading="lazy">
+              <figcaption>3. The finished shot. The interface is tracked onto the monitors and the map's red pin lands on her face.</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 
@@ -238,7 +250,7 @@
       </section>
 
       <div class="case-credits">
-        <p>Made for Dr. Michael Rotondo. Directed, produced, and edited by Eli Harrigan.</p>
+        <p>Made for Dr. Michael Rotondo, from his treatment. Directed, produced, and edited by Eli Harrigan.</p>
       </div>
 
     </div>
