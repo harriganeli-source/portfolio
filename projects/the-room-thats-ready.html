@@ -23,66 +23,70 @@
     .container-narrow.case-film { max-width: 1100px; }
     .case-film .project-credit { max-width: 720px; margin-bottom: var(--spacing-lg); }
     .case-film .project-credit p { margin-bottom: 10px; }
-    .case-film .video-card { margin-bottom: var(--spacing-xl); }
-    .case-body { max-width: 720px; }
-    .case-body p {
-      font-size: 17px;
-      line-height: 1.75;
-      color: var(--color-gray-dark);
-      margin-bottom: var(--spacing-md);
+    .case-film .video-card { max-width: 720px; margin: 0 auto var(--spacing-xl); }
+
+    /* Two-column rows: text left, media right */
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--spacing-xl);
+      align-items: start;
+      padding: var(--spacing-xl) 0;
+      border-top: 1px solid var(--color-border);
     }
-    .case-body h2 {
+    .row:first-of-type { border-top: none; padding-top: 0; }
+    .row-text { position: sticky; top: 120px; }
+    .row-text h2 {
       font-size: 22px;
       font-weight: var(--font-weight-medium);
       color: var(--color-black);
-      margin: var(--spacing-2xl) 0 var(--spacing-md);
-      padding-top: var(--spacing-lg);
-      border-top: 1px solid var(--color-border);
+      margin: 0 0 var(--spacing-sm);
     }
-    .case-body h2:first-child { margin-top: var(--spacing-lg); }
-    .case-body h3 {
-      font-size: 17px;
-      font-weight: var(--font-weight-medium);
-      color: var(--color-black);
-      margin: var(--spacing-lg) 0 var(--spacing-xs);
+    .row-text p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--color-gray-dark);
+      margin-bottom: var(--spacing-sm);
     }
-    .case-fig { margin: var(--spacing-xl) 0; }
-    .case-fig img, .case-fig video {
-      width: 100%; height: auto; display: block;
-      background: #000;
-    }
-    .case-fig figcaption, .case-pair figcaption {
+    .row-media { display: grid; gap: 12px; }
+    .row-media figure { margin: 0; }
+    .row-media img { width: 100%; height: auto; display: block; background: #000; }
+    .row-media figcaption {
       font-size: var(--font-size-small);
       color: var(--color-gray-medium);
       line-height: 1.5;
-      margin-top: var(--spacing-xs);
+      margin-top: 6px;
     }
-    .case-pair {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-md);
-      margin: var(--spacing-xl) 0;
+    .grid-9 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .zoomable { cursor: zoom-in; }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,.94);
+      display: none; align-items: center; justify-content: center;
+      padding: var(--spacing-md);
+      cursor: zoom-out;
     }
-    .case-pair figure { margin: 0; }
-    .case-pair img { width: 100%; height: auto; display: block; background: #000; }
-    .case-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--spacing-sm);
-      margin: var(--spacing-xl) 0;
-    }
-    .case-grid img { width: 100%; height: auto; display: block; background: #000; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; }
+
     .case-credits {
       max-width: 720px;
       font-size: var(--font-size-small);
       color: var(--color-gray-medium);
       line-height: 1.8;
-      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--color-border);
+    }
+    @media (max-width: 1023px) {
+      .row { grid-template-columns: 1fr; gap: var(--spacing-md); }
+      .row-text { position: static; }
     }
     @media (max-width: 767px) {
-      .case-pair { grid-template-columns: 1fr; }
-      .case-grid { grid-template-columns: 1fr 1fr; }
-      .case-body h2 { font-size: 20px; }
+      .row-text h2 { font-size: 20px; }
+      .pair { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -103,7 +107,7 @@
       <h1 class="project-heading">The Room That's Ready</h1>
       <div class="project-credit">
         <p>A film for The Last Preventable Death, the 2026 Scudder Oration on Trauma of the American College of Surgeons.</p>
-        <p>Made for Dr. Michael Rotondo. Directed, produced, and edited by Eli Harrigan. Original score by Gregg Perea.</p>
+        <p>Made for Dr. Michael Rotondo. Directed, produced, and edited by Eli Harrigan.</p>
         <p>3 minutes 30 seconds. No narration. Nothing photographed.</p>
       </div>
 
@@ -114,118 +118,147 @@
         </div>
       </div>
 
-      <div class="case-body">
-        <p>Dr. Michael Rotondo is a trauma surgeon and professor of surgery at the University of Rochester. In 2026 he gave the Scudder Oration on Trauma, a named lecture of the American College of Surgeons, to about a thousand trauma surgeons. The talk asks what digital transformation could do for injury care, and he wanted the room to see it rather than hear it described: a short photoreal film, believable to people who have spent their careers in trauma bays, that makes his argument without a narrator.</p>
-        <p>He supplied the treatment, the clinical logic, and the names of the systems in his talk. I wrote the shot list, designed the world, generated every frame, built the screens, cut the film, and worked the sound. After he screened the first cut for colleagues, he reordered the middle of his lecture around it. The film plays before he explains the systems in it, so the audience sees them work before they hear what they are.</p>
+      <section class="row">
+        <div class="row-text">
+          <h2>The film</h2>
+          <p>Dr. Michael Rotondo is a trauma surgeon and professor of surgery at the University of Rochester. In 2026 he gave the Scudder Oration on Trauma, a named lecture of the American College of Surgeons, to about a thousand trauma surgeons. The talk asks what digital transformation could do for injury care, and he wanted the room to see it rather than hear it described: a short photoreal film, believable to people who have spent their careers in trauma bays, that makes his argument without a narrator.</p>
+          <p>He supplied the treatment, the clinical logic, and the names of the systems in his talk. I wrote the shot list, designed the world, generated every frame, built the screens, cut the film, and worked the sound. After he screened the first cut for colleagues, he reordered the middle of his lecture around it. The film plays before he explains the systems in it, so the audience sees them work before they hear what they are.</p>
+          <p>A 64-year-old man is driving alone on a rural road before dawn. A deer steps into the headlights, he swerves, and the car goes head-on into a pine. Nobody sees it. Then the response starts, and nobody presses a button. The car reports the crash. The watch on his wrist reports his body. A coordination center resolves his location and a drone lifts from its pad in the same instant. His record arrives with one word that matters: he is anticoagulated. The system predicts he will bleed and stages blood at the trauma center before any human has reached him. The drone finds him with a thermal camera. Medics arrive to a scene that is already lit, treat him in the ambulance while the trauma center watches the same numbers, and confirm the prediction. When the doors open, the room is ready and the blood is at the bedside. The film ends on one normal heartbeat.</p>
+        </div>
+        <div class="row-media">
+          <div class="grid-9">
+            <img src="../images/room/dawn.webp" alt="Aerial: the ambulance and the drone run the last miles toward the lit hospital under the first band of dawn." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/team.webp" alt="The trauma team in yellow gowns and masks, backs to camera, reading the wall display together." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/anticoagulated.webp" alt="A dark screen with one word in a red outlined chip: ANTICOAGULATED." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/thermal.webp" alt="The drone's thermal view: a white-hot human signature slumped in the dark cabin of the wreck." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/nurse.webp" alt="A nurse in navy scrubs looks up from her station in the trauma room." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/drone-mist.webp" alt="The drone descends through mist toward the wreck, its floodlight on." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/kiosk.webp" alt="A console screen inside the coordination center, and through the window behind it a drone lifting from a rooftop pad." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/aftermath.webp" alt="Wide shot of the wrecked car against a tree at the edge of the road, one headlight alive, steam rising." width="1920" height="1080" loading="lazy">
+            <img src="../images/room/mtpcase.webp" alt="A gloved hand rests on a sealed grey transport case with red latches, tagged with a blood bank label." width="1920" height="1080" loading="lazy">
+          </div>
+        </div>
+      </section>
 
-        <h2>The film</h2>
-        <p>A 64-year-old man is driving alone on a rural road before dawn. A deer steps into the headlights, he swerves, and the car goes head-on into a pine. Nobody sees it. The impact happens over black, in sound only. Then the response starts, and nobody presses a button. The car reports the crash. The watch on his wrist reports his body. A coordination center resolves his location and a drone lifts from its pad in the same instant. His record arrives with one word that matters: he is anticoagulated. The system predicts he will bleed and stages blood at the trauma center before any human has reached him. The drone finds him with a thermal camera. Medics arrive to a scene that is already lit, treat him in the ambulance while the trauma center watches the same numbers, and confirm the prediction. When the doors open, the room is ready and the blood is at the bedside. The film ends on one normal heartbeat.</p>
-      </div>
+      <section class="row">
+        <div class="row-text">
+          <h2>Nobody speaks</h2>
+          <p>The information is the protagonist. Everything the audience needs arrives on a screen inside the story: a watch, a dashboard, a console, a tablet, a truck monitor, a wall. The camera selects what to read, and the patient's face is never shown. The storyboard carried radio lines for the medics, but at the first screening the cut played without them and neither of us missed them. There are no voices in the finished film.</p>
+          <p>That puts the weight on the screens. Each one was generated dark and blank, and every word was designed and animated by hand afterward, to read from the back of a thousand-seat room in about two seconds. One monospace typeface, all caps. Four colors with fixed meanings: bone white when the machine speaks, red for conclusions and danger only, green for confirmed and live, amber for staged and waiting. A thin bar fills only while the system is analyzing and vanishes when the answer lands. When the system concludes something, the evidence assembles first, and the conclusion lands alone.</p>
+        </div>
+        <div class="row-media">
+          <figure>
+            <img src="../images/room/activated.webp" alt="The ambulance wall monitor: predicted vitals beside measured vitals, each marked MATCH, and MASSIVE TRANSFUSION PROTOCOL: ACTIVATED in green." width="1920" height="1080" loading="lazy">
+            <figcaption>The truck monitor. The prediction from twenty minutes earlier beside the live numbers, then the order flips from staged to activated.</figcaption>
+          </figure>
+          <figure>
+            <img src="../images/room/wall-incoming.webp" alt="A wall display in an empty trauma room reads PATIENT INCOMING with his ID and age." width="1920" height="1080" loading="lazy">
+            <figcaption>The trauma room wakes while he is still in the wreck.</figcaption>
+          </figure>
+        </div>
+      </section>
 
-      <div class="case-grid">
-        <img src="../images/room/aerial.webp" alt="Aerial of a winding rural road through forest in the pre-dawn blue hour, one car's headlights on it." width="1920" height="1080" loading="lazy">
-        <img src="../images/room/aftermath.webp" alt="Wide shot of the wrecked car against a tree at the edge of the road, one headlight alive, steam rising." width="1920" height="1080" loading="lazy">
-        <img src="../images/room/kiosk.webp" alt="A console screen inside the coordination center, and through the window behind it a drone lifting from a rooftop pad." width="1920" height="1080" loading="lazy">
-        <img src="../images/room/anticoagulated.webp" alt="A dark screen with one word in a red outlined chip: ANTICOAGULATED." width="1920" height="1080" loading="lazy">
-        <img src="../images/room/thermal.webp" alt="The drone's thermal view: a white-hot human signature slumped in the dark cabin of the wreck." width="1920" height="1080" loading="lazy">
-        <img src="../images/room/wall-incoming.webp" alt="A wall display in an empty trauma room reads PATIENT INCOMING with his ID and age." width="1920" height="1080" loading="lazy">
-      </div>
+      <section class="row">
+        <div class="row-text">
+          <h2>Every cut is a consequence</h2>
+          <p>The film runs on two causal chains. The first is the blood: his record says he takes a blood thinner, so the system predicts hemorrhage, so it stages a transfusion protocol, so a sealed case leaves a refrigerator in another building, so it is waiting at the bedside when he arrives. The second is the crew: the crash mechanics, his record, and his falling vitals combine into three words on the medics' tablet, and that is what they roll on. Dr. Rotondo made the ruling that keeps the two apart. Anticoagulation drives the blood; mechanism and physiology move a crew.</p>
+          <p>One rule held through every edit: a consequence sits next to its cause, and when two things happen because of one order, the cause has to be visible in the shot. When the trauma room wakes while he is still in the wreck, the wall display lands first with his name, and then the lights come on. Under all of it runs the heartbeat, which enters under the drive, is gone at impact, is found again by the drone's thermal camera, and is the last sound in the film.</p>
+        </div>
+        <div class="row-media">
+          <figure>
+            <img class="zoomable" src="../images/room/flow-diagram.webp" alt="A diagram of the film's information flow: the wreck, the coordination center, the blood bank, the ambulance, and the trauma room, with arrows showing which screen causes which." width="1920" height="1337" loading="lazy">
+            <figcaption>The information flow. Every screen in the film sits on this map, and every arrow is a cut. Dr. Rotondo asked for it, and it caught the film's mistakes. Click to enlarge.</figcaption>
+          </figure>
+        </div>
+      </section>
 
-      <div class="case-body">
-        <h2>Nobody speaks</h2>
-        <p>The information is the protagonist. Everything the audience needs arrives on a screen inside the story: a watch, a dashboard, a console, a tablet, a truck monitor, a wall. The camera selects what to read, and the patient's face is never shown. The storyboard carried radio lines for the medics, but at the first screening the cut played without them and neither of us missed them. There are no voices in the finished film.</p>
-        <p>That puts the weight on the screens. Each one was generated dark and blank, and every word was designed and animated by hand afterward, to read from the back of a thousand-seat room in about two seconds. One monospace typeface, all caps. Four colors with fixed meanings: bone white when the machine speaks, red for conclusions and danger only, green for confirmed and live, amber for staged and waiting. A thin bar fills only while the system is analyzing and vanishes when the answer lands. When the system concludes something, the evidence assembles first: three source chips tick in, hold for a beat, and collapse into a single red line.</p>
-      </div>
+      <section class="row">
+        <div class="row-text">
+          <h2>Restraint over spectacle</h2>
+          <p>Nothing in the film was photographed. Every shot was generated as a still first and animated only after it was approved. The system has no memory between shots, so the car, the road, the drone, the ambulance, the operator, and the light have to be rebuilt from reference every time. Each recurring object was designed once as a clean plate and carried into every shot it appears in. The rules were short and did not move: near future, five years out, so everything is the newest real version of itself and the future shows in what happens without a human, not in gadgets. No holograms, no glowing interfaces, no red cross, no canopy on the drone, because nothing human arrives first.</p>
+          <p>Light was locked to the pre-dawn blue hour for every exterior. The response in the film takes minutes, and a sky that changed between the crash and the ambulance would say hours. The one change in light is the last shot. Dawn comes through the trauma room window about an hour after the crash, which is how long the whole chain takes from the car reporting itself to the doors opening. It is the only place in the film where time passing is the point.</p>
+        </div>
+        <div class="row-media">
+          <figure>
+            <img src="../images/room/watch-before.webp" alt="An early frame: a bruised wrist and a smartwatch filling the frame with a cracked screen reading CRASH DETECTED, EMERGENCY CALLING." width="1920" height="1080" loading="lazy">
+            <figcaption>The watch, first pass. A hero prop that tells the audience what to feel.</figcaption>
+          </figure>
+          <figure>
+            <img src="../images/room/watch-after.webp" alt="The watch in the film: a hand hangs limp beside the door in blue pre-dawn light, the watch face a small red mark." width="1920" height="1080" loading="lazy">
+            <figcaption>The watch in the film. A hand, and one small red light. The audience finds it.</figcaption>
+          </figure>
+        </div>
+      </section>
 
-      <div class="case-fig">
-        <img src="../images/room/screen-synthesis.webp" alt="A dark screen design: three chips labeled KINEMATICS, PHENOME, WEARABLE, a predicted injury pattern, and a large red line reading SIGNIFICANT HEMORRHAGE LIKELY, with MASSIVE TRANSFUSION PROTOCOL STAGED in amber below." width="1920" height="1080" loading="lazy">
-        <figcaption>Evidence assembles, the conclusion lands in red, the order goes out in amber.</figcaption>
-      </div>
+      <section class="row">
+        <div class="row-text">
+          <h2>Working with a surgeon</h2>
+          <p>The audience is trained to spot anything false, and so is the client. Instead of storyboard PDFs, the board lived on a website built for the project. Each shot had its frame, what you see, what you hear, and the text on any screen. Dr. Rotondo could edit the screen text and leave notes directly on the page, every save was kept as a version, and a banner listed the shots his notes touched until each was cleared. His corrections went onto the board the same day, and the board's text became the film's screen text.</p>
+          <p>Three of his notes are visible in the finished film. The proof-of-concept drone was a white product-design box, and he asked for the aircraft fire departments actually fly. The first coordination center was a two-tier operations floor, and he pointed out that most real dispatch centers are the size of a closet; it became a small dark room where one tile on one console turns red and one operator leans in. The blood bank was a drawer of loose units, and he explained that a massive transfusion protocol is a sealed pack that nobody opens before the patient arrives, so the pack rides to the room and waits at the bedside unopened.</p>
+        </div>
+        <div class="row-media">
+          <figure>
+            <img class="zoomable" src="../images/room/storyboard-site.webp" alt="The storyboard website: the title The Room That's Ready, a banner listing shots to address with the client's last save, and the first three shots of Scene 1 with their frames and captions." width="1920" height="1200" loading="lazy">
+            <figcaption>The storyboard site. His edits were tracked per shot, and the film's screen text was written here first. Click to enlarge.</figcaption>
+          </figure>
+          <div class="pair">
+            <figure>
+              <img src="../images/room/trailer-drone.webp" alt="An early test frame: a white box-shaped drone with rotors flying over a forest." width="1920" height="1080" loading="lazy">
+              <figcaption>Proof-of-concept test. The drone was a white box.</figcaption>
+            </figure>
+            <figure>
+              <img src="../images/room/drone-reference.webp" alt="The approved drone: a working quadcopter in fire-department white and orange with a camera gimbal, hovering in mist over dark pines." width="1920" height="1080" loading="lazy">
+              <figcaption>The aircraft in the film.</figcaption>
+            </figure>
+          </div>
+          <div class="pair">
+            <figure>
+              <img src="../images/room/looks-center.webp" alt="An early look for the coordination center: a large two-tier operations floor with a video wall and a dozen operators." width="1920" height="1080" loading="lazy">
+              <figcaption>Coordination center, first look. Not approved.</figcaption>
+            </figure>
+            <figure>
+              <img src="../images/room/operator.webp" alt="The coordination center in the film: a small dark room, one operator leaning toward her monitor." width="1920" height="1080" loading="lazy">
+              <figcaption>Coordination center in the film.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
 
-      <div class="case-body">
-        <h2>Every cut is a consequence</h2>
-        <p>The film runs on two causal chains. The first is the blood: his record says he takes a blood thinner, so the system predicts hemorrhage, so it stages a transfusion protocol, so a sealed case leaves a refrigerator in another building, so it is waiting at the bedside when he arrives. The second is the crew: the crash mechanics, his record, and his falling vitals combine into three words on the medics' tablet, and that is what they roll on. Dr. Rotondo made the ruling that keeps the two apart. Anticoagulation drives the blood; mechanism and physiology move a crew.</p>
-        <p>One rule held through every edit: a consequence sits next to its cause, and when two things happen because of one order, the cause has to be visible in the shot. When the trauma room wakes while he is still in the wreck, the wall display lands first with his name, and then the lights come on. Under all of it runs the heartbeat, which enters under the drive, is gone at impact, is found again by the drone's thermal camera, and is the last sound in the film.</p>
-      </div>
-
-      <div class="case-fig">
-        <img src="../images/room/flow-diagram.webp" alt="A diagram of the film's information flow: the wreck, the coordination center, the blood bank, the ambulance, and the trauma room, with arrows showing which screen causes which." width="1920" height="1337" loading="lazy">
-        <figcaption>The information flow. Every screen in the film sits on this map, and every arrow is a cut. Dr. Rotondo asked for it, and it caught the film's mistakes.</figcaption>
-      </div>
-
-      <div class="case-body">
-        <h2>Restraint over spectacle</h2>
-        <p>Nothing in the film was photographed. Every shot was generated as a still first and animated only after it was approved. The system has no memory between shots, so the car, the road, the drone, the ambulance, the operator, and the light have to be rebuilt from reference every time. Each recurring object was designed once as a clean plate and carried into every shot it appears in. The rules were short and did not move: near future, five years out, so everything is the newest real version of itself and the future shows in what happens without a human, not in gadgets. No holograms, no glowing interfaces, no red cross, no canopy on the drone, because nothing human arrives first.</p>
-        <p>Light was locked to the pre-dawn blue hour for every exterior. The response in the film takes minutes, and a sky that changed between the crash and the ambulance would say hours. The one change in light is the last shot. Dawn comes through the trauma room window about an hour after the crash, which is how long the whole chain takes from the car reporting itself to the doors opening. It is the only place in the film where time passing is the point.</p>
-      </div>
-
-      <div class="case-pair">
-        <figure>
-          <img src="../images/room/watch-before.webp" alt="An early frame: a bruised wrist and a smartwatch filling the frame with a cracked screen reading CRASH DETECTED, EMERGENCY CALLING." width="1920" height="1080" loading="lazy">
-          <figcaption>The watch, first pass. A hero prop that tells the audience what to feel.</figcaption>
-        </figure>
-        <figure>
-          <img src="../images/room/watch-after.webp" alt="The watch in the film: a hand hangs limp beside the door in blue pre-dawn light, the watch face a small red mark." width="1920" height="1080" loading="lazy">
-          <figcaption>The watch in the film. A hand, and one small red light. The audience finds it.</figcaption>
-        </figure>
-      </div>
-
-      <div class="case-body">
-        <h2>Working with a surgeon</h2>
-        <p>The audience is trained to spot anything false, and so is the client. Instead of storyboard PDFs, the board lived on a website built for the project. Each shot had its frame, what you see, what you hear, and the text on any screen. Dr. Rotondo could edit the screen text and leave notes directly on the page, every save was kept as a version, and a banner listed the shots his notes touched until each was cleared. His corrections went onto the board the same day, and the board's text became the film's screen text.</p>
-        <p>Three of his notes are visible in the finished film. The proof-of-concept drone was a white product-design box, and he asked for the aircraft fire departments actually fly. The first coordination center was a two-tier operations floor, and he pointed out that most real dispatch centers are the size of a closet; it became a small dark room where one tile on one console turns red and one operator leans in. The blood bank was a drawer of loose units, and he explained that a massive transfusion protocol is a sealed pack that nobody opens before the patient arrives, so the pack rides to the room and waits at the bedside unopened.</p>
-      </div>
-
-      <div class="case-fig">
-        <img src="../images/room/storyboard-site.webp" alt="The storyboard website: the title The Room That's Ready, a banner listing shots to address with the client's last save, and the first three shots of Scene 1 with their frames and captions." width="1920" height="1200" loading="lazy">
-        <figcaption>The storyboard site. His edits were tracked per shot, and the film's screen text was written here first.</figcaption>
-      </div>
-
-      <div class="case-pair">
-        <figure>
-          <img src="../images/room/trailer-drone.webp" alt="An early test frame: a white box-shaped drone with rotors flying over a forest." width="1920" height="1080" loading="lazy">
-          <figcaption>Proof-of-concept test. The drone was a white box.</figcaption>
-        </figure>
-        <figure>
-          <img src="../images/room/drone-reference.webp" alt="The approved drone: a working quadcopter in fire-department white and orange with a camera gimbal, hovering in mist over dark pines." width="1920" height="1080" loading="lazy">
-          <figcaption>The aircraft in the film, designed once and carried into every shot.</figcaption>
-        </figure>
-      </div>
-
-      <div class="case-pair">
-        <figure>
-          <img src="../images/room/looks-center.webp" alt="An early look for the coordination center: a large two-tier operations floor with a video wall and a dozen operators." width="1920" height="1080" loading="lazy">
-          <figcaption>Coordination center, first look. Not approved.</figcaption>
-        </figure>
-        <figure>
-          <img src="../images/room/operator.webp" alt="The coordination center in the film: a small dark room, one operator leaning toward her monitor." width="1920" height="1080" loading="lazy">
-          <figcaption>Coordination center in the film.</figcaption>
-        </figure>
-      </div>
-
-      <div class="case-body">
-        <h2>The screening</h2>
-        <p>He watched the first cut twice in his office, then screened it cold for colleagues with no setup. They followed the argument and started adding to it, which was the result he wanted from the whole talk. Their notes became the last round: the six system names in his lecture labeled on screen in one wordmark, and six frames pulled from the film for the slides that follow it. There is no title card and no credit inside the film, so nothing stands between his slide and the road.</p>
-      </div>
-
-      <div class="case-pair">
-        <figure>
-          <img src="../images/room/team.webp" alt="The trauma team in yellow gowns and masks, backs to camera, reading the wall display together." width="1920" height="1080" loading="lazy">
-          <figcaption>The team reads him before he exists in the room.</figcaption>
-        </figure>
-        <figure>
-          <img src="../images/room/reverse.webp" alt="From the doorway, over the shoulders of the EMS crew: the trauma team turned toward the camera, dawn light through the windows behind them." width="1920" height="1080" loading="lazy">
-          <figcaption>The last shot. We stop before anyone touches him.</figcaption>
-        </figure>
-      </div>
+      <section class="row">
+        <div class="row-text">
+          <h2>The screening</h2>
+          <p>He watched the first cut twice in his office, then screened it cold for colleagues with no setup. They followed the argument and started adding to it, which was the result he wanted from the whole talk. Their notes became the last round: the six system names in his lecture labeled on screen in one wordmark, and six frames pulled from the film for the slides that follow it. There is no title card and no credit inside the film, so nothing stands between his slide and the road.</p>
+        </div>
+        <div class="row-media">
+          <figure>
+            <img src="../images/room/reverse.webp" alt="From the doorway, over the shoulders of the EMS crew: the trauma team turned toward the camera, dawn light through the windows behind them." width="1920" height="1080" loading="lazy">
+            <figcaption>The last shot.</figcaption>
+          </figure>
+        </div>
+      </section>
 
       <div class="case-credits">
-        <p>Made for Dr. Michael Rotondo. Directed, produced, and edited by Eli Harrigan. Original score by Gregg Perea.</p>
+        <p>Made for Dr. Michael Rotondo. Directed, produced, and edited by Eli Harrigan.</p>
       </div>
 
     </div>
   </main>
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged image"><img src="" alt=""></div>
   <footer><p>&copy; 2026 Eli Harrigan</p></footer>
   <script src="../js/main.js"></script>
+  <script>
+    (function () {
+      var box = document.getElementById('lightbox');
+      var img = box.querySelector('img');
+      document.querySelectorAll('.zoomable').forEach(function (el) {
+        el.addEventListener('click', function () {
+          img.src = el.src; img.alt = el.alt; box.classList.add('open');
+        });
+      });
+      function close() { box.classList.remove('open'); img.src = ''; }
+      box.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
+  </script>
 </body>
 </html>

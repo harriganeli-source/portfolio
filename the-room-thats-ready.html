@@ -20,8 +20,8 @@
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <style>
-    .film-page { max-width: 1100px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-2xl); }
-    .film-head { max-width: 720px; margin: 0 auto var(--spacing-xl); text-align: center; }
+    .film-page { max-width: 1100px; margin: 0 auto; padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-2xl); }
+    .film-head { max-width: 720px; margin: 0 auto var(--spacing-lg); text-align: center; }
     .film-head h1 {
       font-size: 44px;
       font-weight: var(--font-weight-medium);
@@ -42,12 +42,12 @@
       color: var(--color-gray-dark);
       margin-bottom: var(--spacing-sm);
     }
-    .film-page .video-card { margin-bottom: var(--spacing-sm); }
+    .film-page .video-card { max-width: 720px; margin: 0 auto var(--spacing-sm); }
     .film-note {
       text-align: center;
       font-size: var(--font-size-small);
       color: var(--color-gray-medium);
-      margin-bottom: var(--spacing-2xl);
+      margin-bottom: var(--spacing-xl);
     }
     .film-body { max-width: 720px; margin: 0 auto; }
     .film-body p {
@@ -70,8 +70,9 @@
     .film-stills {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--spacing-sm);
-      margin: var(--spacing-xl) 0;
+      gap: 12px;
+      max-width: 900px;
+      margin: var(--spacing-xl) auto;
     }
     .film-stills img { width: 100%; height: auto; display: block; background: #000; }
     @media (max-width: 767px) {
@@ -115,16 +116,19 @@
       </div>
 
       <div class="film-stills">
-        <img src="images/room/aerial.webp" alt="Aerial of a winding rural road through forest in the pre-dawn blue hour, one car's headlights on it." width="1920" height="1080" loading="lazy">
-        <img src="images/room/kiosk.webp" alt="A console screen inside the coordination center, and through the window behind it a drone lifting from a rooftop pad." width="1920" height="1080" loading="lazy">
+        <img src="images/room/dawn.webp" alt="Aerial: the ambulance and the drone run the last miles toward the lit hospital under the first band of dawn." width="1920" height="1080" loading="lazy">
+        <img src="images/room/team.webp" alt="The trauma team in yellow gowns and masks, backs to camera, reading the wall display together." width="1920" height="1080" loading="lazy">
         <img src="images/room/anticoagulated.webp" alt="A dark screen with one word in a red outlined chip: ANTICOAGULATED." width="1920" height="1080" loading="lazy">
         <img src="images/room/thermal.webp" alt="The drone's thermal view: a white-hot human signature slumped in the dark cabin of the wreck." width="1920" height="1080" loading="lazy">
-        <img src="images/room/operator.webp" alt="A dispatcher with a headset leans toward her monitor in a small dark coordination room." width="1920" height="1080" loading="lazy">
-        <img src="images/room/reverse.webp" alt="From the doorway, over the shoulders of the EMS crew: the trauma team turned toward the camera, dawn light through the windows behind them." width="1920" height="1080" loading="lazy">
+        <img src="images/room/nurse.webp" alt="A nurse in navy scrubs looks up from her station in the trauma room." width="1920" height="1080" loading="lazy">
+        <img src="images/room/drone-mist.webp" alt="The drone descends through mist toward the wreck, its floodlight on." width="1920" height="1080" loading="lazy">
+        <img src="images/room/kiosk.webp" alt="A console screen inside the coordination center, and through the window behind it a drone lifting from a rooftop pad." width="1920" height="1080" loading="lazy">
+        <img src="images/room/aftermath.webp" alt="Wide shot of the wrecked car against a tree at the edge of the road, one headlight alive, steam rising." width="1920" height="1080" loading="lazy">
+        <img src="images/room/mtpcase.webp" alt="A gloved hand rests on a sealed grey transport case with red latches, tagged with a blood bank label." width="1920" height="1080" loading="lazy">
       </div>
 
       <div class="film-credits">
-        <p>Made for Dr. Michael Rotondo, Professor of Surgery, University of Rochester Medical Center. Directed, produced, and edited by Eli Harrigan. Original score by Gregg Perea. Clinical content and system names by Dr. Rotondo.</p>
+        <p>Made for Dr. Michael Rotondo, Professor of Surgery, University of Rochester Medical Center. Directed, produced, and edited by Eli Harrigan. Clinical content and system names by Dr. Rotondo.</p>
         <p><a href="projects/the-room-thats-ready.html">How the film was made</a></p>
       </div>
     </div>
