@@ -37,6 +37,10 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.eliharrigan.com/projects/the-room-thats-ready</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.eliharrigan.com/projects/acuvue</loc>
     <priority>0.5</priority>
   </url>
