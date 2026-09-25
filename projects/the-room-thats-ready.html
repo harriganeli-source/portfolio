@@ -73,6 +73,9 @@
     .lightbox.open { display: flex; }
     .lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; }
 
+    .closing { max-width: 720px; margin: var(--spacing-xl) auto; }
+    .closing img { width: 100%; height: auto; display: block; background: #000; }
+    .closing figcaption { font-size: var(--font-size-small); color: var(--color-gray-medium); margin-top: 6px; }
     .case-credits {
       max-width: 720px;
       font-size: var(--font-size-small);
@@ -228,18 +231,11 @@
         </div>
       </section>
 
-      <section class="row">
-        <div class="row-text">
-          <h2>The screening</h2>
-          <p>He watched the first cut twice in his office, then screened it cold for colleagues with no setup. They followed the argument and started adding to it, which was the result he wanted from the whole talk. Their notes became the last round: the six system names in his lecture labeled on screen in one wordmark, and six frames pulled from the film for the slides that follow it. There is no title card and no credit inside the film, so nothing stands between his slide and the road.</p>
-        </div>
-        <div class="row-media">
-          <figure>
-            <img src="../images/room/reverse.webp" alt="From the doorway, over the shoulders of the EMS crew: the trauma team turned toward the camera, dawn light through the windows behind them." width="1920" height="1080" loading="lazy">
-            <figcaption>The last shot.</figcaption>
-          </figure>
-        </div>
-      </section>
+      <figure class="closing">
+        <img src="../images/room/reverse.webp" alt="From the doorway, over the shoulders of the EMS crew: the trauma team turned toward the camera, the sun through the windows behind them." width="1920" height="1080" loading="lazy">
+        <figcaption>The last shot.</figcaption>
+      </figure>
+
 
       <div class="case-credits">
         <p>Made for Dr. Michael Rotondo, from his treatment. Directed, produced, and edited by Eli Harrigan.</p>
