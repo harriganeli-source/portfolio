@@ -41,14 +41,17 @@
     .outline-bar { display: flex; justify-content: flex-end; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; }
     .outline-bar button { background: none; border: 0; padding: 0; font: inherit; font-size: var(--font-size-small); color: var(--color-gray-dark); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
     .case-section { border-bottom: 1px solid var(--color-border); }
-    .case-section > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr) 20px; gap: var(--spacing-xl); align-items: baseline; padding: 18px 0; }
+    .case-section > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 176px minmax(0, 1fr) 20px; gap: 24px; align-items: center; padding: 14px 0; }
+    .case-section > summary .thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #000; transition: opacity .2s; }
+    .case-section > summary:hover .thumb { opacity: .85; }
+    .case-section > summary .sum-text { display: grid; gap: 4px; }
     .case-section > summary::-webkit-details-marker { display: none; }
     .case-section > summary h2 { font-size: 19px; font-weight: var(--font-weight-medium); color: var(--color-black); margin: 0; }
     .case-section > summary .lede { font-size: 15px; line-height: 1.5; color: var(--color-gray-medium); margin: 0; }
-    .case-section > summary .chev { justify-self: end; width: 9px; height: 9px; border-right: 1.5px solid var(--color-gray-dark); border-bottom: 1.5px solid var(--color-gray-dark); transform: rotate(45deg); transition: transform .2s; align-self: center; }
+    .case-section > summary .chev { justify-self: end; width: 9px; height: 9px; border-right: 1.5px solid var(--color-gray-dark); border-bottom: 1.5px solid var(--color-gray-dark); transform: rotate(45deg); transition: transform .2s; }
     .case-section[open] > summary .chev { transform: rotate(-135deg); }
     .case-section > summary:hover h2 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-    .case-section[open] > summary .lede { visibility: hidden; }
+    .case-section[open] > summary .lede { display: none; }
     .row-text { position: sticky; top: 120px; }
     .row-text p {
       font-size: 15px;
@@ -95,10 +98,8 @@
     @media (max-width: 1023px) {
       .row { grid-template-columns: 1fr; gap: var(--spacing-md); }
       .row-text { position: static; }
-      .case-section > summary { grid-template-columns: minmax(0, 1fr) 20px; gap: 4px 16px; }
-      .case-section > summary .lede { grid-column: 1; grid-row: 2; }
-      .case-section > summary .chev { grid-column: 2; grid-row: 1 / span 2; }
-      .case-section[open] > summary .lede { display: none; }
+      .case-section > summary { grid-template-columns: 112px minmax(0, 1fr) 16px; gap: 14px; padding: 12px 0; }
+      .case-section > summary .lede { font-size: 14px; }
     }
     @media (max-width: 767px) {
       .case-section > summary h2 { font-size: 18px; }
@@ -143,12 +144,12 @@
       <div class="outline-bar"><button type="button" id="toggle-all">Expand all</button></div>
 
       <details class="case-section" id="the-film">
-        <summary><h2>The film</h2><p class="lede">A 64-year-old man is driving alone on a rural road before dawn.</p><span class="chev" aria-hidden="true"></span></summary>
+        <summary><img class="thumb" src="../images/room/thumbs/dawn.webp" alt="The ambulance on the road toward the lit hospital at dawn." width="480" height="270"><span class="sum-text"><h2>The film</h2><p class="lede">A 64-year-old man is driving alone on a rural road before dawn.</p></span><span class="chev" aria-hidden="true"></span></summary>
       <section class="row">
         <div class="row-text">
           <p>Dr. Michael Rotondo is a trauma surgeon and professor of surgery at the University of Rochester. In 2026 he gave the Scudder Oration on Trauma, a named lecture of the American College of Surgeons, to about a thousand trauma surgeons. The talk asks what digital transformation could do for injury care, and he wanted the room to see it rather than hear it described: a short photoreal film, believable to people who have spent their careers in trauma bays, that makes his argument without a narrator.</p>
           <p>He supplied the treatment, the clinical logic, and the names of the systems in his talk. I wrote the shot list, designed the world, generated every frame, built the screens, cut the film, and worked the sound. After he screened the first cut for colleagues, he reordered the middle of his lecture around it. The film plays before he explains the systems in it, so the audience sees them work before they hear what they are.</p>
-          <p>A 64-year-old man is driving alone on a rural road before dawn. A deer steps into the headlights, he swerves, and the car goes head-on into a pine. Nobody sees it. Then the response starts, and nobody presses a button. The car reports the crash. The watch on his wrist reports his body. A coordination center resolves his location and a drone lifts from its pad in the same instant. His record arrives with one word that matters: he is anticoagulated. The system predicts he will bleed and stages blood at the trauma center before any human has reached him. The drone finds him with a thermal camera. Medics arrive to a scene that is already lit, treat him in the ambulance while the trauma center watches the same numbers, and confirm the prediction. When the doors open, the room is ready and the blood is at the bedside. The film ends on one normal heartbeat.</p>
+          <p>A 64-year-old man is driving alone on a rural road before dawn. A deer steps into the headlights and the car goes head-on into a pine. Nobody sees it, and nobody presses a button: the car, his watch, and his medical record set off a response that has blood waiting at the trauma center before any human has reached him. The film ends on one normal heartbeat.</p>
         </div>
         <div class="row-media">
           <div class="grid-9">
@@ -166,8 +167,8 @@
       </section>
       </details>
 
-      <details class="case-section" id="nobody-speaks">
-        <summary><h2>Nobody speaks</h2><p class="lede">The information is the protagonist.</p><span class="chev" aria-hidden="true"></span></summary>
+      <details class="case-section" id="how-the-story-is-told">
+        <summary><img class="thumb" src="../images/room/thumbs/anticoagulated.webp" alt="A dark screen with one word in red: ANTICOAGULATED." width="480" height="270"><span class="sum-text"><h2>How the story is told</h2><p class="lede">The information is the protagonist.</p></span><span class="chev" aria-hidden="true"></span></summary>
       <section class="row">
         <div class="row-text">
           <p>The information is the protagonist. Everything the audience needs arrives on a screen inside the story: a watch, a dashboard, a console, a tablet, a truck monitor, a wall. The camera selects what to read, and the patient's face is never shown. The storyboard carried radio lines for the medics, but at the first screening the cut played without them and neither of us missed them. There are no voices in the finished film.</p>
@@ -189,7 +190,7 @@
       </details>
 
       <details class="case-section" id="every-cut">
-        <summary><h2>Every cut is a consequence</h2><p class="lede">The film runs on two causal chains.</p><span class="chev" aria-hidden="true"></span></summary>
+        <summary><img class="thumb" src="../images/room/thumbs/flow-diagram.webp" alt="The film's information-flow diagram." width="480" height="270"><span class="sum-text"><h2>Every cut is a consequence</h2><p class="lede">The film runs on two causal chains.</p></span><span class="chev" aria-hidden="true"></span></summary>
       <section class="row">
         <div class="row-text">
           <p>The film runs on two causal chains. The first is the blood: his record says he takes a blood thinner, so the system predicts hemorrhage, so it stages a transfusion protocol, so a sealed case leaves a refrigerator in another building, so it is waiting at the bedside when he arrives. The second is the crew: the crash mechanics, his record, and his falling vitals combine into three words on the medics' tablet, and that is what they roll on. Dr. Rotondo made the ruling that keeps the two apart. Anticoagulation drives the blood; mechanism and physiology move a crew.</p>
@@ -205,7 +206,7 @@
       </details>
 
       <details class="case-section" id="restraint">
-        <summary><h2>Restraint over spectacle</h2><p class="lede">Nothing in the film was photographed.</p><span class="chev" aria-hidden="true"></span></summary>
+        <summary><img class="thumb" src="../images/room/thumbs/drone-mist.webp" alt="The drone descending through mist, its floodlight on." width="480" height="270"><span class="sum-text"><h2>Restraint over spectacle</h2><p class="lede">Nothing in the film was photographed.</p></span><span class="chev" aria-hidden="true"></span></summary>
       <section class="row">
         <div class="row-text">
           <p>Nothing in the film was photographed. Every shot was generated as a still first and animated only after it was approved. The system has no memory between shots, so the car, the road, the drone, the ambulance, the operator, and the light have to be rebuilt from reference every time. Each recurring object was designed once as a clean plate and carried into every shot it appears in. The rules were short and did not move: near future, five years out, so everything is the newest real version of itself and the future shows in what happens without a human, not in gadgets. No holograms, no glowing interfaces, no red cross, no canopy on the drone, because nothing human arrives first.</p>
@@ -225,7 +226,7 @@
       </details>
 
       <details class="case-section" id="working-with-a-surgeon">
-        <summary><h2>Working with a surgeon</h2><p class="lede">The audience is trained to spot anything false, and so is the client.</p><span class="chev" aria-hidden="true"></span></summary>
+        <summary><img class="thumb" src="../images/room/thumbs/storyboard-site.webp" alt="The storyboard website built for the project." width="480" height="270"><span class="sum-text"><h2>Working with a surgeon</h2><p class="lede">The audience is trained to spot anything false, and so is the client.</p></span><span class="chev" aria-hidden="true"></span></summary>
       <section class="row">
         <div class="row-text">
           <p>The audience is trained to spot anything false, and so is the client. Instead of storyboard PDFs, the board lived on a website built for the project. Each shot had its frame, what you see, what you hear, and the text on any screen. Dr. Rotondo could edit the screen text and leave notes directly on the page, every save was kept as a version, and a banner listed the shots his notes touched until each was cleared. His corrections went onto the board the same day, and the board's text became the film's screen text.</p>
