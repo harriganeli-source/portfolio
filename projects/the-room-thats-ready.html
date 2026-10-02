@@ -35,9 +35,12 @@
       align-items: start;
       padding: var(--spacing-md) 0 var(--spacing-xl);
     }
-    /* Pull quote under the film */
+    /* Pull quotes: one under the film, one inside a section's text column */
     .case-quote { max-width: 720px; margin: 0 auto var(--spacing-xl); padding-left: 20px; border-left: 2px solid var(--color-black); }
-    .case-quote p { font-size: 19px; font-weight: 300; line-height: 1.5; color: var(--color-black); margin: 0 0 8px; }
+    .case-quote p { font-size: 17px; font-weight: 300; line-height: 1.5; color: var(--color-black); margin: 0 0 8px; }
+    .row-text .case-quote { max-width: none; margin: var(--spacing-md) 0 0; }
+    /* beats .row-text p, which sets 15px later in this sheet */
+    .row-text .case-quote p { font-size: 17px; }
     .case-quote cite { font-style: normal; font-size: var(--font-size-small); color: var(--color-gray-medium); }
     /* Sections collapse to one line each: the page reads as an outline */
     .outline-bar { display: flex; justify-content: flex-end; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; }
@@ -140,7 +143,6 @@
 
       <blockquote class="case-quote">
         <p>&ldquo;The film was the difference between a perceived unreachable set of constructs and an audience that walked away saying we could/should do this tomorrow.&rdquo;</p>
-        <p>&ldquo;The talk never would have come together the way it did without those three and a half minutes of the audience seeing how close we really are. You really brought it to life. I was impressed with the degree of detail and your thoughtfulness, not just about the production itself but about how to come into it and how to come out of it. Whatever you did behind the curtain was unbelievable.&rdquo;</p>
         <cite>Dr. Michael Rotondo, trauma surgeon</cite>
       </blockquote>
 
@@ -177,6 +179,10 @@
           <p>The audience is trained to spot anything false, and so is the client. Instead of storyboard PDFs, the board lived on a website built for the project. Each shot had its frame, what you see, what you hear, and the text on any screen. Dr. Rotondo could edit the screen text and leave notes directly on the page, every save was kept as a version, and a banner listed the shots his notes touched until each was cleared. His corrections went onto the board the same day, and the board's text became the film's screen text.</p>
           <p>The nurse enters the trauma room on a close-up of her feet, so her shoes were checked against what nurses wear on shift now. In a room full of clinicians, the wrong shoes would have been the first thing noticed.</p>
           <p>Three of his notes are visible in the finished film. The proof-of-concept drone was a white product-design box, and he asked for the aircraft fire departments actually fly. The first coordination center was a two-tier operations floor, and he pointed out that most real dispatch centers are the size of a closet; it became a small dark room where one tile on one console turns red and one operator leans in. The blood bank was a drawer of loose units, and he explained that a massive transfusion protocol is a sealed pack that nobody opens before the patient arrives, so the pack rides to the room and waits at the bedside unopened.</p>
+          <blockquote class="case-quote">
+            <p>&ldquo;The talk never would have come together the way it did without those three and a half minutes of the audience seeing how close we really are. You really brought it to life. I was impressed with the degree of detail and your thoughtfulness, not just about the production itself but about how to come into it and how to come out of it. Whatever you did behind the curtain was unbelievable.&rdquo;</p>
+            <cite>Dr. Michael Rotondo, trauma surgeon</cite>
+          </blockquote>
         </div>
         <div class="row-media">
           <figure>
