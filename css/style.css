@@ -307,6 +307,39 @@ main {
   border-radius: 4px;
 }
 
+/* Touch devices never run the grid's hover preview or frame scrub (see
+   initThumbnailScrub, which gates on hover:hover), so a phone shows nothing
+   but a still frame and no sign the card is a film. Badge the ones that are.
+   [data-preview] keeps this off non-video thumbs, e.g. reorder.html. */
+@media (hover: none) {
+  .project-thumb[data-preview]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    background-color: rgba(0, 0, 0, 0.45);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='5,3 19,12 5,21' fill='%23fff'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 55% 50%;
+    background-size: 22px 22px;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+  }
+
+  /* The active card's title overlay fills the thumb -- long titles wrap to
+     three lines -- so no fixed badge position clears it. The badge marks the
+     cards you are scrolling past; the overlay replaces it on the focused one. */
+  .project-card.mobile-active .project-thumb[data-preview]::after {
+    opacity: 0;
+  }
+}
+
 .project-card img {
   position: absolute;
   inset: -1px;
