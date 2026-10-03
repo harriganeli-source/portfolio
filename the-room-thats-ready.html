@@ -43,10 +43,8 @@
       margin-bottom: var(--spacing-sm);
     }
     .film-page .video-card { max-width: 720px; margin: 0 auto var(--spacing-sm); }
-    /* The global .play-btn is a faint 40px triangle, and is hidden outright on
-       touch. This is the film's own page, so it gets a real control: same
-       treatment as the case study, visible on phones too. */
-    .film-page .play-btn { display: flex; width: 76px; height: 76px; border-radius: 50%; background: rgba(0,0,0,.45); border: 1.5px solid rgba(255,255,255,.85); opacity: .95; }
+    /* Larger than the sitewide control: this is the film's own page. */
+    .film-page .play-btn { width: 76px; height: 76px; border-radius: 50%; background: rgba(0,0,0,.45); border: 1.5px solid rgba(255,255,255,.85); opacity: .95; }
     .film-page .play-btn svg { width: 30px; height: 30px; }
     .film-note {
       text-align: center;

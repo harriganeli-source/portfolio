@@ -648,9 +648,23 @@ img.thumb-zoomed {
   transition: opacity 0.35s ease;
 }
 
+/* Touch devices get no hover preview, so the play button is the only cue
+   that a poster is a video. It used to be display:none here, which left ~50
+   videos across the site with no play affordance at all. Show it, with a
+   solid control treatment rather than the faint triangle desktop uses. */
 @media (hover: none) {
   .play-btn {
-    display: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    opacity: 0.95;
+  }
+
+  .play-btn svg {
+    width: 26px;
+    height: 26px;
   }
 }
 

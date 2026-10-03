@@ -24,9 +24,8 @@
     .case-film .project-credit { max-width: 720px; margin-bottom: var(--spacing-lg); }
     .case-film .project-credit p { margin-bottom: 10px; }
     .case-film .video-card { max-width: 720px; margin: 0 auto var(--spacing-xl); }
-    /* display:flex overrides the global @media (hover:none) rule that hides
-       .play-btn on touch; tapping the poster does start the film there. */
-    .case-film .play-btn { display: flex; width: 76px; height: 76px; border-radius: 50%; background: rgba(0,0,0,.45); border: 1.5px solid rgba(255,255,255,.85); opacity: .95; }
+    /* Larger than the sitewide control: this is the page's hero video. */
+    .case-film .play-btn { width: 76px; height: 76px; border-radius: 50%; background: rgba(0,0,0,.45); border: 1.5px solid rgba(255,255,255,.85); opacity: .95; }
     .case-film .play-btn svg { width: 30px; height: 30px; }
 
     /* Two-column rows: text left, media right */
