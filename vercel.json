@@ -1,3 +1,10 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/the-room-thats-ready",
+      "destination": "/projects/the-room-thats-ready",
+      "permanent": true
+    }
+  ]
 }
