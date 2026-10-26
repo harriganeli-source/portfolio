@@ -94,6 +94,13 @@
     .closing { max-width: 720px; margin: var(--spacing-xl) auto; }
     .closing img { width: 100%; height: auto; display: block; background: #000; }
     .closing figcaption { font-size: var(--font-size-small); color: var(--color-gray-medium); margin-top: 6px; }
+    .for-speakers { max-width: 720px; margin: var(--spacing-lg) auto var(--spacing-lg); padding: 18px 22px; border: 1px solid var(--color-border); border-radius: 6px; }
+    .for-speakers h2 { font-size: 19px; margin: 0 0 8px; }
+    .for-speakers p { margin: 0 0 12px; }
+    .for-speakers ul { margin: 0; padding-left: 18px; }
+    .for-speakers li { margin: 0 0 8px; line-height: 1.6; }
+    .case-credits .reach { margin-top: 10px; }
+    .case-credits .reach a { color: inherit; }
     .case-credits {
       max-width: 720px;
       font-size: var(--font-size-small);
@@ -128,12 +135,12 @@
   </nav>
   <main>
     <div class="container-narrow case-film">
-      <a href="../index.html" class="back-link">Back to Video</a>
+      <a href="../index.html" class="back-link">More films</a>
       <h1 class="project-heading">The Room That's Ready</h1>
       <div class="project-credit">
-        <p>A film for The Last Preventable Death, the 2026 Scudder Oration on Trauma of the American College of Surgeons.</p>
-        <p>Made for Dr. Michael Rotondo, from his treatment. Directed, produced, and edited by Eli Harrigan.</p>
-        <p>3 minutes 30 seconds. No narration. Nothing photographed.</p>
+        <p>A short film made for Dr. Michael Rotondo, a trauma surgeon, to play in the middle of The Last Preventable Death, his 2026 Scudder Oration on Trauma for the American College of Surgeons, in front of about a thousand trauma surgeons.</p>
+        <p>A man crashes alone on a rural road before dawn, and nobody sees it. His car, his watch, and a regional coordination system do. The film follows the hour before he reaches the trauma center, from the point of view of the information that gets there first, and makes the talk's case: when every system shares what it knows, the trauma room can be ready before the patient arrives.</p>
+        <p>From Dr. Rotondo's treatment. Directed, produced, and edited by Eli Harrigan. 3 minutes 30 seconds, no narration. The images and motion were made with AI tools; every screen, word, edit, and sound was designed by hand.</p>
       </div>
 
       <div class="video-card">
@@ -142,12 +149,22 @@
           <button class="play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
       </div>
-      <p class="case-film-note">Sound on. Full screen if you can. The heartbeat is part of the story.</p>
 
       <blockquote class="case-quote">
         <p>&ldquo;The film was the difference between a perceived unreachable set of constructs and an audience that walked away saying we could/should do this tomorrow.&rdquo;</p>
         <cite>Dr. Michael Rotondo, after the Oration</cite>
       </blockquote>
+
+      <section class="for-speakers">
+        <h2>A film for your talk</h2>
+        <p>A short film works anywhere an audience needs to see something that doesn't exist yet: a system, a procedure, a future, a situation too rare or too risky to film.</p>
+        <ul>
+          <li><b>What the speaker brings:</b> the talk, or the part of it the film needs to carry, and the clinical details. Everything else is built from there.</li>
+          <li><b>Time it takes from the speaker:</b> a first call, then notes left on a shared storyboard, a few minutes at a time.</li>
+          <li><b>Length:</b> whatever the talk needs. This one runs three and a half minutes; a minute is often enough.</li>
+          <li><b>Timeline:</b> three to five weeks from the first call, depending on length.</li>
+        </ul>
+      </section>
 
       <div class="outline-bar"><button type="button" id="toggle-all">Expand all</button></div>
 
@@ -156,7 +173,7 @@
       <section class="row">
         <div class="row-text">
           <p>A 64-year-old man is driving alone on a rural road before dawn. A deer steps into the headlights and the car goes head-on into a pine. Nobody sees it, and nobody presses a button: the car, his watch, and his medical record set off a response that has blood waiting at the trauma center before any human has reached him. The film ends on one normal heartbeat.</p>
-          <p>Dr. Michael Rotondo is a trauma surgeon and professor of surgery at the University of Rochester. In 2026 he gave the Scudder Oration on Trauma, a named lecture of the American College of Surgeons, to about a thousand trauma surgeons. The talk asks what digital transformation could do for injury care, and he wanted the room to see it rather than hear it described: a short photoreal film, believable to people who have spent their careers in trauma bays, that makes his argument without a narrator.</p>
+          <p>Dr. Rotondo is a professor of surgery at the University of Rochester. His talk asks what digital transformation could do for injury care, and he wanted the room to see it rather than hear it described: a short photoreal film, believable to people who have spent their careers in trauma bays, that makes his argument without a narrator.</p>
           <p>He supplied the treatment, the clinical logic, and the names of the systems in his talk. The shot list, the world, every frame, the screens, the cut, and the sound were built from there. After he screened the first cut for colleagues, he reordered the middle of his lecture around it. The film plays before he explains the systems in it, so the audience sees them work before they hear what they are.</p>
         </div>
         <div class="row-media">
@@ -258,7 +275,7 @@
         <summary><img class="thumb" src="../images/room/thumbs/drone-mist.webp" alt="The drone descending through mist, its floodlight on." width="480" height="270"><span class="sum-text"><h2>Restraint over spectacle</h2><p class="lede">Nothing in the film was photographed.</p></span><span class="chev" aria-hidden="true"></span></summary>
       <section class="row">
         <div class="row-text">
-          <p>Nothing in the film was photographed. Every shot was generated as a still first and animated only after it was approved. The system has no memory between shots, so the car, the road, the drone, the ambulance, the operator, and the light have to be rebuilt from reference every time. Each recurring object was designed once as a clean plate and carried into every shot it appears in. The rules were short and did not move: near future, five years out, so everything is the newest real version of itself and the future shows in what happens without a human, not in gadgets. No holograms, no glowing interfaces, no red cross, no canopy on the drone, because nothing human arrives first.</p>
+          <p>Nothing in the film was photographed. Every shot was generated as a still first and animated only after it was approved. The AI tools have no memory between shots, so the car, the road, the drone, the ambulance, the operator, and the light have to be rebuilt from reference every time. Each recurring object was designed once as a clean plate and carried into every shot it appears in. The rules were short and did not move: near future, five years out, so everything is the newest real version of itself and the future shows in what happens without a human, not in gadgets. No holograms, no glowing interfaces, no red cross, no canopy on the drone, because nothing human arrives first.</p>
           <p>Light was locked to the pre-dawn blue hour for every exterior. The response in the film takes minutes, and a sky that changed between the crash and the ambulance would say hours. The one change in light is the last shot. Dawn comes through the trauma room window about an hour after the crash, which is how long the whole chain takes from the car reporting itself to the doors opening. It is the only place in the film where time passing is the point.</p>
         </div>
         <div class="row-media">
@@ -282,6 +299,7 @@
 
       <div class="case-credits">
         <p>Made for Dr. Michael Rotondo, Professor of Surgery, University of Rochester Medical Center, from his treatment. Directed, produced, and edited by Eli Harrigan. Clinical content and system names by Dr. Rotondo.</p>
+        <p class="reach">Eli Harrigan, Rochester, NY &middot; <a href="mailto:harrigan.eli@gmail.com">harrigan.eli@gmail.com</a> &middot; <a href="tel:5857470851">585.747.0851</a></p>
       </div>
 
     </div>
